@@ -194,7 +194,7 @@ class _OtpActions extends StatelessWidget {
                 await cubit.verify();
                 final s = cubit.state;
                 if (s is OtpVerified) {
-                  context.go('/home');
+                  context.go('/auth/select-role');
                 } else if (s is OtpError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(s.failureKey.tr())),

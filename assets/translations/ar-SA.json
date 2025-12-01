@@ -175,5 +175,21 @@
   },
   "services": "خدمات متنوعة",
   "growth": "نمو مستمر",
-  "quality": "جودة عالية"
+  "quality": "جودة عالية",
+  "roleSelection": {
+    "title": "كيف تريد استخدام احترافي؟",
+    "subtitle": "اختر الدور المناسب لك",
+    "clientTitle": "عميل",
+    "clientSubtitle": "أبحث عن مصورين",
+    "clientDesc": "تصفح إعلانات المصورين واطلب الخدمات التي تحتاجها",
+    "clientBadge1": "طلب خدمات",
+    "clientBadge2": "تصفح الإعلانات",
+    "freelancerTitle": "مصور محترف",
+    "freelancerSubtitle": "أقدم خدمات التصوير",
+    "freelancerDesc": "أنشئ إعلانات لخدماتك واحصل على طلبات من العملاء",
+    "freelancerBadge1": "استقبال طلبات",
+    "freelancerBadge2": "إنشاء إعلانات",
+    "footerNote": "يمكنك التبديل بين الدورين في أي وقت من الإعدادات",
+    "confirm": "تأكيد الاختيار"
+  }
 }

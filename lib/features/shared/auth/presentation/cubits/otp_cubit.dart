@@ -13,7 +13,7 @@ class OtpCubit extends Cubit<OtpState> {
   static const int initialSeconds = 60;
   int _remaining = initialSeconds;
   Timer? _timer;
-  String _code = '';
+  final List<String> _digits = ['', '', '', ''];
 
   OtpCubit() : super(OtpInitial()) {
     startTimer();
@@ -34,21 +34,18 @@ class OtpCubit extends Cubit<OtpState> {
   }
 
   void updateDigit(int index, String value) {
-    // Ensure length 4
-    final list = _code.padRight(4).split('');
     if (index < 0 || index > 3) return;
-    list[index] = value.isEmpty ? '' : value[0];
-    _code = list.join();
+    _digits[index] = value.isEmpty ? '' : value[0];
   }
 
-  bool get canVerify => _code.length == 4 && !_code.contains('');
+  bool get canVerify => _digits.every((d) => d.isNotEmpty);
+  String get code => _digits.join();
 
   Future<void> verify() async {
     if (!canVerify) return;
     emit(OtpVerifying());
-    await Future.delayed(const Duration(milliseconds: 600));
-    // Simulate success for any 4-digit code
-    if (_code.length == 4) {
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (code == '6666') {
       emit(OtpVerified());
     } else {
       emit(const OtpError('failures.validation'));
@@ -58,7 +55,7 @@ class OtpCubit extends Cubit<OtpState> {
   Future<void> resend() async {
     if (_remaining > 0) return; // only allow when timer finished
     emit(OtpResent());
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 300));
     startTimer();
   }
 
@@ -68,4 +65,3 @@ class OtpCubit extends Cubit<OtpState> {
     return super.close();
   }
 }
-
