@@ -48,7 +48,16 @@
 
     "or": "أو",
     "loginGoogle": "تسجيل الدخول بواسطة Google",
-    "loginApple": "تسجيل الدخول بواسطة Apple"
+    "loginApple": "تسجيل الدخول بواسطة Apple",
+
+    "phoneLabel": "رقم الهاتف",
+    "phoneHint": "+966 xxx xxx xxx",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "loginNow": "تسجيل الدخول",
+    "termsPrefix": "بإنشاء حساب، أنت توافق على ",
+    "terms": "الشروط والأحكام",
+    "and": " و ",
+    "privacy": "سياسة الخصوصية"
   },
 
   "failures": {

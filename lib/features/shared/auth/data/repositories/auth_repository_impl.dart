@@ -18,4 +18,22 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left('failures.unexpected');
     }
   }
+
+  @override
+  Future<Either<String, LoginResult>> signup({
+    required String fullName,
+    required String email,
+    required String phone,
+    required String password,
+  }) async {
+    try {
+      final res = await _api.signup(fullName: fullName, email: email, phone: phone, password: password);
+      if (res['success'] == true) {
+        return Right(LoginResult(token: res['token'] as String, userName: res['userName'] as String));
+      }
+      return const Left('failures.validation');
+    } catch (_) {
+      return const Left('failures.unexpected');
+    }
+  }
 }
