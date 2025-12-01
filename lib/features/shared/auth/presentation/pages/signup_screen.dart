@@ -52,7 +52,10 @@ class _SignupScreenState extends State<SignupScreen> {
     if (value == null || value.isEmpty) {
       return 'Please enter your email';
     }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    // Basic email validation - more comprehensive validation should be done server-side
+    final emailRegex = RegExp(
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$",
+    );
     if (!emailRegex.hasMatch(value)) {
       return 'Please enter a valid email';
     }

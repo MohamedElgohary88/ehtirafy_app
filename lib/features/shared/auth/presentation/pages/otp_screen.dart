@@ -205,8 +205,8 @@ class _OtpScreenState extends State<OtpScreen> {
                     color: AppColors.gold,
                   ),
                   onCompleted: (pin) {
-                    // Auto-submit when 4 digits entered
-                    _handleVerify();
+                    // Focus shifts to verify button when complete
+                    // User must tap Verify to submit
                   },
                 ),
               ),
