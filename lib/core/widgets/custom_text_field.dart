@@ -6,8 +6,14 @@ class CustomTextField extends StatelessWidget {
   final String hint;
   final TextEditingController? controller;
   final bool isPassword;
+  final bool? obscureText;
   final TextInputType? keyboardType;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final int? maxLines;
+  final bool enabled;
 
   const CustomTextField({
     super.key,
@@ -15,8 +21,14 @@ class CustomTextField extends StatelessWidget {
     required this.hint,
     this.controller,
     this.isPassword = false,
+    this.obscureText,
     this.keyboardType,
     this.suffixIcon,
+    this.prefixIcon,
+    this.validator,
+    this.onChanged,
+    this.maxLines = 1,
+    this.enabled = true,
   });
 
   @override
@@ -35,11 +47,16 @@ class CustomTextField extends StatelessWidget {
         SizedBox(height: 8.h),
         TextFormField(
           controller: controller,
-          obscureText: isPassword,
+          obscureText: obscureText ?? isPassword,
           keyboardType: keyboardType,
+          validator: validator,
+          onChanged: onChanged,
+          maxLines: isPassword ? 1 : maxLines,
+          enabled: enabled,
           decoration: InputDecoration(
             hintText: hint,
             suffixIcon: suffixIcon,
+            prefixIcon: prefixIcon,
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -50,3 +67,4 @@ class CustomTextField extends StatelessWidget {
     );
   }
 }
+
