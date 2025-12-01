@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.2
+  sdk: ^3.5.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -59,7 +59,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
 
   # Localization
-  intl: ^0.20.2
+  intl: any
   easy_localization: ^3.0.7
 
   # Storage
@@ -74,6 +74,9 @@ dependencies:
 
   # Additional utilities
   logger: ^2.5.0
+
+  # OTP Input
+  pinput: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +96,15 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/translations/
+
+# Flutter Native Splash configuration
+flutter_native_splash:
+  color: "#1C1D18"
+  image: assets/images/logo.png
+  android_12:
+    color: "#1C1D18"
+    image: assets/images/logo.png
+    icon_background_color: "#1C1D18"
+  ios: true
+  android: true
+  web: false

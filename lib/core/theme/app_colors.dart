@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Primary colors
   static const Color gold = Color(0xFFB7873B);
-  static const Color dark = Color(0xFF1C1D17); //  1C1D17
+  static const Color dark = Color(0xFF1C1D18); // Native splash background
 
   // Background colors
   static const Color backgroundLight = Color(0xFFFAFAFA);
