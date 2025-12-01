@@ -34,7 +34,7 @@
     "forgotPassword": "نسيت كلمة المرور؟",
     "loginButton": "تسجيل الدخول",
     "noAccount": "ليس لديك حساب؟",
-    "createAccount": "إنشاء حساب",
+    "createAccount": "إنشاء حساب جديد",
 
     "signupTitle": "إنشاء حساب",
     "signupSubtitle": "أنشئ حسابك كمستخدم جديد",
@@ -44,7 +44,11 @@
 
     "otpTitle": "رمز التحقق",
     "otpSubtitle": "أدخل الرمز المرسل إلى جوالك",
-    "otpConfirm": "تأكيد"
+    "otpConfirm": "تأكيد",
+
+    "or": "أو",
+    "loginGoogle": "تسجيل الدخول بواسطة Google",
+    "loginApple": "تسجيل الدخول بواسطة Apple"
   },
 
   "failures": {

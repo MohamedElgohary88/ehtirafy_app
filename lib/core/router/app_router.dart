@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/shared/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:ehtirafy_app/features/shared/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/screens/login_screen.dart';
 
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
@@ -18,7 +19,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/auth/login',
-      builder: (context, state) => const Scaffold(body: SizedBox.shrink()),
+      builder: (context, state) => const LoginScreen(),
     ),
   ],
 );
