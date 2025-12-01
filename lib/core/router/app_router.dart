@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/features/shared/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/login_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/signup_screen.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/screens/otp_screen.dart';
 
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
@@ -21,6 +22,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/auth/login',
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/auth/otp',
+      builder: (context, state) {
+        final phone = state.uri.queryParameters['phone'] ?? '';
+        return OtpScreen(phone: phone);
+      },
     ),
     GoRoute(
       path: '/home',

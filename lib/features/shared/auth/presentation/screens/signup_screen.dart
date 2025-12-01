@@ -68,7 +68,7 @@ class _SignupForm extends StatelessWidget {
     return BlocConsumer<SignupCubit, SignupState>(
       listener: (context, state) {
         if (state is SignupSuccess) {
-          context.go('/home');
+          context.go('/auth/otp?phone=${Uri.encodeComponent(state.phone)}');
         } else if (state is SignupError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.failureKey.tr())),

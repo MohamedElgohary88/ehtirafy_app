@@ -5,7 +5,7 @@ import 'package:ehtirafy_app/features/shared/auth/domain/usecases/login_usecase.
 abstract class SignupState { const SignupState(); }
 class SignupInitial extends SignupState {}
 class SignupLoading extends SignupState {}
-class SignupSuccess extends SignupState { final LoginResult result; const SignupSuccess(this.result); }
+class SignupSuccess extends SignupState { final LoginResult result; final String phone; const SignupSuccess(this.result, this.phone); }
 class SignupError extends SignupState { final String failureKey; const SignupError(this.failureKey); }
 
 class SignupCubit extends Cubit<SignupState> {
@@ -26,8 +26,7 @@ class SignupCubit extends Cubit<SignupState> {
     final result = await _usecase.call(fullName: fullName, email: email, phone: phone, password: password);
     result.fold(
       (failureKey) => emit(SignupError(failureKey)),
-      (data) => emit(SignupSuccess(data)),
+      (data) => emit(SignupSuccess(data, phone)),
     );
   }
 }
-

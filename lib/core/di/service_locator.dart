@@ -5,6 +5,7 @@ import 'package:ehtirafy_app/features/shared/auth/domain/repositories/auth_repos
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/login_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/otp_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -20,4 +21,5 @@ Future<void> setupLocator() async {
   // Presentation layer
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl<LoginUseCase>()));
   sl.registerFactory<SignupCubit>(() => SignupCubit(sl<SignupUseCase>()));
+  sl.registerFactory<OtpCubit>(() => OtpCubit());
 }
