@@ -83,7 +83,14 @@
     "welcomeTitle": "مرحباً بك في احترافي",
     "subtitle": "بوابتك الاحترافية لعالم التصوير الفوتوغرافي",
     "login": "تسجيل الدخول",
-    "signup": "إنشاء حساب جديد"
+    "signup": "إنشاء حساب جديد",
+    "bannerTitle": "انضم إلى أكبر منصة",
+    "bannerSubtitle": "للمصورين المحترفين في الوطن العربي",
+    "disclaimer": "بالمتابعة، أنت توافق على شروط الخدمة وسياسة الخصوصية",
+    "servicesSubtitle": "جميع المجالات",
+    "photographersSubtitle": "+500 مصور",
+    "growthSubtitle": "آلاف المشاريع",
+    "qualitySubtitle": "4.8+ تقييم"
   },
   "booking": {
     "requests": {
@@ -143,5 +150,8 @@
     "status": {
       "paid": "مدفوع"
     }
-  }
+  },
+  "services": "خدمات متنوعة",
+  "growth": "نمو مستمر",
+  "quality": "جودة عالية"
 }

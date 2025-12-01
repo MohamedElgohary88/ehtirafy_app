@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 /// App color constants based on the UI Kit
 class AppColors {
   // Primary colors
-  static const Color gold = Color(0xFFB7873B);
-  static const Color dark = Color(0xFF1C1D17); //  1C1D17
+  static const Color gold = Color(0xFFC8A44F); // Updated to correct gold
+  static const Color dark = Color(0xFF1C1D18);
 
   // Background colors
   static const Color backgroundLight = Color(0xFFFAFAFA);
