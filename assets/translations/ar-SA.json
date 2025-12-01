@@ -1,0 +1,147 @@
+{
+  "app_name": "احترافي",
+  "welcome": "مرحباً بك",
+  "login": "تسجيل الدخول",
+  "signup": "إنشاء حساب",
+  "logout": "تسجيل الخروج",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "client": "عميل",
+  "freelancer": "مصور محترف",
+  "switch_to_client": "التبديل إلى وضع العميل",
+  "switch_to_freelancer": "التبديل إلى وضع المصور",
+  "home": "الرئيسية",
+  "bookings": "الحجوزات",
+  "dashboard": "لوحة التحكم",
+  "my_gigs": "خدماتي",
+  "profile": "الملف الشخصي",
+  "settings": "الإعدادات",
+  "chat": "الرسائل",
+  "error": "خطأ",
+  "loading": "جارٍ التحميل...",
+  "success": "تم بنجاح",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "save": "حفظ",
+
+  "auth": {
+    "welcomeBack": "مرحباً بعودتك",
+    "loginSubtitle": "سجّل دخولك للمتابعة",
+    "emailLabel": "البريد الإلكتروني",
+    "emailHint": "example@email.com",
+    "passwordLabel": "كلمة المرور",
+    "passwordHint": "••••••••",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "loginButton": "تسجيل الدخول",
+    "noAccount": "ليس لديك حساب؟",
+    "createAccount": "إنشاء حساب",
+
+    "signupTitle": "إنشاء حساب",
+    "signupSubtitle": "أنشئ حسابك كمستخدم جديد",
+    "fullNameLabel": "الاسم الكامل",
+    "fullNameHint": "الاسم كما في الهوية",
+    "signupButton": "إنشاء حساب",
+
+    "otpTitle": "رمز التحقق",
+    "otpSubtitle": "أدخل الرمز المرسل إلى جوالك",
+    "otpConfirm": "تأكيد"
+  },
+
+  "failures": {
+    "server": "حدث خطأ في الخادم",
+    "cache": "حدث خطأ في التخزين المحلي",
+    "network": "تحقق من اتصال الإنترنت",
+    "validation": "البيانات المدخلة غير صحيحة",
+    "authentication": "فشلت عملية المصادقة",
+    "authorization": "ليس لديك صلاحية للوصول",
+    "unexpected": "حدث خطأ غير متوقع"
+  },
+
+  "splash": {
+    "tagline": "بوابتك الاحترافية لعالم التصوير"
+  },
+
+  "nav": {
+    "home": "الرئيسية",
+    "requests": "طلباتي",
+    "messages": "الرسائل",
+    "account": "حسابي",
+    "dashboard": "لوحة التحكم",
+    "myGigs": "خدماتي",
+    "orders": "الطلبات"
+  },
+
+  "role": {
+    "current": "الدور الحالي",
+    "client": "عميل",
+    "freelancer": "مصور محترف",
+    "switchedToClient": "تم التبديل إلى وضع العميل",
+    "switchedToFreelancer": "تم التبديل إلى وضع المصور"
+  },
+
+  "onboarding": {
+    "welcomeTitle": "مرحباً بك في احترافي",
+    "subtitle": "بوابتك الاحترافية لعالم التصوير الفوتوغرافي",
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب جديد"
+  },
+  "booking": {
+    "requests": {
+      "title": "طلباتي",
+      "active": "النشطة",
+      "pending": "قيد المراجعة",
+      "completed": "المنتهية"
+    },
+    "service": {
+      "weddingTitle": "تصوير حفل زفاف",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "تفاصيل الخدمة كاملة هنا...",
+      "priceLabel": "السعر",
+      "bookButton": "حجز الخدمة",
+      "currencySuffix": "ريال",
+      "photographerPrefix": "المصور",
+      "clientPrefix": "العميل"
+    }
+  },
+  "chat": {
+    "list": {
+      "title": "الرسائل",
+      "photographerPrefix": "المصور",
+      "clientPrefix": "العميل",
+      "placeholderMessage": "مرحباً، هل يمكنني الاستفسار عن...",
+      "timePlaceholder": "10:30 ص"
+    },
+    "room": {
+      "title": "المحادثة",
+      "sample": {
+        "mine": "هذا مثال لرسالتي",
+        "other": "هذه رسالة من الطرف الآخر"
+      },
+      "inputHint": "اكتب رسالة..."
+    }
+  },
+  "freelancer": {
+    "gigs": {
+      "title": "خدماتي",
+      "sampleTitle": "تصوير جوي"
+    },
+    "orders": {
+      "title": "طلبات العملاء",
+      "newStatus": "جديد"
+    }
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "transactions": "السجل المالي",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "clientRole": "دورك: عميل",
+    "freelancerRole": "دورك: مصور"
+  },
+  "transactions": {
+    "itemLabel": "عملية",
+    "status": {
+      "paid": "مدفوع"
+    }
+  }
+}
