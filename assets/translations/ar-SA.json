@@ -23,7 +23,6 @@
   "cancel": "إلغاء",
   "confirm": "تأكيد",
   "save": "حفظ",
-
   "auth": {
     "welcomeBack": "مرحباً بعودتك",
     "loginSubtitle": "سجّل دخولك للمتابعة",
@@ -35,13 +34,12 @@
     "loginButton": "تسجيل الدخول",
     "noAccount": "ليس لديك حساب؟",
     "createAccount": "إنشاء حساب جديد",
-
     "signupTitle": "إنشاء حساب",
     "signupSubtitle": "أنشئ حسابك كمستخدم جديد",
     "fullNameLabel": "الاسم الكامل",
     "fullNameHint": "الاسم كما في الهوية",
     "signupButton": "إنشاء حساب",
-
+    "passwordRequirements": "يجب أن تحتوي على 8 أحرف على الأقل",
     "otpTitle": "أدخل رمز التحقق",
     "otpSubtitle": "لقد أرسلنا رمز التحقق إلى",
     "otpConfirm": "تأكيد",
@@ -54,11 +52,9 @@
     "otpCanResend": "يمكنك إرسال رمز آخر",
     "otpWhyTitle": "لماذا نحتاج رمز التحقق؟",
     "otpWhyDesc": "نحتاج للتحقق من رقمك لضمان أمان حسابك وحماية معلوماتك الشخصية",
-
     "or": "أو",
     "loginGoogle": "تسجيل الدخول بواسطة Google",
     "loginApple": "تسجيل الدخول بواسطة Apple",
-
     "phoneLabel": "رقم الهاتف",
     "phoneHint": "+966 xxx xxx xxx",
     "haveAccount": "لديك حساب بالفعل؟",
@@ -68,7 +64,6 @@
     "and": " و ",
     "privacy": "سياسة الخصوصية"
   },
-
   "failures": {
     "server": "حدث خطأ في الخادم",
     "cache": "حدث خطأ في التخزين المحلي",
@@ -78,11 +73,9 @@
     "authorization": "ليس لديك صلاحية للوصول",
     "unexpected": "حدث خطأ غير متوقع"
   },
-
   "splash": {
     "tagline": "بوابتك الاحترافية لعالم التصوير"
   },
-
   "nav": {
     "home": "الرئيسية",
     "requests": "طلباتي",
@@ -92,7 +85,6 @@
     "myGigs": "خدماتي",
     "orders": "الطلبات"
   },
-
   "role": {
     "current": "الدور الحالي",
     "client": "عميل",
@@ -100,7 +92,6 @@
     "switchedToClient": "تم التبديل إلى وضع العميل",
     "switchedToFreelancer": "تم التبديل إلى وضع المصور"
   },
-
   "onboarding": {
     "welcomeTitle": "مرحباً بك في احترافي",
     "subtitle": "بوابتك الاحترافية لعالم التصوير الفوتوغرافي",

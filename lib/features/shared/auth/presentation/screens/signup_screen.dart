@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/core/widgets/primary_button.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_header.dart';
@@ -42,11 +43,11 @@ class _SignupView extends StatelessWidget {
               children: [
                 AuthHeader(
                   iconAsset: 'assets/icons/camera_icon.svg',
-                  title: 'auth.signupTitle'.tr(),
-                  subtitle: 'auth.signupSubtitle'.tr(),
+                  title: AppStrings.authSignupTitle.tr(),
+                  subtitle: AppStrings.authSignupSubtitle.tr(),
                 ),
                 SizedBox(height: 24.h),
-                _SignupForm(),
+                const _SignupForm(),
               ],
             ),
           ),
@@ -56,13 +57,36 @@ class _SignupView extends StatelessWidget {
   }
 }
 
-class _SignupForm extends StatelessWidget {
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _SignupForm extends StatefulWidget {
+  const _SignupForm();
 
-  _SignupForm();
+  @override
+  State<_SignupForm> createState() => _SignupFormState();
+}
+
+class _SignupFormState extends State<_SignupForm> {
+  late final TextEditingController _fullNameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    _fullNameController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,31 +110,31 @@ class _SignupForm extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AuthTextField(
-              label: 'auth.fullNameLabel'.tr(),
-              hint: 'auth.fullNameHint'.tr(),
+              label: AppStrings.authFullNameLabel.tr(),
+              hint: AppStrings.authFullNameHint.tr(),
               controller: _fullNameController,
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 16.h),
             AuthTextField(
-              label: 'auth.emailLabel'.tr(),
-              hint: 'auth.emailHint'.tr(),
+              label: AppStrings.authEmailLabel.tr(),
+              hint: AppStrings.authEmailHint.tr(),
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 16.h),
             AuthTextField(
-              label: 'auth.phoneLabel'.tr(),
-              hint: 'auth.phoneHint'.tr(),
+              label: AppStrings.authPhoneLabel.tr(),
+              hint: AppStrings.authPhoneHint.tr(),
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 16.h),
             AuthTextField(
-              label: 'auth.passwordLabel'.tr(),
-              hint: 'auth.passwordHint'.tr(),
+              label: AppStrings.authPasswordLabel.tr(),
+              hint: AppStrings.authPasswordHint.tr(),
               controller: _passwordController,
               obscureText: true,
             ),
@@ -118,8 +142,7 @@ class _SignupForm extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                // Password hint line
-                'يجب أن تحتوي على 8 أحرف على الأقل',
+                AppStrings.authPasswordRequirements.tr(),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.grey600,
                 ),
@@ -127,7 +150,7 @@ class _SignupForm extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             PrimaryButton(
-              text: 'auth.signupButton'.tr(),
+              text: AppStrings.authSignupButton.tr(),
               onPressed: () {
                 final current = context.read<SignupCubit>().state;
                 if (current is SignupLoading) return;
@@ -146,13 +169,13 @@ class _SignupForm extends StatelessWidget {
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: 'auth.haveAccount'.tr(),
+                      text: AppStrings.authHaveAccount.tr(),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.grey600,
                       ),
                     ),
                     TextSpan(
-                      text: 'auth.loginNow'.tr(),
+                      text: AppStrings.authLoginNow.tr(),
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: AppColors.gold,
                       ),
@@ -170,26 +193,26 @@ class _SignupForm extends StatelessWidget {
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: 'auth.termsPrefix'.tr(),
+                      text: AppStrings.authTermsPrefix.tr(),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppColors.grey600,
                       ),
                     ),
                     TextSpan(
-                      text: 'auth.terms'.tr(),
+                      text: AppStrings.authTerms.tr(),
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: AppColors.gold,
                       ),
                       recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                     TextSpan(
-                      text: 'auth.and'.tr(),
+                      text: AppStrings.authAnd.tr(),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppColors.grey600,
                       ),
                     ),
                     TextSpan(
-                      text: 'auth.privacy'.tr(),
+                      text: AppStrings.authPrivacy.tr(),
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: AppColors.gold,
                       ),

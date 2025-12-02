@@ -18,6 +18,7 @@ class AppStrings {
   static const authFullNameLabel = 'auth.fullNameLabel';
   static const authFullNameHint = 'auth.fullNameHint';
   static const authSignupButton = 'auth.signupButton';
+  static const authPasswordRequirements = 'auth.passwordRequirements';
 
   static const authOtpTitle = 'auth.otpTitle';
   static const authOtpSubtitle = 'auth.otpSubtitle';

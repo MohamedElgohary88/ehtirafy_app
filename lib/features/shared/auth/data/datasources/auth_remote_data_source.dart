@@ -33,6 +33,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     // Mock API call
     await Future.delayed(const Duration(seconds: 2));
+    if (email == 'error@test.com') {
+      throw Exception('Signup failed');
+    }
     return const LoginModel(token: 'mock_token_123', userName: 'Ahmed Mohamed');
   }
 }
