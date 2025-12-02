@@ -1,3 +1,4 @@
+import 'package:ehtirafy_app/features/client/home/presentation/pages/client_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/features/shared/onboarding/presentation/screens/onboarding_screen.dart';
@@ -13,7 +14,7 @@ final appRouter = GoRouter(
     // Onboarding screen - entry point
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),
+      builder: (context, state) => const ClientHomeScreen(),
     ),
     // Auth routes (placeholder - will be implemented later)
     GoRoute(
@@ -37,7 +38,8 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/home',
-      builder: (context, state) => const Scaffold(body: Center(child: Text('Home Placeholder'))),
+      builder: (context, state) =>
+          const Scaffold(body: Center(child: Text('Home Placeholder'))),
     ),
   ],
 );
