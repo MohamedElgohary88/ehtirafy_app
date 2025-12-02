@@ -1,53 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
+import 'package:ehtirafy_app/core/di/service_locator.dart';
+import 'package:ehtirafy_app/features/client/search/presentation/cubits/search_cubit.dart';
+import 'package:ehtirafy_app/features/client/search/presentation/cubits/search_state.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      body: SafeArea(
-        child: Column(
+    return BlocProvider(
+      create: (context) => sl<SearchCubit>()..loadInitialData(),
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundLight,
+        body: Column(
           children: [
             _buildHeader(context),
             Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(24.w),
-                children: [
-                  _buildSectionTitle(
-                    context,
-                    AppStrings.searchRecentSearches.tr(),
-                  ),
-                  SizedBox(height: 12.h),
-                  _buildRecentSearchItem(context, 'تصوير أفراح'),
-                  SizedBox(height: 8.h),
-                  _buildRecentSearchItem(context, 'جلسات تصوير'),
-                  SizedBox(height: 8.h),
-                  _buildRecentSearchItem(context, 'تصوير منتجات'),
-                  SizedBox(height: 24.h),
-                  _buildSectionTitle(
-                    context,
-                    AppStrings.searchMostSearched.tr(),
-                  ),
-                  SizedBox(height: 12.h),
-                  Wrap(
-                    spacing: 8.w,
-                    runSpacing: 8.h,
-                    children: [
-                      _buildSearchTag(context, 'أفراح'),
-                      _buildSearchTag(context, 'عائلي'),
-                      _buildSearchTag(context, 'منتجات'),
-                      _buildSearchTag(context, 'عقارات'),
-                      _buildSearchTag(context, 'طعام'),
-                      _buildSearchTag(context, 'مناسبات'),
-                    ],
-                  ),
-                ],
+              child: BlocBuilder<SearchCubit, SearchState>(
+                builder: (context, state) {
+                  if (state is SearchLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is SearchError) {
+                    return Center(child: Text(state.message.tr()));
+                  } else if (state is SearchLoaded) {
+                    if (state.searchResults != null) {
+                      return ListView.builder(
+                        padding: EdgeInsets.all(24.w),
+                        itemCount: state.searchResults!.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(state.searchResults![index].title),
+                          );
+                        },
+                      );
+                    }
+                    return ListView(
+                      padding: EdgeInsets.all(24.w),
+                      children: [
+                        _buildSectionTitle(
+                          context,
+                          AppStrings.searchRecentSearches.tr(),
+                        ),
+                        SizedBox(height: 12.h),
+                        ...state.recentSearches.map(
+                          (e) => Padding(
+                            padding: EdgeInsets.only(bottom: 8.h),
+                            child: _buildRecentSearchItem(context, e.title),
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+                        _buildSectionTitle(
+                          context,
+                          AppStrings.searchMostSearched.tr(),
+                        ),
+                        SizedBox(height: 12.h),
+                        Wrap(
+                          spacing: 8.w,
+                          runSpacing: 8.h,
+                          children: state.popularTags
+                              .map((e) => _buildSearchTag(context, e.title))
+                              .toList(),
+                        ),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
             ),
           ],
@@ -58,55 +81,71 @@ class SearchScreen extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-      decoration: const BoxDecoration(
-        color: AppColors.dark,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
-          Expanded(
-            child: Container(
-              height: 48.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14.r),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.search, color: AppColors.grey600, size: 24.w),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: AppStrings.searchHint.tr(),
-                        hintStyle: TextStyle(
-                          color: AppColors.grey400,
-                          fontSize: 14.sp,
-                        ),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => _showFilterBottomSheet(context),
-                    child: Icon(Icons.tune, color: AppColors.gold, size: 24.w),
-                  ),
-                ],
-              ),
+      color: AppColors.dark,
+      child: SafeArea(
+        bottom: false,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+          decoration: const BoxDecoration(
+            color: AppColors.dark,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(24),
+              bottomRight: Radius.circular(24),
             ),
           ),
-        ],
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+              Expanded(
+                child: Container(
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14.r),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.search, color: AppColors.grey600, size: 24.w),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            return TextField(
+                              onSubmitted: (query) =>
+                                  context.read<SearchCubit>().search(query),
+                              decoration: InputDecoration(
+                                hintText: AppStrings.searchHint.tr(),
+                                hintStyle: TextStyle(
+                                  color: AppColors.grey400,
+                                  fontSize: 14.sp,
+                                ),
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => _showFilterBottomSheet(context),
+                        child: Icon(
+                          Icons.tune,
+                          color: AppColors.gold,
+                          size: 24.w,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -189,7 +228,7 @@ class FilterBottomSheet extends StatelessWidget {
           Container(
             height: 48.h,
             color: AppColors.grey100,
-            child: Center(child: Text('Price Slider Placeholder')),
+            child: const Center(child: Text('Price Slider Placeholder')),
           ),
           SizedBox(height: 24.h),
           Text(

@@ -1,34 +1,38 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ehtirafy_app/core/theme/app_colors.dart';
+import 'package:ehtirafy_app/features/client/home/domain/entities/photographer_entity.dart';
 
 class HomeFeaturedPhotographers extends StatelessWidget {
-  const HomeFeaturedPhotographers({super.key});
+  final List<PhotographerEntity> photographers;
+
+  const HomeFeaturedPhotographers({super.key, required this.photographers});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'أبرز المصورين',
                 style: TextStyle(
-                  color: Color(0xFF2B2B2B),
-                  fontSize: 16,
+                  color: const Color(0xFF2B2B2B),
+                  fontSize: 16.sp,
                   fontFamily: 'Cairo',
                   fontWeight: FontWeight.w400,
                 ),
               ),
               TextButton(
                 onPressed: () {},
-                child: const Text(
+                child: Text(
                   'عرض الكل',
                   style: TextStyle(
                     color: AppColors.gold,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontFamily: 'Cairo',
                     fontWeight: FontWeight.w400,
                   ),
@@ -37,15 +41,15 @@ class HomeFeaturedPhotographers extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          itemCount: 3,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          itemCount: photographers.length,
+          separatorBuilder: (context, index) => SizedBox(height: 16.h),
           itemBuilder: (context, index) {
-            return const _PhotographerCard();
+            return _PhotographerCard(photographer: photographers[index]);
           },
         ),
       ],
@@ -54,15 +58,17 @@ class HomeFeaturedPhotographers extends StatelessWidget {
 }
 
 class _PhotographerCard extends StatelessWidget {
-  const _PhotographerCard();
+  final PhotographerEntity photographer;
+
+  const _PhotographerCard({required this.photographer});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: const Color(0xFFE5E5E5)),
         boxShadow: const [
           BoxShadow(
@@ -76,17 +82,17 @@ class _PhotographerCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 80.w,
+            height: 80.w,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              image: const DecorationImage(
-                image: NetworkImage("https://placehold.co/80x80.png"),
+              borderRadius: BorderRadius.circular(8.r),
+              image: DecorationImage(
+                image: NetworkImage(photographer.imageUrl),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,11 +100,11 @@ class _PhotographerCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'أحمد المصور',
+                    Text(
+                      photographer.name,
                       style: TextStyle(
-                        color: Color(0xFF2B2B2B),
-                        fontSize: 16,
+                        color: const Color(0xFF2B2B2B),
+                        fontSize: 16.sp,
                         fontFamily: 'Cairo',
                         fontWeight: FontWeight.w400,
                       ),
@@ -106,102 +112,102 @@ class _PhotographerCard extends StatelessWidget {
                     Icon(
                       Icons.bookmark_border,
                       color: AppColors.gold,
-                      size: 24,
+                      size: 24.w,
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'تصوير حفلات زفاف',
+                SizedBox(height: 4.h),
+                Text(
+                  photographer.category,
                   style: TextStyle(
-                    color: Color(0xFF888888),
-                    fontSize: 14,
+                    color: const Color(0xFF888888),
+                    fontSize: 14.sp,
                     fontFamily: 'Cairo',
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 Row(
                   children: [
-                    const Icon(Icons.star, color: AppColors.gold, size: 16),
-                    const SizedBox(width: 4),
-                    const Text(
-                      '4.9',
+                    Icon(Icons.star, color: AppColors.gold, size: 16.w),
+                    SizedBox(width: 4.w),
+                    Text(
+                      photographer.rating.toString(),
                       style: TextStyle(
-                        color: Color(0xFF2B2B2B),
-                        fontSize: 14,
+                        color: const Color(0xFF2B2B2B),
+                        fontSize: 14.sp,
                         fontFamily: 'Cairo',
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      '(127)',
+                    SizedBox(width: 4.w),
+                    Text(
+                      '(${photographer.reviewsCount})',
                       style: TextStyle(
-                        color: Color(0xFF888888),
-                        fontSize: 14,
+                        color: const Color(0xFF888888),
+                        fontSize: 14.sp,
                         fontFamily: 'Cairo',
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                     const Spacer(),
-                    const Icon(
+                    Icon(
                       Icons.location_on_outlined,
-                      color: Color(0xFF888888),
-                      size: 16,
+                      color: const Color(0xFF888888),
+                      size: 16.w,
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'الرياض',
+                    SizedBox(width: 4.w),
+                    Text(
+                      photographer.location,
                       style: TextStyle(
-                        color: Color(0xFF888888),
-                        fontSize: 14,
+                        color: const Color(0xFF888888),
+                        fontSize: 14.sp,
                         fontFamily: 'Cairo',
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 6.h,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.gold,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.r),
                       ),
-                      child: const Text(
+                      child: Text(
                         'عرض الملف',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontFamily: 'Cairo',
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    const Row(
+                    Row(
                       children: [
                         Text(
-                          '5,000',
+                          '${photographer.price}',
                           style: TextStyle(
                             color: AppColors.gold,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontFamily: 'Cairo',
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        SizedBox(width: 4),
+                        SizedBox(width: 4.w),
                         Text(
                           'ريال',
                           style: TextStyle(
-                            color: Color(0xFF888888),
-                            fontSize: 14,
+                            color: const Color(0xFF888888),
+                            fontSize: 14.sp,
                             fontFamily: 'Cairo',
                             fontWeight: FontWeight.w400,
                           ),

@@ -11,6 +11,21 @@ import 'package:ehtirafy_app/features/shared/auth/domain/repositories/role_repos
 import 'package:ehtirafy_app/features/shared/auth/data/repositories/role_repository_impl.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/role_usecases.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit.dart';
+import 'package:ehtirafy_app/features/client/notifications/data/datasources/notifications_remote_data_source.dart';
+import 'package:ehtirafy_app/features/client/notifications/data/repositories/notifications_repository_impl.dart';
+import 'package:ehtirafy_app/features/client/notifications/domain/repositories/notifications_repository.dart';
+import 'package:ehtirafy_app/features/client/notifications/domain/usecases/get_notifications_usecase.dart';
+import 'package:ehtirafy_app/features/client/notifications/presentation/cubits/notifications_cubit.dart';
+import 'package:ehtirafy_app/features/client/search/data/datasources/search_remote_data_source.dart';
+import 'package:ehtirafy_app/features/client/search/data/repositories/search_repository_impl.dart';
+import 'package:ehtirafy_app/features/client/search/domain/repositories/search_repository.dart';
+import 'package:ehtirafy_app/features/client/search/domain/usecases/search_usecase.dart';
+import 'package:ehtirafy_app/features/client/search/presentation/cubits/search_cubit.dart';
+import 'package:ehtirafy_app/features/client/home/data/datasources/home_remote_data_source.dart';
+import 'package:ehtirafy_app/features/client/home/data/repositories/home_repository_impl.dart';
+import 'package:ehtirafy_app/features/client/home/domain/repositories/home_repository.dart';
+import 'package:ehtirafy_app/features/client/home/domain/usecases/get_featured_photographers_usecase.dart';
+import 'package:ehtirafy_app/features/client/home/presentation/cubits/home_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -34,5 +49,32 @@ Future<void> setupLocator() async {
   sl.registerFactory<OtpCubit>(() => OtpCubit());
   sl.registerFactory<RoleCubit>(
     () => RoleCubit(sl<GetRoleUseCase>(), sl<SetRoleUseCase>()),
+  );
+  // Features - Notifications
+  sl.registerFactory(() => NotificationsCubit(getNotificationsUseCase: sl()));
+  sl.registerLazySingleton(() => GetNotificationsUseCase(sl()));
+  sl.registerLazySingleton<NotificationsRepository>(
+    () => NotificationsRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<NotificationsRemoteDataSource>(
+    () => NotificationsRemoteDataSourceImpl(),
+  );
+  // Features - Search
+  sl.registerFactory(() => SearchCubit(searchUseCase: sl()));
+  sl.registerLazySingleton(() => SearchUseCase(sl()));
+  sl.registerLazySingleton<SearchRepository>(
+    () => SearchRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<SearchRemoteDataSource>(
+    () => SearchRemoteDataSourceImpl(),
+  );
+  // Features - Home
+  sl.registerFactory(() => HomeCubit(getFeaturedPhotographersUseCase: sl()));
+  sl.registerLazySingleton(() => GetFeaturedPhotographersUseCase(sl()));
+  sl.registerLazySingleton<HomeRepository>(
+    () => HomeRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<HomeRemoteDataSource>(
+    () => HomeRemoteDataSourceImpl(),
   );
 }
