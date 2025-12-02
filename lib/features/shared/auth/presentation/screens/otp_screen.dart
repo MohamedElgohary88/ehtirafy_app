@@ -68,8 +68,10 @@ class _OtpTarget extends StatelessWidget {
     final theme = Theme.of(context);
     return Column(
       children: [
-        Text(phone.isEmpty ? 'auth.otpPhoneMask'.tr() : phone,
-            style: theme.textTheme.titleMedium?.copyWith(color: AppColors.gold)),
+        Text(
+          phone.isEmpty ? 'auth.otpPhoneMask'.tr() : phone,
+          style: theme.textTheme.titleMedium?.copyWith(color: AppColors.gold),
+        ),
       ],
     );
   }
@@ -82,14 +84,21 @@ class _OtpDigits extends StatefulWidget {
 }
 
 class _OtpDigitsState extends State<_OtpDigits> {
-  final List<TextEditingController> _controllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> _nodes = List.generate(4, (_) => FocusNode());
   final List<String> _prev = List.filled(4, '');
 
   @override
   void dispose() {
-    for (final c in _controllers) c.dispose();
-    for (final n in _nodes) n.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    for (final n in _nodes) {
+      n.dispose();
+    }
     super.dispose();
   }
 
@@ -131,7 +140,10 @@ class _OtpDigitsState extends State<_OtpDigits> {
                 cubit.updateDigit(i, v);
                 if (v.isEmpty && wasNotEmpty && i > 0) {
                   _nodes[i - 1].requestFocus();
-                  _controllers[i - 1].selection = TextSelection(baseOffset: 0, extentOffset: _controllers[i - 1].text.length);
+                  _controllers[i - 1].selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: _controllers[i - 1].text.length,
+                  );
                 } else if (v.isNotEmpty && i < 3) {
                   _nodes[i + 1].requestFocus();
                 }
@@ -163,16 +175,36 @@ class _OtpTimer extends StatelessWidget {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('auth.otpResendAfter'.tr(), style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey600)),
+              Text(
+                'auth.otpResendAfter'.tr(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.grey600,
+                ),
+              ),
               SizedBox(width: 6.w),
-              Text(remaining.toString(), style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.gold)),
+              Text(
+                remaining.toString(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.gold,
+                ),
+              ),
               SizedBox(width: 4.w),
-              Text('auth.otpSeconds'.tr(), style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey600)),
+              Text(
+                'auth.otpSeconds'.tr(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.grey600,
+                ),
+              ),
             ],
           );
         }
         return Center(
-          child: Text('auth.otpCanResend'.tr(), style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey600)),
+          child: Text(
+            'auth.otpCanResend'.tr(),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.grey600,
+            ),
+          ),
         );
       },
     );
@@ -190,17 +222,19 @@ class _OtpActions extends StatelessWidget {
           children: [
             PrimaryButton(
               text: 'auth.otpConfirm'.tr(),
-              onPressed: canVerify ? () async {
-                await cubit.verify();
-                final s = cubit.state;
-                if (s is OtpVerified) {
-                  context.go('/auth/select-role');
-                } else if (s is OtpError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(s.failureKey.tr())),
-                  );
-                }
-              } : () {},
+              onPressed: canVerify
+                  ? () async {
+                      await cubit.verify();
+                      final s = cubit.state;
+                      if (s is OtpVerified) {
+                        context.go('/auth/select-role');
+                      } else if (s is OtpError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(s.failureKey.tr())),
+                        );
+                      }
+                    }
+                  : () {},
               isLoading: state is OtpVerifying,
             ),
             SizedBox(height: 16.h),
@@ -209,10 +243,10 @@ class _OtpActions extends StatelessWidget {
               child: Text(
                 'auth.otpResend'.tr(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: (state is OtpTick && (state.remaining > 0))
-                          ? AppColors.grey400
-                          : AppColors.gold,
-                    ),
+                  color: (state is OtpTick && (state.remaining > 0))
+                      ? AppColors.grey400
+                      : AppColors.gold,
+                ),
               ),
             ),
           ],
@@ -240,7 +274,9 @@ class _OtpInfo extends StatelessWidget {
           SizedBox(height: 8.h),
           Text(
             'auth.otpWhyDesc'.tr(),
-            style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey600),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.grey600,
+            ),
           ),
         ],
       ),

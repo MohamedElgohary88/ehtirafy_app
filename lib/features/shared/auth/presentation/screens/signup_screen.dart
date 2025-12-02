@@ -61,7 +61,7 @@ class _SignupForm extends StatelessWidget {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  _SignupForm({super.key});
+  _SignupForm();
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +70,9 @@ class _SignupForm extends StatelessWidget {
         if (state is SignupSuccess) {
           context.go('/auth/otp?phone=${Uri.encodeComponent(state.phone)}');
         } else if (state is SignupError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.failureKey.tr())),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.failureKey.tr())));
         }
       },
       builder: (context, state) {
@@ -117,7 +117,9 @@ class _SignupForm extends StatelessWidget {
               child: Text(
                 // Password hint line
                 'يجب أن تحتوي على 8 أحرف على الأقل',
-                style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey600),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.grey600,
+                ),
               ),
             ),
             SizedBox(height: 16.h),
@@ -142,12 +144,17 @@ class _SignupForm extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: 'auth.haveAccount'.tr(),
-                      style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey600),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.grey600,
+                      ),
                     ),
                     TextSpan(
                       text: 'auth.loginNow'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(color: AppColors.gold),
-                      recognizer: TapGestureRecognizer()..onTap = () => context.go('/auth/login'),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: AppColors.gold,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => context.go('/auth/login'),
                     ),
                   ],
                 ),
@@ -161,20 +168,28 @@ class _SignupForm extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: 'auth.termsPrefix'.tr(),
-                      style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey600),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.grey600,
+                      ),
                     ),
                     TextSpan(
                       text: 'auth.terms'.tr(),
-                      style: theme.textTheme.titleSmall?.copyWith(color: AppColors.gold),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: AppColors.gold,
+                      ),
                       recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                     TextSpan(
                       text: 'auth.and'.tr(),
-                      style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey600),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.grey600,
+                      ),
                     ),
                     TextSpan(
                       text: 'auth.privacy'.tr(),
-                      style: theme.textTheme.titleSmall?.copyWith(color: AppColors.gold),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: AppColors.gold,
+                      ),
                       recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                   ],

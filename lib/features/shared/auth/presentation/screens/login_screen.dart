@@ -64,7 +64,7 @@ class _LoginForm extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  _LoginForm({super.key});
+  _LoginForm();
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +73,9 @@ class _LoginForm extends StatelessWidget {
         if (state is LoginSuccess) {
           context.go('/home');
         } else if (state is LoginError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.failureKey.tr())),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.failureKey.tr())));
         }
       },
       builder: (context, state) {
@@ -106,7 +106,9 @@ class _LoginForm extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   'auth.forgotPassword'.tr(),
-                  style: theme.textTheme.titleMedium?.copyWith(color: AppColors.gold),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: AppColors.gold,
+                  ),
                 ),
               ),
             ),
@@ -161,12 +163,21 @@ class _SocialDivider extends StatelessWidget {
     final theme = Theme.of(context);
     return Row(
       children: [
-        Expanded(child: Divider(color: AppColors.grey300, thickness: 1.h)),
+        Expanded(
+          child: Divider(color: AppColors.grey300, thickness: 1.h),
+        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
-          child: Text('auth.or'.tr(), style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey600)),
+          child: Text(
+            'auth.or'.tr(),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.grey600,
+            ),
+          ),
         ),
-        Expanded(child: Divider(color: AppColors.grey300, thickness: 1.h)),
+        Expanded(
+          child: Divider(color: AppColors.grey300, thickness: 1.h),
+        ),
       ],
     );
   }
@@ -214,7 +225,9 @@ class _OutlinedIconButton extends StatelessWidget {
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: AppColors.grey300, width: 2.w),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14.r),
+          ),
         ),
         onPressed: onPressed,
         child: Row(
