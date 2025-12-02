@@ -23,6 +23,10 @@ class AppStrings {
   static const authOtpSubtitle = 'auth.otpSubtitle';
   static const authOtpConfirm = 'auth.otpConfirm';
 
+  static const authOr = 'auth.or';
+  static const authLoginGoogle = 'auth.loginGoogle';
+  static const authLoginApple = 'auth.loginApple';
+
   // Failures
   static const failureServer = 'failures.server';
   static const failureCache = 'failures.cache';
@@ -56,6 +60,19 @@ class AppStrings {
   static const onboardingSubtitle = 'onboarding.subtitle';
   static const onboardingLogin = 'onboarding.login';
   static const onboardingSignup = 'onboarding.signup';
+  static const onboardingBannerTitle = 'onboarding.bannerTitle';
+  static const onboardingBannerSubtitle = 'onboarding.bannerSubtitle';
+  static const onboardingDisclaimer = 'onboarding.disclaimer';
+  static const onboardingServicesSubtitle = 'onboarding.servicesSubtitle';
+  static const onboardingPhotographersSubtitle =
+      'onboarding.photographersSubtitle';
+  static const onboardingGrowthSubtitle = 'onboarding.growthSubtitle';
+  static const onboardingQualitySubtitle = 'onboarding.qualitySubtitle';
+
+  // General
+  static const services = 'services';
+  static const growth = 'growth';
+  static const quality = 'quality';
 
   // Booking / Requests
   static const bookingRequestsTitle = 'booking.requests.title';
@@ -64,7 +81,8 @@ class AppStrings {
   static const bookingRequestsCompleted = 'booking.requests.completed';
   static const bookingServiceWedding = 'booking.service.weddingTitle';
   static const bookingDescriptionLabel = 'booking.service.descriptionLabel';
-  static const bookingDescriptionPlaceholder = 'booking.service.descriptionPlaceholder';
+  static const bookingDescriptionPlaceholder =
+      'booking.service.descriptionPlaceholder';
   static const bookingPriceLabel = 'booking.service.priceLabel';
   static const bookingBookButton = 'booking.service.bookButton';
   static const bookingCurrency = 'booking.service.currencySuffix';

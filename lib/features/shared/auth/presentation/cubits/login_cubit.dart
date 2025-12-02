@@ -1,36 +1,27 @@
 import 'package:bloc/bloc.dart';
-import 'package:ehtirafy_app/features/shared/auth/domain/usecases/login_usecase.dart';
-import 'package:ehtirafy_app/features/shared/auth/domain/entities/login_result.dart';
-
-// States
-abstract class LoginState {
-  const LoginState();
-}
-class LoginInitial extends LoginState {}
-class LoginLoading extends LoginState {}
-class LoginSuccess extends LoginState {
-  final LoginResult result;
-  const LoginSuccess(this.result);
-}
-class LoginError extends LoginState {
-  final String failureKey; // localization key
-  const LoginError(this.failureKey);
-}
+import 'package:ehtirafy_app/core/constants/app_strings.dart';
+import 'package:ehtirafy_app/core/error/failures.dart';
+import '../../domain/usecases/login_usecase.dart';
+import 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  final LoginUseCase _usecase;
-  LoginCubit(this._usecase) : super(LoginInitial());
+  final LoginUseCase loginUseCase;
+
+  LoginCubit(this.loginUseCase) : super(LoginInitial());
 
   Future<void> login(String email, String password) async {
-    if (email.isEmpty || password.isEmpty) {
-      emit(const LoginError('failures.validation'));
-      return;
-    }
     emit(LoginLoading());
-    final result = await _usecase.call(email: email, password: password);
+    final result = await loginUseCase(email: email, password: password);
     result.fold(
-      (failureKey) => emit(LoginError(failureKey)),
-      (data) => emit(LoginSuccess(data)),
+      (failure) => emit(LoginError(_mapFailureToMessage(failure))),
+      (loginResult) => emit(LoginSuccess(loginResult)),
     );
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    if (failure is ServerFailure) return AppStrings.failureServer;
+    if (failure is CacheFailure) return AppStrings.failureCache;
+    if (failure is NetworkFailure) return AppStrings.failureNetwork;
+    return AppStrings.failureUnexpected;
   }
 }

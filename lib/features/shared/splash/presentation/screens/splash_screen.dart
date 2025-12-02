@@ -1,66 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ehtirafy_app/core/widgets/app_logo.dart';
-import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ehtirafy_app/core/theme/app_colors.dart';
+import 'package:ehtirafy_app/core/widgets/app_logo.dart';
+import 'package:ehtirafy_app/core/constants/app_strings.dart';
+import '../cubits/splash_cubit.dart';
 
-/// Flutter Splash Screen - Shown after native splash
-///
-/// This screen appears after the native splash and provides:
-/// - App logo centered
-/// - Tagline at the bottom
-/// - 2-3 second delay before navigating to onboarding
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => SplashCubit()..initSplash(),
+      child: const _SplashView(),
+    );
+  }
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _navigateToOnboarding();
-  }
-
-  void _navigateToOnboarding() {
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        // Use context.go() to replace the splash route (no back navigation)
-        context.go('/onboarding');
-      }
-    });
-  }
+class _SplashView extends StatelessWidget {
+  const _SplashView();
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    return PopScope(
-      canPop: false,
+    return BlocListener<SplashCubit, SplashState>(
+      listener: (context, state) {
+        if (state is SplashNavigateToOnboarding) {
+          context.go('/onboarding');
+        } else if (state is SplashNavigateToHome) {
+          context.go('/home');
+        }
+      },
       child: Scaffold(
-        backgroundColor: isDarkMode ? AppColors.dark : AppColors.backgroundLight,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.dark
+            : AppColors.backgroundLight,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo - centered
-              const AppLogo(
-                width: 145,
-                fit: BoxFit.contain,
-              ),
+              const AppLogo(width: 145, fit: BoxFit.contain),
               const Spacer(),
-              // Tagline - at bottom
               Padding(
                 padding: EdgeInsets.only(bottom: 80.h),
                 child: Text(
-                  'splash.tagline'.tr(),
+                  AppStrings.splashTagline.tr(),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDarkMode
+                    color: Theme.of(context).brightness == Brightness.dark
                         ? AppColors.grey400
                         : AppColors.textSecondary,
                   ),

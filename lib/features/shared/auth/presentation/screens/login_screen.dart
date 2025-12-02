@@ -6,10 +6,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
+import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/widgets/primary_button.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_header.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_text_field.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_state.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -42,8 +44,8 @@ class _LoginView extends StatelessWidget {
               children: [
                 AuthHeader(
                   iconAsset: 'assets/icons/camera_icon.svg',
-                  title: 'auth.welcomeBack'.tr(),
-                  subtitle: 'auth.loginSubtitle'.tr(),
+                  title: AppStrings.authWelcomeBack.tr(),
+                  subtitle: AppStrings.authLoginSubtitle.tr(),
                 ),
                 SizedBox(height: 24.h),
                 _LoginForm(),
@@ -86,16 +88,16 @@ class _LoginForm extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AuthTextField(
-              label: 'auth.emailLabel'.tr(),
-              hint: 'auth.emailHint'.tr(),
+              label: AppStrings.authEmailLabel.tr(),
+              hint: AppStrings.authEmailHint.tr(),
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 16.h),
             AuthTextField(
-              label: 'auth.passwordLabel'.tr(),
-              hint: 'auth.passwordHint'.tr(),
+              label: AppStrings.authPasswordLabel.tr(),
+              hint: AppStrings.authPasswordHint.tr(),
               controller: _passwordController,
               obscureText: true,
             ),
@@ -105,7 +107,7 @@ class _LoginForm extends StatelessWidget {
               child: TextButton(
                 onPressed: () {},
                 child: Text(
-                  'auth.forgotPassword'.tr(),
+                  AppStrings.authForgotPassword.tr(),
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: AppColors.gold,
                   ),
@@ -114,7 +116,7 @@ class _LoginForm extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             PrimaryButton(
-              text: 'auth.loginButton'.tr(),
+              text: AppStrings.authLoginButton.tr(),
               onPressed: () {
                 final currentState = context.read<LoginCubit>().state;
                 if (currentState is LoginLoading) return;
@@ -132,13 +134,13 @@ class _LoginForm extends StatelessWidget {
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: 'auth.noAccount'.tr(),
+                      text: AppStrings.authNoAccount.tr(),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.grey600,
                       ),
                     ),
                     TextSpan(
-                      text: 'auth.createAccount'.tr(),
+                      text: AppStrings.authCreateAccount.tr(),
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: AppColors.gold,
                       ),
@@ -169,7 +171,7 @@ class _SocialDivider extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Text(
-            'auth.or'.tr(),
+            AppStrings.authOr.tr(),
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.grey600,
             ),
@@ -191,13 +193,13 @@ class _SocialButtons extends StatelessWidget {
       children: [
         _OutlinedIconButton(
           iconAsset: 'assets/icons/google.svg',
-          label: 'auth.loginGoogle'.tr(),
+          label: AppStrings.authLoginGoogle.tr(),
           onPressed: () {},
         ),
         SizedBox(height: 12.h),
         _OutlinedIconButton(
           iconAsset: 'assets/icons/apple.svg',
-          label: 'auth.loginApple'.tr(),
+          label: AppStrings.authLoginApple.tr(),
           onPressed: () {},
         ),
       ],

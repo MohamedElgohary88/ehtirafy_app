@@ -9,6 +9,7 @@ import 'package:ehtirafy_app/core/widgets/primary_button.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_header.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_text_field.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_state.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
 
 class SignupScreen extends StatelessWidget {
@@ -68,7 +69,9 @@ class _SignupForm extends StatelessWidget {
     return BlocConsumer<SignupCubit, SignupState>(
       listener: (context, state) {
         if (state is SignupSuccess) {
-          context.go('/auth/otp?phone=${Uri.encodeComponent(state.phone)}');
+          context.go(
+            '/auth/otp?phone=${Uri.encodeComponent(_phoneController.text)}',
+          );
         } else if (state is SignupError) {
           ScaffoldMessenger.of(
             context,
