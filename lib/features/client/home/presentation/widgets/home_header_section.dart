@@ -120,7 +120,7 @@ class HomeHeaderSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
           // Search Bar
           Container(
             width: double.infinity,
