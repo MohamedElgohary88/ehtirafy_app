@@ -143,4 +143,20 @@ class AppStrings {
   static const searchFilterPriceRange = 'search.filter.priceRange';
   static const searchFilterRating = 'search.filter.rating';
   static const searchFilterApply = 'search.filter.apply';
+
+  // Freelancer Profile
+  static const freelancerProfileTitle = 'freelancerProfile.title';
+  static const freelancerProfileMessage = 'freelancerProfile.message';
+  static const freelancerProfileOrderNow = 'freelancerProfile.orderNow';
+  static const freelancerProfileReviews = 'freelancerProfile.reviews';
+  static const freelancerProfileServices = 'freelancerProfile.services';
+  static const freelancerProfilePortfolio = 'freelancerProfile.portfolio';
+  static const freelancerProfileProjects = 'freelancerProfile.projects';
+  static const freelancerProfileResponse = 'freelancerProfile.response';
+  static const freelancerProfileWithinHour = 'freelancerProfile.withinHour';
+  static const freelancerProfileMemberSince = 'freelancerProfile.memberSince';
+  static const freelancerProfileReviewsCount = 'freelancerProfile.reviewsCount';
+  static const freelancerProfileBookNow = 'freelancerProfile.bookNow';
+  static const freelancerProfileRequestService =
+      'freelancerProfile.requestService';
 }

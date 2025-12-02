@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/features/client/home/domain/entities/photographer_entity.dart';
 
@@ -64,162 +66,165 @@ class _PhotographerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x19000000),
-            blurRadius: 3,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 80.w,
-            height: 80.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.r),
-              image: DecorationImage(
-                image: NetworkImage(photographer.imageUrl),
-                fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () => context.push('/freelancer/${photographer.id}'),
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(color: const Color(0xFFE5E5E5)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x19000000),
+              blurRadius: 3,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 80.w,
+              height: 80.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.r),
+                image: DecorationImage(
+                  image: NetworkImage(photographer.imageUrl),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      photographer.name,
-                      style: TextStyle(
-                        color: const Color(0xFF2B2B2B),
-                        fontSize: 16.sp,
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    Icon(
-                      Icons.bookmark_border,
-                      color: AppColors.gold,
-                      size: 24.w,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  photographer.category,
-                  style: TextStyle(
-                    color: const Color(0xFF888888),
-                    fontSize: 14.sp,
-                    fontFamily: 'Cairo',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: AppColors.gold, size: 16.w),
-                    SizedBox(width: 4.w),
-                    Text(
-                      photographer.rating.toString(),
-                      style: TextStyle(
-                        color: const Color(0xFF2B2B2B),
-                        fontSize: 14.sp,
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      '(${photographer.reviewsCount})',
-                      style: TextStyle(
-                        color: const Color(0xFF888888),
-                        fontSize: 14.sp,
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const Spacer(),
-                    Icon(
-                      Icons.location_on_outlined,
-                      color: const Color(0xFF888888),
-                      size: 16.w,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      photographer.location,
-                      style: TextStyle(
-                        color: const Color(0xFF888888),
-                        fontSize: 14.sp,
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.gold,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: Text(
-                        'عرض الملف',
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        photographer.name,
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.sp,
+                          color: const Color(0xFF2B2B2B),
+                          fontSize: 16.sp,
                           fontFamily: 'Cairo',
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
+                      Icon(
+                        Icons.bookmark_border,
+                        color: AppColors.gold,
+                        size: 24.w,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    photographer.category,
+                    style: TextStyle(
+                      color: const Color(0xFF888888),
+                      fontSize: 14.sp,
+                      fontFamily: 'Cairo',
+                      fontWeight: FontWeight.w400,
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          '${photographer.price}',
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Icon(Icons.star, color: AppColors.gold, size: 16.w),
+                      SizedBox(width: 4.w),
+                      Text(
+                        photographer.rating.toString(),
+                        style: TextStyle(
+                          color: const Color(0xFF2B2B2B),
+                          fontSize: 14.sp,
+                          fontFamily: 'Cairo',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        '(${photographer.reviewsCount})',
+                        style: TextStyle(
+                          color: const Color(0xFF888888),
+                          fontSize: 14.sp,
+                          fontFamily: 'Cairo',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.location_on_outlined,
+                        color: const Color(0xFF888888),
+                        size: 16.w,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        photographer.location,
+                        style: TextStyle(
+                          color: const Color(0xFF888888),
+                          fontSize: 14.sp,
+                          fontFamily: 'Cairo',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.gold,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Text(
+                          'عرض الملف',
                           style: TextStyle(
-                            color: AppColors.gold,
-                            fontSize: 16.sp,
+                            color: Colors.white,
+                            fontSize: 12.sp,
                             fontFamily: 'Cairo',
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          'ريال',
-                          style: TextStyle(
-                            color: const Color(0xFF888888),
-                            fontSize: 14.sp,
-                            fontFamily: 'Cairo',
-                            fontWeight: FontWeight.w400,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '${photographer.price}',
+                            style: TextStyle(
+                              color: AppColors.gold,
+                              fontSize: 16.sp,
+                              fontFamily: 'Cairo',
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                          SizedBox(width: 4.w),
+                          Text(
+                            'ريال',
+                            style: TextStyle(
+                              color: const Color(0xFF888888),
+                              fontSize: 14.sp,
+                              fontFamily: 'Cairo',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

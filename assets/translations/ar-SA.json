@@ -7,16 +7,13 @@
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",
   "client": "عميل",
-  "freelancer": "مصور محترف",
   "switch_to_client": "التبديل إلى وضع العميل",
   "switch_to_freelancer": "التبديل إلى وضع المصور",
   "home": "الرئيسية",
   "bookings": "حجوزاتي",
   "dashboard": "لوحة التحكم",
   "my_gigs": "خدماتي",
-  "profile": "الملف الشخصي",
   "settings": "الإعدادات",
-  "chat": "الرسائل",
   "error": "خطأ",
   "loading": "جارٍ التحميل...",
   "success": "تم بنجاح",
@@ -208,5 +205,21 @@
       "rating": "التقييم",
       "apply": "تطبيق"
     }
+  },
+  "freelancerProfile": {
+    "title": "الملف الشخصي",
+    "message": "مراسلة",
+    "orderNow": "اطلب الآن",
+    "reviews": "التقييمات",
+    "services": "الخدمات",
+    "portfolio": "سابقة الأعمال",
+    "projects": "مشروع",
+    "response": "الرد",
+    "withinHour": "خلال ساعة",
+    "memberSince": "عضو منذ",
+    "bookNow": "احجز الآن",
+    "orderNow": "اطلب الآن",
+    "requestService": "طلب الخدمة",
+    "reviewsCount": "({count} تقييم)"
   }
 }

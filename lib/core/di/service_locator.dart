@@ -26,6 +26,11 @@ import 'package:ehtirafy_app/features/client/home/data/repositories/home_reposit
 import 'package:ehtirafy_app/features/client/home/domain/repositories/home_repository.dart';
 import 'package:ehtirafy_app/features/client/home/domain/usecases/get_featured_photographers_usecase.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/cubits/home_cubit.dart';
+import 'package:ehtirafy_app/features/client/freelancer/data/datasources/freelancer_remote_data_source.dart';
+import 'package:ehtirafy_app/features/client/freelancer/data/repositories/freelancer_repository_impl.dart';
+import 'package:ehtirafy_app/features/client/freelancer/domain/repositories/freelancer_repository.dart';
+import 'package:ehtirafy_app/features/client/freelancer/domain/usecases/get_freelancer_profile_usecase.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/freelancer_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -76,5 +81,14 @@ Future<void> setupLocator() async {
   );
   sl.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(),
+  );
+  // Features - Freelancer
+  sl.registerFactory(() => FreelancerCubit(getFreelancerProfileUseCase: sl()));
+  sl.registerLazySingleton(() => GetFreelancerProfileUseCase(sl()));
+  sl.registerLazySingleton<FreelancerRepository>(
+    () => FreelancerRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<FreelancerRemoteDataSource>(
+    () => FreelancerRemoteDataSourceImpl(),
   );
 }

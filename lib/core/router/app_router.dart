@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/features/shared/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/login_screen.dart';
@@ -8,6 +7,7 @@ import 'package:ehtirafy_app/features/client/home/presentation/pages/notificatio
 import 'package:ehtirafy_app/features/client/home/presentation/pages/search_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/otp_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/role_selection_screen.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/pages/freelancer_profile_screen.dart';
 
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
@@ -16,7 +16,8 @@ final appRouter = GoRouter(
     // Onboarding screen - entry point
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),
+      builder: (context, state) =>
+          const FreelancerProfileScreen(freelancerId: '1'),
     ),
     // Auth routes (placeholder - will be implemented later)
     GoRoute(
@@ -48,9 +49,11 @@ final appRouter = GoRouter(
       builder: (context, state) => const RoleSelectionScreen(),
     ),
     GoRoute(
-      path: '/home',
-      builder: (context, state) =>
-          const Scaffold(body: Center(child: Text('Home Placeholder'))),
+      path: '/freelancer/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return FreelancerProfileScreen(freelancerId: id);
+      },
     ),
   ],
 );
