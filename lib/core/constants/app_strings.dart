@@ -24,6 +24,15 @@ class AppStrings {
   static const authOtpSubtitle = 'auth.otpSubtitle';
   static const authOtpConfirm = 'auth.otpConfirm';
 
+  static const authPhoneLabel = 'auth.phoneLabel';
+  static const authPhoneHint = 'auth.phoneHint';
+  static const authHaveAccount = 'auth.haveAccount';
+  static const authLoginNow = 'auth.loginNow';
+  static const authTermsPrefix = 'auth.termsPrefix';
+  static const authTerms = 'auth.terms';
+  static const authAnd = 'auth.and';
+  static const authPrivacy = 'auth.privacy';
+
   static const authOr = 'auth.or';
   static const authLoginGoogle = 'auth.loginGoogle';
   static const authLoginApple = 'auth.loginApple';
@@ -118,4 +127,20 @@ class AppStrings {
   // Transactions
   static const transactionItemLabel = 'transactions.itemLabel';
   static const transactionStatusPaid = 'transactions.status.paid';
+
+  // Notifications
+  static const notificationsTitle = 'notifications.title';
+  static const notificationsUnread = 'notifications.unread';
+  static const notificationsAll = 'notifications.all';
+  static const notificationsMarkAllRead = 'notifications.markAllRead';
+  static const notificationsEmpty = 'notifications.empty';
+
+  // Search
+  static const searchRecentSearches = 'search.recentSearches';
+  static const searchMostSearched = 'search.mostSearched';
+  static const searchHint = 'search.hint';
+  static const searchFilterTitle = 'search.filter.title';
+  static const searchFilterPriceRange = 'search.filter.priceRange';
+  static const searchFilterRating = 'search.filter.rating';
+  static const searchFilterApply = 'search.filter.apply';
 }

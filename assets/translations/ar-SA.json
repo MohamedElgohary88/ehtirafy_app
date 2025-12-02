@@ -3,7 +3,7 @@
   "welcome": "مرحباً بك",
   "login": "تسجيل الدخول",
   "signup": "إنشاء حساب",
-  "logout": "تسجيل الخروج",
+  "logout": "تسجيل خروج",
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",
   "client": "عميل",
@@ -11,7 +11,7 @@
   "switch_to_client": "التبديل إلى وضع العميل",
   "switch_to_freelancer": "التبديل إلى وضع المصور",
   "home": "الرئيسية",
-  "bookings": "الحجوزات",
+  "bookings": "حجوزاتي",
   "dashboard": "لوحة التحكم",
   "my_gigs": "خدماتي",
   "profile": "الملف الشخصي",
@@ -23,6 +23,14 @@
   "cancel": "إلغاء",
   "confirm": "تأكيد",
   "save": "حفظ",
+  "label_freelancer": "مصور محترف",
+  "label_booking": "الحجوزات",
+  "label_profile": "الملف الشخصي",
+  "label_chat": "المحادثات",
+  "register": "إنشاء حساب",
+  "skip": "تخطي",
+  "next": "التالي",
+  "start": "ابدأ الآن",
   "auth": {
     "welcomeBack": "مرحباً بعودتك",
     "loginSubtitle": "سجّل دخولك للمتابعة",
@@ -182,5 +190,23 @@
     "freelancerBadge2": "إنشاء إعلانات",
     "footerNote": "يمكنك التبديل بين الدورين في أي وقت من الإعدادات",
     "confirm": "تأكيد الاختيار"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "unread": "غير المقروءة",
+    "all": "الكل",
+    "markAllRead": "تحديد الكل كمقروء",
+    "empty": "لا توجد إشعارات"
+  },
+  "search": {
+    "recentSearches": "عمليات البحث الأخيرة",
+    "mostSearched": "الأكثر بحثاً",
+    "hint": "ابحث عن خدمات التصوير...",
+    "filter": {
+      "title": "تصفية النتائج",
+      "priceRange": "نطاق السعر",
+      "rating": "التقييم",
+      "apply": "تطبيق"
+    }
   }
 }
