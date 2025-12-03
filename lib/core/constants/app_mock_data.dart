@@ -163,14 +163,26 @@ class AppMockData {
 
   static final List<Map<String, dynamic>> mockMyRequests = [
     {
-      'id': '1',
+      'id': '101',
       'serviceName': 'جلسة تصوير عائلية',
       'photographerName': 'أحمد المصور',
       'photographerImage': 'https://placehold.co/40x40.png',
-      'status': 'active',
+      'status': 'underReview',
       'price': 2500,
       'date': DateTime.now()
-          .subtract(const Duration(days: 5))
+          .subtract(const Duration(hours: 2))
+          .toIso8601String(),
+      'isPaymentRequired': false,
+    },
+    {
+      'id': '102',
+      'serviceName': 'تصوير منتجات للمتجر',
+      'photographerName': 'سارة محمد',
+      'photographerImage': 'https://placehold.co/40x40.png',
+      'status': 'active',
+      'price': 3000,
+      'date': DateTime.now()
+          .subtract(const Duration(hours: 24))
           .toIso8601String(),
       'isPaymentRequired': true,
       'approvedDate': DateTime.now()
@@ -178,40 +190,71 @@ class AppMockData {
           .toIso8601String(),
     },
     {
-      'id': '2',
-      'serviceName': 'تصوير منتجات للمتجر',
-      'photographerName': 'أحمد المصور',
+      'id': '103',
+      'serviceName': 'تصوير حفل زفاف',
+      'photographerName': 'استوديو الإبداع',
       'photographerImage': 'https://placehold.co/40x40.png',
-      'status': 'underReview',
-      'price': 3000,
+      'status': 'active',
+      'price': 5000,
       'date': DateTime.now()
-          .subtract(const Duration(hours: 5))
-          .toIso8601String(),
-      'isPaymentRequired': false,
-    },
-    {
-      'id': '3',
-      'serviceName': 'تصوير مناسبة',
-      'photographerName': 'نور العدسة',
-      'photographerImage': 'https://placehold.co/40x40.png',
-      'status': 'cancelled',
-      'price': 4000,
-      'date': DateTime.now()
-          .subtract(const Duration(days: 30))
-          .toIso8601String(),
-      'isPaymentRequired': false,
-    },
-    {
-      'id': '4',
-      'serviceName': 'تصوير حفل تخرج',
-      'photographerName': 'سارة محمد',
-      'photographerImage': 'https://placehold.co/40x40.png',
-      'status': 'completed',
-      'price': 1500,
-      'date': DateTime.now()
-          .subtract(const Duration(days: 10))
+          .subtract(const Duration(days: 2))
           .toIso8601String(),
       'isPaymentRequired': false,
     },
   ];
+  static final List<Map<String, dynamic>> mockContractDetails = [
+    {
+      'id': '101',
+      'status': 'underReview',
+      'serviceTitle': 'جلسة تصوير عائلية',
+      'serviceCategory': 'تصوير عائلات',
+      'description': 'جلسة تصوير عائلية في المنزل.',
+      'location': 'الرياض',
+      'date': '2024-12-28T16:00:00.000',
+      'budget': 2500,
+      'isPaymentDeposited': false,
+      'photographerName': 'أحمد المصور',
+      'photographerImage': 'https://placehold.co/80x80.png',
+      'approvedAt': null,
+    },
+    {
+      'id': '102',
+      'status': 'awaitingPayment',
+      'serviceTitle': 'تصوير منتجات للمتجر',
+      'serviceCategory': 'تصوير منتجات',
+      'description': 'تصوير منتجات لمتجر إلكتروني.',
+      'location': 'جدة',
+      'date': '2024-12-30T10:00:00.000',
+      'budget': 3000,
+      'isPaymentDeposited': false,
+      'photographerName': 'سارة محمد',
+      'photographerImage': 'https://placehold.co/80x80.png',
+      'approvedAt': DateTime.now()
+          .subtract(const Duration(minutes: 30))
+          .toIso8601String(),
+    },
+    {
+      'id': '103',
+      'status': 'inProgress',
+      'serviceTitle': 'تصوير حفل زفاف',
+      'serviceCategory': 'تصوير حفلات زفاف',
+      'description': 'تغطية حفل زفاف كامل.',
+      'location': 'الدمام',
+      'date': '2025-01-05T18:00:00.000',
+      'budget': 5000,
+      'isPaymentDeposited': true,
+      'photographerName': 'استوديو الإبداع',
+      'photographerImage': 'https://placehold.co/80x80.png',
+      'approvedAt': DateTime.now()
+          .subtract(const Duration(days: 1))
+          .toIso8601String(),
+    },
+  ];
+
+  static Map<String, dynamic> getContractDetails(String id) {
+    return mockContractDetails.firstWhere(
+      (element) => element['id'] == id,
+      orElse: () => mockContractDetails.first,
+    );
+  }
 }

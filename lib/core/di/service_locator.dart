@@ -31,10 +31,14 @@ import 'package:ehtirafy_app/features/client/freelancer/data/repositories/freela
 import 'package:ehtirafy_app/features/client/freelancer/domain/repositories/freelancer_repository.dart';
 import 'package:ehtirafy_app/features/client/freelancer/domain/usecases/get_freelancer_profile_usecase.dart';
 import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/freelancer_cubit.dart';
-import 'package:ehtirafy_app/features/booking/data/repositories/booking_repository_impl.dart';
-import 'package:ehtirafy_app/features/booking/domain/repositories/booking_repository.dart';
-import 'package:ehtirafy_app/features/booking/domain/usecases/submit_booking_request_usecase.dart';
-import 'package:ehtirafy_app/features/booking/presentation/cubit/booking_cubit.dart';
+import 'package:ehtirafy_app/features/client/booking/data/repositories/booking_repository_impl.dart';
+import 'package:ehtirafy_app/features/client/booking/domain/repositories/booking_repository.dart';
+import 'package:ehtirafy_app/features/client/booking/domain/usecases/submit_booking_request_usecase.dart';
+import 'package:ehtirafy_app/features/client/booking/presentation/cubit/booking_cubit.dart';
+import 'package:ehtirafy_app/features/client/contract/data/repositories/contract_repository_impl.dart';
+import 'package:ehtirafy_app/features/client/contract/domain/repositories/contract_repository.dart';
+import 'package:ehtirafy_app/features/client/contract/domain/usecases/get_contract_details_usecase.dart';
+import 'package:ehtirafy_app/features/client/contract/presentation/manager/contract_details_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -96,7 +100,14 @@ Future<void> setupLocator() async {
     () => FreelancerRemoteDataSourceImpl(),
   );
   // Features - Booking
-  sl.registerFactory(() => BookingCubit(submitBookingRequestUseCase: sl()));
+  // Booking Feature
+  sl.registerFactory(() => BookingCubit(sl()));
   sl.registerLazySingleton(() => SubmitBookingRequestUseCase(sl()));
   sl.registerLazySingleton<BookingRepository>(() => BookingRepositoryImpl());
+  // Features - Contract
+  sl.registerFactory(
+    () => ContractDetailsCubit(getContractDetailsUseCase: sl()),
+  );
+  sl.registerLazySingleton(() => GetContractDetailsUseCase(sl()));
+  sl.registerLazySingleton<ContractRepository>(() => ContractRepositoryImpl());
 }

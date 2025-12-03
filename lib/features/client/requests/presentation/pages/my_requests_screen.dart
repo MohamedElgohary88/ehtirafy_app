@@ -10,7 +10,7 @@ import '../../data/repositories/requests_repository_impl.dart';
 import '../../domain/usecases/get_my_requests_usecase.dart';
 import '../cubit/requests_cubit.dart';
 import '../cubit/requests_state.dart';
-import '../widgets/request_card.dart';
+import '../../../booking/presentation/widgets/request_card.dart';
 import '../widgets/requests_filter_tab.dart';
 
 class MyRequestsScreen extends StatelessWidget {

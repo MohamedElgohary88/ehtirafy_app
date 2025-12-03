@@ -11,9 +11,10 @@ import 'package:ehtirafy_app/features/client/profile/presentation/pages/client_p
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/otp_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/role_selection_screen.dart';
 import 'package:ehtirafy_app/features/client/freelancer/presentation/pages/freelancer_profile_screen.dart';
-import 'package:ehtirafy_app/features/booking/presentation/screens/request_booking_screen.dart';
-import 'package:ehtirafy_app/features/booking/presentation/screens/booking_success_screen.dart';
+import 'package:ehtirafy_app/features/client/booking/presentation/screens/request_booking_screen.dart';
+import 'package:ehtirafy_app/features/client/booking/presentation/screens/booking_success_screen.dart';
 import 'package:ehtirafy_app/features/client/requests/presentation/pages/my_requests_screen.dart';
+import 'package:ehtirafy_app/features/client/booking/presentation/screens/order_details_screen.dart';
 
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
@@ -118,6 +119,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/booking/success',
       builder: (context, state) => const BookingSuccessScreen(),
+    ),
+    GoRoute(
+      path: '/contract/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return OrderDetailsScreen(orderId: id);
+      },
     ),
   ],
 );

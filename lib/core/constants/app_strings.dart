@@ -80,9 +80,13 @@ class AppStrings {
   static const onboardingQualitySubtitle = 'onboarding.qualitySubtitle';
 
   // General
+  static const success = 'success';
+  static const cancel = 'cancel';
+  static const confirm = 'confirm';
   static const services = 'services';
   static const growth = 'growth';
   static const quality = 'quality';
+  static const validationRequired = 'validation_required';
 
   // Booking / Requests
   static const bookingRequestsTitle = 'booking.requests.title';
@@ -209,4 +213,80 @@ class AppStrings {
   static const myRequestsPayNow = 'myRequests.action.payNow';
   static const myRequestsPaymentMessage = 'myRequests.message.paymentRequired';
   static const myRequestsApprovedSince = 'myRequests.message.approvedSince';
+  // Contract Details
+  static const contractDetailsTitle = 'contract.details.title';
+  static const contractStatusInProgress = 'contract.status.inProgress';
+  static const contractDescriptionLabel = 'contract.description.label';
+  static const contractLocationLabel = 'contract.location.label';
+  static const contractDateLabel = 'contract.date.label';
+  static const contractBudgetLabel = 'contract.budget.label';
+  static const contractPaymentStatusLabel = 'contract.paymentStatus.label';
+  static const contractPaymentStatusDeposited =
+      'contract.paymentStatus.deposited';
+  static const contractPaymentSecureMessage =
+      'contract.paymentStatus.secureMessage';
+  static const contractWorkStagesLabel = 'contract.workStages.label';
+  static const contractStageConfirmBooking =
+      'contract.workStages.confirmBooking';
+  static const contractStageShooting = 'contract.workStages.shooting';
+  static const contractStageDeliveringPhotos =
+      'contract.workStages.deliveringPhotos';
+  static const contractPaymentSecureNote = 'contract.paymentSecureNote';
+  static const contractStep1Confirmation = 'contract.steps.confirmation';
+  static const contractStep2Preparation = 'contract.steps.preparation';
+  static const contractStep3Communication = 'contract.steps.communication';
+
+  // Archived
+  static const contractArchivedOrdersNote = 'contract.archived.note';
+  static const contractStatusCancelledArchived =
+      'contract.status.cancelledArchived';
+  static const contractCancelledReasonPayment =
+      'contract.cancelled.reasonPayment';
+  static const String contractStatusUnderReview =
+      'contract_status_under_review';
+  static const String contractStatusUnderReviewBadge =
+      'contract_status_under_review_badge';
+  static const String contractPhotographerName = 'contract_photographer_name';
+  static const String contractDateAndTime = 'contract_date_and_time';
+  static const String contractLocation = 'contract_location';
+  static const String contractRequiredAmount = 'contract_required_amount';
+  static const String contractWhatHappensNext = 'contract_what_happens_next';
+  static const String contractStep1Payment = 'contract_step_1_payment';
+  static const String contractStep2Prepare = 'contract_step_2_prepare';
+  static const String contractStep3Contact = 'contract_step_3_contact';
+  static const String contractPaymentWarningTitle =
+      'contract_payment_warning_title';
+  static const String contractPaymentWarningBody =
+      'contract_payment_warning_body';
+  static const String hour = 'hour';
+  static const String minute = 'minute';
+  static const String contractPaymentDisclaimer = 'contract_payment_disclaimer';
+  static const String contractPhotographerApprovedTitle =
+      'contract_photographer_approved_title';
+  static const String contractApprovedBadge = 'contract_approved_badge';
+  static const String contractWhatHappensAfterPayment =
+      'contract_what_happens_after_payment';
+  static const String contractStep1Confirm = 'contract_step_1_confirm';
+  static const String contractPayNowAction = 'contract_pay_now_action';
+  static const String contractPaymentSecurityNote =
+      'contract_payment_security_note';
+  static const String contractContactPhotographer =
+      'contract_contact_photographer';
+  static const String contractFinishService = 'contract_finish_service';
+  // Booking Missing Keys
+  static const String bookingServiceLabel = 'booking_service_label';
+  static const String bookingPhotographerLabel = 'booking_photographer_label';
+  static const String bookingDateLabel = 'booking_date_label';
+  static const String bookingTimeLabel = 'booking_time_label';
+  static const String bookingNotesLabel = 'booking_notes_label';
+  static const String bookingSuccessMessage = 'booking_success_message';
+  static const String bookingBackToHome = 'booking_back_to_home';
+
+  // Pending View
+  static const String pendingViewStatusText = 'pending_view_status_text';
+  static const String pendingViewBadgeText = 'pending_view_badge_text';
+  static const String pendingViewTimelineTitle = 'pending_view_timeline_title';
+  static const String pendingViewTimelineStep1 = 'pending_view_timeline_step1';
+  static const String pendingViewTimelineStep2 = 'pending_view_timeline_step2';
+  static const String pendingViewTimelineStep3 = 'pending_view_timeline_step3';
 }
