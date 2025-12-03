@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:ehtirafy_app/core/theme/app_colors.dart';
-
 class AppMockData {
   static final List<Map<String, dynamic>> notifications = [
     {
