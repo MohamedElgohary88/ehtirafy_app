@@ -98,6 +98,36 @@ class AppStrings {
   static const bookingCurrency = 'booking.service.currencySuffix';
   static const bookingPhotographerPrefix = 'booking.service.photographerPrefix';
   static const bookingClientPrefix = 'booking.service.clientPrefix';
+  static const bookingRequestTitle = 'booking.service.requestTitle';
+  static const bookingServiceRequired = 'booking.service.serviceRequired';
+  static const bookingPhotographer = 'booking.service.photographer';
+  static const bookingPrice = 'booking.service.price';
+  static const bookingDetailsTitle = 'booking.service.detailsTitle';
+  static const bookingDetailsSubtitle = 'booking.service.detailsSubtitle';
+  static const bookingEventDate = 'booking.service.eventDate';
+  static const bookingStartTime = 'booking.service.startTime';
+  static const bookingLocation = 'booking.service.location';
+  static const bookingLocationHint = 'booking.service.locationHint';
+  static const bookingNotesTitle = 'booking.service.notesTitle';
+  static const bookingNotesHint = 'booking.service.notesHint';
+  static const bookingCharCount = 'booking.service.charCount';
+  static const bookingImportantNoteTitle = 'booking.service.importantNoteTitle';
+  static const bookingImportantNoteBody = 'booking.service.importantNoteBody';
+  static const bookingSubmitButton = 'booking.service.submitButton';
+  static const bookingSuccessTitle = 'booking.service.successTitle';
+  static const bookingSuccessSubtitle = 'booking.service.successSubtitle';
+  static const bookingStep1Title = 'booking.service.step1Title';
+  static const bookingStep1Desc = 'booking.service.step1Desc';
+  static const bookingStep2Title = 'booking.service.step2Title';
+  static const bookingStep2Desc = 'booking.service.step2Desc';
+  static const bookingStep3Title = 'booking.service.step3Title';
+  static const bookingStep3Desc = 'booking.service.step3Desc';
+  static const bookingNextStepsTitle = 'booking.service.nextStepsTitle';
+  static const bookingNextStep1 = 'booking.service.nextStep1';
+  static const bookingNextStep2 = 'booking.service.nextStep2';
+  static const bookingNextStep3 = 'booking.service.nextStep3';
+  static const bookingViewRequestsButton = 'booking.service.viewRequestsButton';
+  static const bookingBackHomeButton = 'booking.service.backHomeButton';
 
   // Chat
   static const chatListTitle = 'chat.list.title';
@@ -159,4 +189,24 @@ class AppStrings {
   static const freelancerProfileBookNow = 'freelancerProfile.bookNow';
   static const freelancerProfileRequestService =
       'freelancerProfile.requestService';
+
+  // My Requests
+  static const myRequestsTitle = 'myRequests.title';
+  static const myRequestsTabActive = 'myRequests.tabs.active';
+  static const myRequestsTabUnderReview = 'myRequests.tabs.underReview';
+  static const myRequestsTabCompleted = 'myRequests.tabs.completed';
+  static const myRequestsNoRequests = 'myRequests.empty.noRequests';
+  static const myRequestsStartRequesting = 'myRequests.empty.startRequesting';
+  static const myRequestsBrowsePhotographers =
+      'myRequests.empty.browsePhotographers';
+  static const myRequestsPhotographerLabel = 'myRequests.card.photographer';
+  static const myRequestsCurrency = 'myRequests.card.currency';
+  static const myRequestsStatusApproved = 'myRequests.status.approved';
+  static const myRequestsStatusUnderReview = 'myRequests.status.underReview';
+  static const myRequestsStatusActive = 'myRequests.status.active';
+  static const myRequestsStatusCompleted = 'myRequests.status.completed';
+  static const myRequestsStatusCancelled = 'myRequests.status.cancelled';
+  static const myRequestsPayNow = 'myRequests.action.payNow';
+  static const myRequestsPaymentMessage = 'myRequests.message.paymentRequired';
+  static const myRequestsApprovedSince = 'myRequests.message.approvedSince';
 }

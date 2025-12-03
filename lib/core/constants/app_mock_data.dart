@@ -156,4 +156,65 @@ class AppMockData {
       },
     ],
   };
+
+  static const Map<String, dynamic> mockBookingSuccessResponse = {
+    'success': true,
+    'message': 'تم إرسال طلبك بنجاح',
+    'bookingId': '12345',
+    'status': 'pending',
+  };
+
+  static final List<Map<String, dynamic>> mockMyRequests = [
+    {
+      'id': '1',
+      'serviceName': 'جلسة تصوير عائلية',
+      'photographerName': 'أحمد المصور',
+      'photographerImage': 'https://placehold.co/40x40.png',
+      'status': 'active',
+      'price': 2500,
+      'date': DateTime.now()
+          .subtract(const Duration(days: 5))
+          .toIso8601String(),
+      'isPaymentRequired': true,
+      'approvedDate': DateTime.now()
+          .subtract(const Duration(minutes: 30))
+          .toIso8601String(),
+    },
+    {
+      'id': '2',
+      'serviceName': 'تصوير منتجات للمتجر',
+      'photographerName': 'أحمد المصور',
+      'photographerImage': 'https://placehold.co/40x40.png',
+      'status': 'underReview',
+      'price': 3000,
+      'date': DateTime.now()
+          .subtract(const Duration(hours: 5))
+          .toIso8601String(),
+      'isPaymentRequired': false,
+    },
+    {
+      'id': '3',
+      'serviceName': 'تصوير مناسبة',
+      'photographerName': 'نور العدسة',
+      'photographerImage': 'https://placehold.co/40x40.png',
+      'status': 'cancelled',
+      'price': 4000,
+      'date': DateTime.now()
+          .subtract(const Duration(days: 30))
+          .toIso8601String(),
+      'isPaymentRequired': false,
+    },
+    {
+      'id': '4',
+      'serviceName': 'تصوير حفل تخرج',
+      'photographerName': 'سارة محمد',
+      'photographerImage': 'https://placehold.co/40x40.png',
+      'status': 'completed',
+      'price': 1500,
+      'date': DateTime.now()
+          .subtract(const Duration(days: 10))
+          .toIso8601String(),
+      'isPaymentRequired': false,
+    },
+  ];
 }

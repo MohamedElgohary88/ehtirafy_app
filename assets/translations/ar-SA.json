@@ -125,7 +125,37 @@
       "bookButton": "حجز الخدمة",
       "currencySuffix": "ريال",
       "photographerPrefix": "المصور",
-      "clientPrefix": "العميل"
+      "clientPrefix": "العميل",
+      "requestTitle": "طلب حجز خدمة",
+      "serviceRequired": "الخدمة المطلوبة",
+      "photographer": "المصور",
+      "price": "السعر",
+      "detailsTitle": "تفاصيل الحجز",
+      "detailsSubtitle": "يرجى تحديد تاريخ ووقت المناسبة ليتمكن المصور من تأكيد توفره",
+      "eventDate": "تاريخ المناسبة",
+      "startTime": "وقت البدء المتوقع",
+      "location": "الموقع",
+      "locationHint": "مثال: قاعة الأفراح - حي النخيل، الرياض",
+      "notesTitle": "أضف ملاحظات للمصور",
+      "notesHint": "أضف أي تفاصيل إضافية قد تساعد المصور (نوع المناسبة، عدد الساعات المطلوبة، متطلبات خاصة...)",
+      "charCount": "0/500 حرف",
+      "importantNoteTitle": "ملاحظة هامة",
+      "importantNoteBody": "سيقوم المصور بمراجعة طلبك والتأكد من توفره في التاريخ والوقت المحددين. ستتلقى إشعاراً فور قبول الطلب لإتمام عملية الدفع.",
+      "submitButton": "إرسال طلب الحجز",
+      "successTitle": "تم إرسال طلبك للمصور!",
+      "successSubtitle": "سيقوم المصور بمراجعة طلبك (التاريخ والوقت). ستتلقى إشعاراً للقيام بالدفع فور موافقته.",
+      "step1Title": "في انتظار الموافقة",
+      "step1Desc": "المصور يراجع توفره في التاريخ والوقت المطلوب",
+      "step2Title": "سنرسل لك إشعاراً",
+      "step2Desc": "فور موافقة المصور لإتمام عملية الدفع وتأكيد الحجز",
+      "step3Title": "تابع طلبك",
+      "step3Desc": "يمكنك متابعة حالة الطلب من صفحة \"طلباتي\"",
+      "nextStepsTitle": "الخطوات التالية",
+      "nextStep1": "مراجعة المصور للطلب",
+      "nextStep2": "موافقة المصور",
+      "nextStep3": "إتمام الدفع وتأكيد الحجز",
+      "viewRequestsButton": "عرض طلباتي",
+      "backHomeButton": "العودة للرئيسية"
     }
   },
   "chat": {
@@ -218,8 +248,38 @@
     "withinHour": "خلال ساعة",
     "memberSince": "عضو منذ",
     "bookNow": "احجز الآن",
-    "orderNow": "اطلب الآن",
     "requestService": "طلب الخدمة",
     "reviewsCount": "({count} تقييم)"
+  },
+  "myRequests": {
+    "title": "طلباتي",
+    "tabs": {
+      "active": "النشطة",
+      "underReview": "قيد المراجعة",
+      "completed": "المنتهية"
+    },
+    "empty": {
+      "noRequests": "لا توجد طلبات بعد",
+      "startRequesting": "ابدأ بطلب خدمة من أحد المصورين",
+      "browsePhotographers": "تصفح المصورين"
+    },
+    "card": {
+      "photographer": "المصور",
+      "currency": "ريال"
+    },
+    "status": {
+      "approved": "تمت الموافقة!",
+      "underReview": "قيد المراجعة",
+      "active": "نشط",
+      "completed": "مكتمل",
+      "cancelled": "ملغي"
+    },
+    "action": {
+      "payNow": "إتمام الدفع الآن"
+    },
+    "message": {
+      "paymentRequired": "وافق المصور على طلبك! قم بالدفع الآن لتأكيد الحجز.",
+      "approvedSince": "تمت الموافقة منذ"
+    }
   }
 }

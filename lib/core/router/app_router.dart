@@ -8,6 +8,9 @@ import 'package:ehtirafy_app/features/client/home/presentation/pages/search_scre
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/otp_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/role_selection_screen.dart';
 import 'package:ehtirafy_app/features/client/freelancer/presentation/pages/freelancer_profile_screen.dart';
+import 'package:ehtirafy_app/features/booking/presentation/screens/request_booking_screen.dart';
+import 'package:ehtirafy_app/features/booking/presentation/screens/booking_success_screen.dart';
+import 'package:ehtirafy_app/features/client/requests/presentation/pages/my_requests_screen.dart';
 
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
@@ -16,8 +19,7 @@ final appRouter = GoRouter(
     // Onboarding screen - entry point
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) =>
-          const FreelancerProfileScreen(freelancerId: '1'),
+      builder: (context, state) => const OnboardingScreen(),
     ),
     // Auth routes (placeholder - will be implemented later)
     GoRoute(
@@ -54,6 +56,26 @@ final appRouter = GoRouter(
         final id = state.pathParameters['id']!;
         return FreelancerProfileScreen(freelancerId: id);
       },
+    ),
+    GoRoute(
+      path: '/booking/request',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return RequestBookingScreen(
+          freelancerId: extra['freelancerId'],
+          freelancerName: extra['freelancerName'],
+          serviceName: extra['serviceName'],
+          price: extra['price'],
+        );
+      },
+    ),
+    GoRoute(
+      path: '/booking/success',
+      builder: (context, state) => const BookingSuccessScreen(),
+    ),
+    GoRoute(
+      path: '/my-requests',
+      builder: (context, state) => const MyRequestsScreen(),
     ),
   ],
 );

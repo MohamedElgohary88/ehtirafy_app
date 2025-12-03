@@ -31,6 +31,10 @@ import 'package:ehtirafy_app/features/client/freelancer/data/repositories/freela
 import 'package:ehtirafy_app/features/client/freelancer/domain/repositories/freelancer_repository.dart';
 import 'package:ehtirafy_app/features/client/freelancer/domain/usecases/get_freelancer_profile_usecase.dart';
 import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/freelancer_cubit.dart';
+import 'package:ehtirafy_app/features/booking/data/repositories/booking_repository_impl.dart';
+import 'package:ehtirafy_app/features/booking/domain/repositories/booking_repository.dart';
+import 'package:ehtirafy_app/features/booking/domain/usecases/submit_booking_request_usecase.dart';
+import 'package:ehtirafy_app/features/booking/presentation/cubit/booking_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -91,4 +95,8 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton<FreelancerRemoteDataSource>(
     () => FreelancerRemoteDataSourceImpl(),
   );
+  // Features - Booking
+  sl.registerFactory(() => BookingCubit(submitBookingRequestUseCase: sl()));
+  sl.registerLazySingleton(() => SubmitBookingRequestUseCase(sl()));
+  sl.registerLazySingleton<BookingRepository>(() => BookingRepositoryImpl());
 }

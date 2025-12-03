@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Primary colors
   static const Color gold = Color(0xFFC8A44F); // Updated to correct gold
+  static const Color primary = gold;
   static const Color dark = Color(0xFF1C1D18);
 
   // Background colors
@@ -37,4 +38,3 @@ class AppColors {
   static const Color shadowLight = Color(0x1A000000);
   static const Color shadowDark = Color(0x40000000);
 }
-

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,25 +60,43 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen> {
             ],
           ),
           child: SafeArea(
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.gold,
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                AppStrings.freelancerProfileOrderNow.tr(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Cairo',
-                ),
-              ),
+            child: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    final state = context.read<FreelancerCubit>().state;
+                    if (state is FreelancerLoaded) {
+                      context.push(
+                        '/booking/request',
+                        extra: {
+                          'freelancerId': widget.freelancerId,
+                          'freelancerName': state.freelancer.name,
+                          'serviceName': state.freelancer.title,
+                          'price':
+                              100.0, // TODO: Get actual price from service selection
+                        },
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.gold,
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    AppStrings.freelancerProfileOrderNow.tr(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
