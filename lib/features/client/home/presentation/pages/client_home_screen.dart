@@ -11,10 +11,9 @@ import '../widgets/home_categories_section.dart';
 import '../widgets/home_special_offer_banner.dart';
 import '../widgets/home_featured_photographers.dart';
 import '../widgets/home_sliver_header_delegate.dart';
-import '../widgets/client_bottom_nav_bar.dart';
 
-class ClientHomeScreen extends StatelessWidget {
-  const ClientHomeScreen({super.key});
+class ClientHomeContent extends StatelessWidget {
+  const ClientHomeContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +66,6 @@ class ClientHomeScreen extends StatelessWidget {
               return const SizedBox.shrink();
             },
           ),
-          bottomNavigationBar: const ClientBottomNavBar(),
         ),
       ),
     );

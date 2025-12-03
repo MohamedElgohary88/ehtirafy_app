@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/theme/app_colors.dart';
 
 class ClientBottomNavBar extends StatelessWidget {
-  const ClientBottomNavBar({super.key});
+  final int currentIndex;
+  final Function(int) onTap;
+
+  const ClientBottomNavBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +24,42 @@ class ClientBottomNavBar extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: const [
-          _NavBarItem(
-            icon: Icons.person_outline,
-            label: 'حسابي',
-            isSelected: false,
+        children: [
+          GestureDetector(
+            onTap: () => onTap(0),
+            behavior: HitTestBehavior.opaque,
+            child: _NavBarItem(
+              icon: Icons.person_outline,
+              label: 'حسابي',
+              isSelected: currentIndex == 0,
+            ),
           ),
-          _NavBarItem(
-            icon: Icons.chat_bubble_outline,
-            label: 'الرسائل',
-            isSelected: false,
+          GestureDetector(
+            onTap: () => onTap(1),
+            behavior: HitTestBehavior.opaque,
+            child: _NavBarItem(
+              icon: Icons.chat_bubble_outline,
+              label: 'الرسائل',
+              isSelected: currentIndex == 1,
+            ),
           ),
-          _NavBarItem(icon: Icons.list_alt, label: 'طلباتي', isSelected: false),
-          _NavBarItem(
-            icon: Icons.home_filled,
-            label: 'الرئيسية',
-            isSelected: true,
+          GestureDetector(
+            onTap: () => onTap(2),
+            behavior: HitTestBehavior.opaque,
+            child: _NavBarItem(
+              icon: Icons.list_alt,
+              label: 'طلباتي',
+              isSelected: currentIndex == 2,
+            ),
+          ),
+          GestureDetector(
+            onTap: () => onTap(3),
+            behavior: HitTestBehavior.opaque,
+            child: _NavBarItem(
+              icon: Icons.home_filled,
+              label: 'الرئيسية',
+              isSelected: currentIndex == 3,
+            ),
           ),
         ],
       ),

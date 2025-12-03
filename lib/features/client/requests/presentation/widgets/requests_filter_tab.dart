@@ -17,37 +17,71 @@ class RequestsFilterTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40.h,
+      height: 48.h,
       width: double.infinity,
-      padding: EdgeInsets.only(left: 0.02.w),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1, color: const Color(0xFFE5E5E5)),
+          side: const BorderSide(width: 1, color: Color(0xFFE5E5E5)),
+          borderRadius: BorderRadius.circular(12.r),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
         children: [
-          _buildTabItem(
-            context,
-            index: 2,
-            title: AppStrings.myRequestsTabCompleted.tr(),
+          Row(
+            children: [
+              _buildTabItem(
+                context,
+                index: 2,
+                title: AppStrings.myRequestsTabCompleted.tr(),
+              ),
+              _buildTabItem(
+                context,
+                index: 1,
+                title: AppStrings.myRequestsTabUnderReview.tr(),
+              ),
+              _buildTabItem(
+                context,
+                index: 0,
+                title: AppStrings.myRequestsTabActive.tr(),
+              ),
+            ],
           ),
-          _buildTabItem(
-            context,
-            index: 1,
-            title: AppStrings.myRequestsTabUnderReview.tr(),
-          ),
-          _buildTabItem(
-            context,
-            index: 0,
-            title: AppStrings.myRequestsTabActive.tr(),
+          AnimatedAlign(
+            alignment: _getAlignment(selectedIndex),
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: FractionallySizedBox(
+              widthFactor: 1 / 3,
+              child: Container(
+                height: 3.h,
+                margin: EdgeInsets.only(top: 45.h), // Position at bottom
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(4.r),
+                    topRight: Radius.circular(4.r),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  AlignmentGeometry _getAlignment(int index) {
+    switch (index) {
+      case 2:
+        return AlignmentDirectional.centerStart;
+      case 1:
+        return AlignmentDirectional.center;
+      case 0:
+        return AlignmentDirectional.centerEnd;
+      default:
+        return AlignmentDirectional.centerEnd;
+    }
   }
 
   Widget _buildTabItem(
@@ -59,32 +93,15 @@ class RequestsFilterTab extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: () => onTabSelected(index),
-        child: Container(
-          height: 39.h,
-          padding: EdgeInsets.only(
-            top: 4.h,
-            left: 8.w,
-            right: 8.w,
-            bottom: 12.h,
-          ),
-          decoration: ShapeDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: isSelected ? 2 : 0,
-                color: isSelected ? AppColors.primary : Colors.transparent,
-              ),
-            ),
-          ),
-          child: Center(
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isSelected ? AppColors.primary : const Color(0xFF0A0A0A),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                height: 1.43,
-              ),
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isSelected ? AppColors.primary : const Color(0xFF888888),
+              fontSize: 14.sp,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              height: 1.43,
             ),
           ),
         ),

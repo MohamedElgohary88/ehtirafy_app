@@ -15,42 +15,45 @@ class RequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(top: 8.h, left: 16.w),
-      decoration: ShapeDecoration(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
         color: Colors.white,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 1, color: Color(0xFFE5E5E5)),
-          borderRadius: BorderRadius.circular(14.r),
-        ),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x0D000000),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
+        border: Border.all(color: const Color(0xFFF2F2F2)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 330.w,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPhotographerImage(),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildServiceName(context),
-                      SizedBox(height: 8.h),
-                      _buildPhotographerName(context),
-                      SizedBox(height: 8.h),
-                      _buildStatusAndPrice(context),
-                      SizedBox(height: 8.h),
-                      _buildTimeAgo(context),
-                    ],
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPhotographerImage(),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildServiceName(context),
+                    SizedBox(height: 8.h),
+                    _buildPhotographerName(context),
+                    SizedBox(height: 8.h),
+                    _buildStatusAndPrice(context),
+                    SizedBox(height: 8.h),
+                    _buildTimeAgo(context),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           if (request.isPaymentRequired &&
               request.status == RequestStatus.active)
