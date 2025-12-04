@@ -227,6 +227,7 @@ class AppStrings {
   static const contractLocationLabel = 'contract.location.label';
   static const contractDateLabel = 'contract.date.label';
   static const contractBudgetLabel = 'contract.budget.label';
+  static const contractRequiredAmountLabel = 'contract.requiredAmount.label';
   static const contractPaymentStatusLabel = 'contract.paymentStatus.label';
   static const contractPaymentStatusDeposited =
       'contract.paymentStatus.deposited';

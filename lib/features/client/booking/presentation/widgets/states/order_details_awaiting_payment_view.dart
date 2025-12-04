@@ -16,7 +16,7 @@ class OrderDetailsAwaitingPaymentView extends StatelessWidget {
       color: const Color(0xFFF9F9F9),
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

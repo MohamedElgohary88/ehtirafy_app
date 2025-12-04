@@ -4,6 +4,7 @@ import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_details_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class ContractUnderReviewCard extends StatelessWidget {
   final ContractDetailsEntity contract;
@@ -131,11 +132,11 @@ class ContractUnderReviewCard extends StatelessWidget {
       child: Column(
         children: [
           _buildDetailRow(
-            AppStrings.contractDateAndTime.tr(),
+            AppStrings.contractDateLabel.tr(),
             DateFormat('dd MMMM yyyy - HH:mm a', 'ar').format(contract.date),
           ),
           SizedBox(height: 8.h),
-          _buildDetailRow(AppStrings.contractLocation.tr(), contract.location),
+          _buildDetailRow(AppStrings.contractLocationLabel.tr(), contract.location),
           SizedBox(height: 8.h),
           Container(
             padding: EdgeInsets.symmetric(vertical: 4.h),
@@ -149,7 +150,7 @@ class ContractUnderReviewCard extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: Text(
-                    AppStrings.contractRequiredAmount.tr(),
+                    AppStrings.contractBudgetLabel.tr(),
                     style: TextStyle(color: AppColors.grey500, fontSize: 14.sp),
                   ),
                 ),
@@ -314,7 +315,7 @@ class ContractAwaitingPaymentCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  AppStrings.contractPaymentDisclaimer.tr(),
+                  AppStrings.contractPaymentWarningBody.tr(),
                   style: TextStyle(
                     color: AppColors.grey500,
                     fontSize: 14.sp,
@@ -485,11 +486,11 @@ class ContractAwaitingPaymentCard extends StatelessWidget {
       child: Column(
         children: [
           _buildDetailRow(
-            AppStrings.contractDateAndTime.tr(),
+            AppStrings.contractDateLabel.tr(),
             DateFormat('dd MMMM yyyy - HH:mm a', 'ar').format(contract.date),
           ),
           SizedBox(height: 8.h),
-          _buildDetailRow(AppStrings.contractLocation.tr(), contract.location),
+          _buildDetailRow(AppStrings.contractLocationLabel.tr(), contract.location),
           SizedBox(height: 8.h),
           Container(
             padding: EdgeInsets.symmetric(vertical: 4.h),
@@ -503,7 +504,7 @@ class ContractAwaitingPaymentCard extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: Text(
-                    AppStrings.contractRequiredAmount.tr(),
+                    AppStrings.contractBudgetLabel.tr(),
                     style: TextStyle(color: AppColors.grey500, fontSize: 14.sp),
                   ),
                 ),
