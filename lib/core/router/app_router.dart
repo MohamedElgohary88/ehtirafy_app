@@ -6,7 +6,13 @@ import 'package:ehtirafy_app/features/client/home/presentation/pages/client_home
 import 'package:ehtirafy_app/features/client/home/presentation/pages/client_main_layout.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/pages/notifications_screen.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/pages/search_screen.dart';
-import 'package:ehtirafy_app/features/client/messages/presentation/pages/messages_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ehtirafy_app/core/di/service_locator.dart';
+import 'package:ehtirafy_app/features/shared/chat/presentation/cubit/chat_cubit.dart';
+import 'package:ehtirafy_app/features/shared/chat/presentation/pages/conversations_screen.dart';
+import 'package:ehtirafy_app/features/shared/chat/presentation/pages/chat_room_screen.dart';
+import 'package:ehtirafy_app/features/shared/chat/domain/entities/conversation_entity.dart';
+
 import 'package:ehtirafy_app/features/client/profile/presentation/pages/client_profile_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/otp_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/role_selection_screen.dart';
@@ -66,7 +72,22 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/messages',
-              builder: (context, state) => const MessagesScreen(),
+              builder: (context, state) => BlocProvider(
+                create: (_) => sl<ChatCubit>()..loadConversations(),
+                child: const ConversationsScreen(),
+              ),
+              routes: [
+                GoRoute(
+                  path: 'chat/:id',
+                  builder: (context, state) {
+                    final conversation = state.extra as ConversationEntity;
+                    return BlocProvider(
+                      create: (_) => sl<ChatCubit>(),
+                      child: ChatRoomScreen(conversation: conversation),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

@@ -164,7 +164,13 @@
       "photographerPrefix": "المصور",
       "clientPrefix": "العميل",
       "placeholderMessage": "مرحباً، هل يمكنني الاستفسار عن...",
-      "timePlaceholder": "10:30 ص"
+      "timePlaceholder": "10:30 ص",
+      "noMessages": "لا توجد رسائل",
+      "startConversation": "ابدأ محادثة مع أحد المصورين",
+      "findPhotographer": "إيجاد مصور",
+      "ago": "منذ",
+      "minute": "دقيقة",
+      "hour": "ساعة"
     },
     "room": {
       "title": "المحادثة",
@@ -172,7 +178,8 @@
         "mine": "هذا مثال لرسالتي",
         "other": "هذه رسالة من الطرف الآخر"
       },
-      "inputHint": "اكتب رسالة..."
+      "inputHint": "اكتب رسالتك...",
+      "onlineNow": "متصل الآن"
     }
   },
   "freelancer": {

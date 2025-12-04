@@ -39,6 +39,13 @@ import 'package:ehtirafy_app/features/client/contract/data/repositories/contract
 import 'package:ehtirafy_app/features/client/contract/domain/repositories/contract_repository.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/usecases/get_contract_details_usecase.dart';
 import 'package:ehtirafy_app/features/client/contract/presentation/manager/contract_details_cubit.dart';
+import 'package:ehtirafy_app/features/shared/chat/data/datasources/chat_remote_data_source.dart';
+import 'package:ehtirafy_app/features/shared/chat/data/repositories/chat_repository_impl.dart';
+import 'package:ehtirafy_app/features/shared/chat/domain/repositories/chat_repository.dart';
+import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_conversations_usecase.dart';
+import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_messages_usecase.dart';
+import 'package:ehtirafy_app/features/shared/chat/domain/usecases/send_message_usecase.dart';
+import 'package:ehtirafy_app/features/shared/chat/presentation/cubit/chat_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -110,4 +117,20 @@ Future<void> setupLocator() async {
   );
   sl.registerLazySingleton(() => GetContractDetailsUseCase(sl()));
   sl.registerLazySingleton<ContractRepository>(() => ContractRepositoryImpl());
+
+  // Features - Chat
+  sl.registerFactory(
+    () => ChatCubit(
+      getConversationsUseCase: sl(),
+      getMessagesUseCase: sl(),
+      sendMessageUseCase: sl(),
+    ),
+  );
+  sl.registerLazySingleton(() => GetConversationsUseCase(sl()));
+  sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
+  sl.registerLazySingleton(() => SendMessageUseCase(sl()));
+  sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(sl()));
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(),
+  );
 }

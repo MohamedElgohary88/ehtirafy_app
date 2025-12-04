@@ -143,6 +143,13 @@ class AppStrings {
   static const chatSampleMine = 'chat.room.sample.mine';
   static const chatSampleOther = 'chat.room.sample.other';
   static const chatInputHint = 'chat.room.inputHint';
+  static const chatNoMessages = 'chat.list.noMessages';
+  static const chatStartConversation = 'chat.list.startConversation';
+  static const chatFindPhotographer = 'chat.list.findPhotographer';
+  static const chatAgo = 'chat.list.ago';
+  static const chatMinute = 'chat.list.minute';
+  static const chatHour = 'chat.list.hour';
+  static const chatOnlineNow = 'chat.room.onlineNow';
 
   // Freelancer
   static const freelancerMyGigsTitle = 'freelancer.gigs.title';
