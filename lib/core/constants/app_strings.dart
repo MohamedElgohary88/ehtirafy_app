@@ -238,10 +238,28 @@ class AppStrings {
   static const contractStageShooting = 'contract.workStages.shooting';
   static const contractStageDeliveringPhotos =
       'contract.workStages.deliveringPhotos';
-  static const contractPaymentSecureNote = 'contract.paymentSecureNote';
-  static const contractStep1Confirmation = 'contract.steps.confirmation';
-  static const contractStep2Preparation = 'contract.steps.preparation';
-  static const contractStep3Communication = 'contract.steps.communication';
+
+  // Refactored (dot-notation) contract keys
+  static const String contractPaymentWarningTitle =
+      'contract.paymentWarning.title';
+  static const String contractPaymentWarningBody =
+      'contract.paymentWarning.body';
+  static const String contractPhotographerApprovedTitle =
+      'contract.status.photographerApproved';
+  static const String contractApprovedBadge = 'contract.status.approvedBadge';
+  static const String contractPayNowAction = 'contract.action.payNow';
+  static const String contractPaymentSecureNote =
+      'contract.payment.secureNote';
+
+  static const String contractWhatHappensAfterPayment =
+      'contract.timeline.title';
+  static const String contractStep1Confirm = 'contract.timeline.step1';
+  static const String contractStep2Prepare = 'contract.timeline.step2';
+  static const String contractStep3Contact = 'contract.timeline.step3';
+
+  // Time keys (moved to nested object)
+  static const String hour = 'time.hour';
+  static const String minute = 'time.minute';
 
   // Archived
   static const contractArchivedOrdersNote = 'contract.archived.note';
@@ -259,22 +277,7 @@ class AppStrings {
   static const String contractRequiredAmount = 'contract_required_amount';
   static const String contractWhatHappensNext = 'contract_what_happens_next';
   static const String contractStep1Payment = 'contract_step_1_payment';
-  static const String contractStep2Prepare = 'contract_step_2_prepare';
-  static const String contractStep3Contact = 'contract_step_3_contact';
-  static const String contractPaymentWarningTitle =
-      'contract_payment_warning_title';
-  static const String contractPaymentWarningBody =
-      'contract_payment_warning_body';
-  static const String hour = 'hour';
-  static const String minute = 'minute';
   static const String contractPaymentDisclaimer = 'contract_payment_disclaimer';
-  static const String contractPhotographerApprovedTitle =
-      'contract_photographer_approved_title';
-  static const String contractApprovedBadge = 'contract_approved_badge';
-  static const String contractWhatHappensAfterPayment =
-      'contract_what_happens_after_payment';
-  static const String contractStep1Confirm = 'contract_step_1_confirm';
-  static const String contractPayNowAction = 'contract_pay_now_action';
   static const String contractPaymentSecurityNote =
       'contract_payment_security_note';
   static const String contractContactPhotographer =

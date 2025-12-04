@@ -4,6 +4,7 @@ import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_details_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class ApprovedStatusCard extends StatelessWidget {
   final ContractDetailsEntity contract;
@@ -16,25 +17,18 @@ class ApprovedStatusCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
       decoration: ShapeDecoration(
-        color: const Color(0xFFF0FDF4), // Softer Light Green
+        color: const Color(0x0C28A745), // Light green
         shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 1, color: Color(0xFFDCFCE7)),
-          borderRadius: BorderRadius.circular(16.r),
+          side: const BorderSide(width: 1, color: Color(0xFF28A745)),
+          borderRadius: BorderRadius.circular(14.r),
         ),
-        shadows: [
-          BoxShadow(
-            color: const Color(0x0A000000),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Row 1: Status Text + Badge
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Text(
@@ -45,6 +39,7 @@ class ApprovedStatusCard extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontFamily: 'Cairo',
                   ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -52,7 +47,7 @@ class ApprovedStatusCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: ShapeDecoration(
-                  color: AppColors.success,
+                  color: const Color(0xFF28A745),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.r),
                   ),
@@ -69,7 +64,7 @@ class ApprovedStatusCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           // Row 2: Service Name + Photographer
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,6 +81,8 @@ class ApprovedStatusCard extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                         fontFamily: 'Cairo',
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 4.h),
                     Text(
@@ -96,6 +93,8 @@ class ApprovedStatusCard extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                         fontFamily: 'Cairo',
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -103,22 +102,27 @@ class ApprovedStatusCard extends StatelessWidget {
               Container(
                 width: 56.w,
                 height: 56.h,
+                clipBehavior: Clip.antiAlias,
                 decoration: ShapeDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(contract.photographerImage),
-                    fit: BoxFit.cover,
-                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14.r),
+                  ),
+                ),
+                child: Image.network(
+                  contract.photographerImage,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: const Color(0xFFECECEC),
+                    child: Icon(Icons.person_outline, color: AppColors.textSecondary, size: 28.r),
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           // Inner Card: Details
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: RoundedRectangleBorder(
@@ -130,10 +134,7 @@ class ApprovedStatusCard extends StatelessWidget {
                 _buildDetailRow(
                   context,
                   AppStrings.contractDateAndTime.tr(),
-                  DateFormat(
-                    'dd MMMM yyyy - hh:mm a',
-                    'ar',
-                  ).format(contract.date),
+                  DateFormat('dd MMMM yyyy - hh:mm a', 'ar').format(contract.date),
                 ),
                 SizedBox(height: 8.h),
                 _buildDetailRow(
@@ -146,6 +147,7 @@ class ApprovedStatusCard extends StatelessWidget {
                 SizedBox(height: 8.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Flexible(
                       child: Text(
@@ -156,6 +158,7 @@ class ApprovedStatusCard extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                           fontFamily: 'Cairo',
                         ),
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -189,7 +192,7 @@ class ApprovedStatusCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           // Pay Button
           SizedBox(
             width: double.infinity,
@@ -203,8 +206,7 @@ class ApprovedStatusCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14.r),
                 ),
-                elevation: 4,
-                shadowColor: AppColors.gold.withOpacity(0.4),
+                elevation: 0,
               ),
               child: Text(
                 AppStrings.contractPayNowAction.tr(),
@@ -217,15 +219,15 @@ class ApprovedStatusCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           // Security Note
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 13.h),
             decoration: ShapeDecoration(
-              color: const Color(0xFFE0F2F1), // Softer Cyan/Teal
+              color: const Color(0x1917A2B8),
               shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1, color: Color(0xFFB2DFDB)),
-                borderRadius: BorderRadius.circular(12.r),
+                side: const BorderSide(width: 1, color: Color(0x3316A2B8)),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
             child: Text(
@@ -235,6 +237,7 @@ class ApprovedStatusCard extends StatelessWidget {
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w400,
                 fontFamily: 'Cairo',
+                height: 1.63,
               ),
             ),
           ),
@@ -247,13 +250,17 @@ class ApprovedStatusCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Cairo',
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'Cairo',
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         SizedBox(width: 8.w),
@@ -267,6 +274,7 @@ class ApprovedStatusCard extends StatelessWidget {
               fontWeight: FontWeight.w400,
               fontFamily: 'Cairo',
             ),
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ),

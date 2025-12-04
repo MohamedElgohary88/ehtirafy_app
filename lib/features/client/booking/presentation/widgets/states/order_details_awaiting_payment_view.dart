@@ -15,14 +15,18 @@ class OrderDetailsAwaitingPaymentView extends StatelessWidget {
     return Container(
       color: const Color(0xFFF9F9F9),
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const TimerBanner(),
-            SizedBox(height: 16.h),
-            ApprovedStatusCard(contract: contract),
-            SizedBox(height: 16.h),
-            PostPaymentTimeline(),
-          ],
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const TimerBanner(),
+              SizedBox(height: 16.h),
+              ApprovedStatusCard(contract: contract),
+              SizedBox(height: 16.h),
+              const PostPaymentTimeline(),
+            ],
+          ),
         ),
       ),
     );

@@ -296,21 +296,13 @@
     "status": {
       "inProgress": "قيد التنفيذ",
       "photographerApproved": "وافق المصور على طلبك",
-      "approved": "تمت الموافقة!",
+      "approvedBadge": "تمت الموافقة",
       "cancelledArchived": "ملغي / مؤرشف"
     },
-    "description": {
-      "label": "الوصف"
-    },
-    "location": {
-      "label": "الموقع"
-    },
-    "date": {
-      "label": "تاريخ المناسبة"
-    },
-    "budget": {
-      "label": "الميزانية"
-    },
+    "description": { "label": "الوصف" },
+    "location": { "label": "الموقع" },
+    "date": { "label": "تاريخ المناسبة" },
+    "budget": { "label": "الميزانية" },
     "paymentStatus": {
       "label": "حالة الدفع",
       "deposited": "تم إيداع المبلغ لدى احترافي",
@@ -322,40 +314,26 @@
       "shooting": "تصوير الحفل",
       "deliveringPhotos": "تسليم الصور"
     },
-    "actions": {
-      "contactPhotographer": "تواصل مع المصور",
-      "finishService": "إنهاء واستلام الخدمة",
-      "payNow": "ادفع الآن وأكد الحجز"
-    },
     "paymentWarning": {
       "title": "تنبيه: الوقت المتبقي للدفع",
       "body": "يرجى الدفع خلال 24 ساعة لتأكيد الحجز وإلا سيتم إلغاء الطلب تلقائياً."
     },
-    "contract_payment_warning_title": "تنبيه: الوقت المتبقي للدفع",
-    "contract_payment_warning_body": "يرجى الدفع خلال 24 ساعة لتأكيد الحجز وإلا سيتم إلغاء الطلب تلقائياً.",
-    "time": {
-      "hour": "ساعة",
-      "minute": "دقيقة"
+    "action": {
+      "payNow": "ادفع الآن وأكد الحجز"
     },
-    "dateTime": {
-      "label": "التاريخ والوقت:"
+    "payment": {
+      "secureNote": "سيتم حفظ المبلغ بشكل آمن ولن يتم تحويله للمصور إلا بعد إتمام الخدمة."
     },
-    "requiredAmount": {
-      "label": "المبلغ المطلوب:"
-    },
-    "paymentSecureNote": "سيتم حفظ المبلغ بشكل آمن ولن يتم تحويله للمصور إلا بعد إتمام الخدمة.",
-    "whatHappensAfterPayment": "ماذا سيحدث بعد الدفع؟",
-    "steps": {
-      "confirmation": "سيتم تأكيد الحجز فوراً",
-      "preparation": "المصور سيستعد للموعد المحدد",
-      "communication": "يمكنك التواصل معه عبر الرسائل"
-    },
-    "archived": {
-      "note": "الطلبات التي لم يتم دفعها خلال 24 ساعة من موافقة المصور"
-    },
-    "cancelled": {
-      "reasonPayment": "تم إلغاء الطلب لعدم السداد"
+    "timeline": {
+      "title": "ماذا سيحدث بعد الدفع؟",
+      "step1": "سيتم تأكيد الحجز فوراً",
+      "step2": "المصور سيستعد للموعد المحدد",
+      "step3": "يمكنك التواصل معه عبر الرسائل"
     }
+  },
+  "time": {
+    "minute": "دقيقة",
+    "hour": "ساعة"
   },
   "booking_service_label": "الخدمة",
   "booking_photographer_label": "المصور",
