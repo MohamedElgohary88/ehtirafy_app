@@ -133,13 +133,13 @@ class ApprovedStatusCard extends StatelessWidget {
               children: [
                 _buildDetailRow(
                   context,
-                  AppStrings.contractDateAndTime.tr(),
-                  DateFormat('dd MMMM yyyy - hh:mm a', 'ar').format(contract.date),
+                  AppStrings.contractDateLabel.tr(),
+                  DateFormat('dd MMMM yyyy - HH:mm a', 'ar').format(contract.date),
                 ),
                 SizedBox(height: 8.h),
                 _buildDetailRow(
                   context,
-                  AppStrings.contractLocation.tr(),
+                  AppStrings.contractLocationLabel.tr(),
                   contract.location,
                 ),
                 SizedBox(height: 8.h),
@@ -151,14 +151,13 @@ class ApprovedStatusCard extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        AppStrings.contractRequiredAmount.tr(),
+                        AppStrings.contractBudgetLabel.tr(),
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
                           fontFamily: 'Cairo',
                         ),
-                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
