@@ -4,7 +4,6 @@ import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_details_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 class ApprovedStatusCard extends StatelessWidget {
   final ContractDetailsEntity contract;
@@ -113,7 +112,11 @@ class ApprovedStatusCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
                     color: const Color(0xFFECECEC),
-                    child: Icon(Icons.person_outline, color: AppColors.textSecondary, size: 28.r),
+                    child: Icon(
+                      Icons.person_outline,
+                      color: AppColors.textSecondary,
+                      size: 28.r,
+                    ),
                   ),
                 ),
               ),
@@ -134,7 +137,10 @@ class ApprovedStatusCard extends StatelessWidget {
                 _buildDetailRow(
                   context,
                   AppStrings.contractDateLabel.tr(),
-                  DateFormat('dd MMMM yyyy - HH:mm a', 'ar').format(contract.date),
+                  DateFormat(
+                    'dd MMMM yyyy - HH:mm a',
+                    'ar',
+                  ).format(contract.date),
                 ),
                 SizedBox(height: 8.h),
                 _buildDetailRow(

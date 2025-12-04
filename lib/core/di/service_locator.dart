@@ -46,6 +46,12 @@ import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_conversati
 import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_messages_usecase.dart';
 import 'package:ehtirafy_app/features/shared/chat/domain/usecases/send_message_usecase.dart';
 import 'package:ehtirafy_app/features/shared/chat/presentation/cubit/chat_cubit.dart';
+import 'package:ehtirafy_app/features/shared/profile/data/datasources/profile_remote_datasource.dart';
+import 'package:ehtirafy_app/features/shared/profile/data/repositories/profile_repository_impl.dart';
+import 'package:ehtirafy_app/features/shared/profile/domain/repositories/profile_repository.dart';
+import 'package:ehtirafy_app/features/shared/profile/domain/usecases/get_user_profile_usecase.dart';
+import 'package:ehtirafy_app/features/shared/profile/domain/usecases/switch_user_role_usecase.dart';
+import 'package:ehtirafy_app/features/shared/profile/presentation/manager/profile_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -132,5 +138,19 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(sl()));
   sl.registerLazySingleton<ChatRemoteDataSource>(
     () => ChatRemoteDataSourceImpl(),
+  );
+
+  // Features - Profile
+  sl.registerFactory(
+    () =>
+        ProfileCubit(getUserProfileUseCase: sl(), switchUserRoleUseCase: sl()),
+  );
+  sl.registerLazySingleton(() => GetUserProfileUseCase(sl()));
+  sl.registerLazySingleton(() => SwitchUserRoleUseCase(sl()));
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(sl()),
+  );
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(),
   );
 }

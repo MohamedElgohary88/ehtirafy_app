@@ -13,7 +13,11 @@ import 'package:ehtirafy_app/features/shared/chat/presentation/pages/conversatio
 import 'package:ehtirafy_app/features/shared/chat/presentation/pages/chat_room_screen.dart';
 import 'package:ehtirafy_app/features/shared/chat/domain/entities/conversation_entity.dart';
 
-import 'package:ehtirafy_app/features/client/profile/presentation/pages/client_profile_screen.dart';
+import 'package:ehtirafy_app/features/shared/profile/presentation/screens/shared_profile_screen.dart';
+import 'package:ehtirafy_app/features/shared/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:ehtirafy_app/features/shared/profile/presentation/screens/settings_screen.dart';
+import 'package:ehtirafy_app/features/shared/profile/presentation/screens/wallet_screen.dart';
+import 'package:ehtirafy_app/features/shared/profile/presentation/screens/withdrawal_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/otp_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/role_selection_screen.dart';
 import 'package:ehtirafy_app/features/client/freelancer/presentation/pages/freelancer_profile_screen.dart';
@@ -63,7 +67,27 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/profile',
-              builder: (context, state) => const ClientProfileScreen(),
+              builder: (context, state) => const SharedProfileScreen(),
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) => const EditProfileScreen(),
+                ),
+                GoRoute(
+                  path: 'settings',
+                  builder: (context, state) => const SettingsScreen(),
+                ),
+                GoRoute(
+                  path: 'wallet',
+                  builder: (context, state) => const WalletScreen(),
+                  routes: [
+                    GoRoute(
+                      path: 'withdraw',
+                      builder: (context, state) => const WithdrawalScreen(),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

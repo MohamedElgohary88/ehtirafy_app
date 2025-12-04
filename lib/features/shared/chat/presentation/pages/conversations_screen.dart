@@ -10,7 +10,7 @@ import '../cubit/chat_state.dart';
 import '../widgets/conversation_tile.dart';
 
 class ConversationsScreen extends StatefulWidget {
-  const ConversationsScreen({Key? key}) : super(key: key);
+  const ConversationsScreen({super.key});
 
   @override
   State<ConversationsScreen> createState() => _ConversationsScreenState();

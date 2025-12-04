@@ -7,8 +7,11 @@ class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
 
-  const ChatInputBar({Key? key, required this.controller, required this.onSend})
-    : super(key: key);
+  const ChatInputBar({
+    super.key,
+    required this.controller,
+    required this.onSend,
+  });
 
   @override
   Widget build(BuildContext context) {

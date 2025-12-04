@@ -13,7 +13,6 @@
   "bookings": "حجوزاتي",
   "dashboard": "لوحة التحكم",
   "my_gigs": "خدماتي",
-  "settings": "الإعدادات",
   "error": "خطأ",
   "loading": "جارٍ التحميل...",
   "success": "تم بنجاح",
@@ -193,19 +192,54 @@
     }
   },
   "profile": {
-    "title": "الملف الشخصي",
-    "transactions": "السجل المالي",
-    "settings": "الإعدادات",
+    "title": "حسابي",
+    "browsing_as": "أنت تتصفح كـ",
+    "role_client": "عميل",
+    "role_freelancer": "مصور",
+    "switch_to_freelancer": "التبديل إلى وضع المصور",
+    "switch_to_client": "التبديل إلى وضع العميل",
+    "menu": {
+      "edit_profile": "تعديل الملف الشخصي",
+      "payment_methods": "طرق الدفع",
+      "settings": "الإعدادات",
+      "my_gigs": "إدارة خدماتي",
+      "portfolio": "معرض الأعمال"
+    },
+    "edit": {
+      "full_name": "الاسم الكامل",
+      "email_read_only": "لا يمكن تغيير البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "bio": "نبذة عني",
+      "bio_hint": "اكتب نبذة مختصرة عن خبراتك ومهاراتك..."
+    },
     "logout": "تسجيل الخروج",
+    "transactions": "السجل المالي",
     "clientRole": "دورك: عميل",
     "freelancerRole": "دورك: مصور"
   },
-  "transactions": {
-    "itemLabel": "عملية",
-    "status": {
-      "paid": "مدفوع"
-    }
+  "settings": {
+    "change_password": "تغيير كلمة المرور",
+    "language": "اللغة",
+    "notifications": "إعدادات الإشعارات",
+    "help_support": "المساعدة والدعم",
+    "privacy_policy": "سياسة الخصوصية",
+    "terms_conditions": "الشروط والأحكام"
   },
+  "wallet": {
+    "title": "المحفظة",
+    "total_balance": "الرصيد الكلي",
+    "withdraw": "سحب الرصيد",
+    "recent_transactions": "آخر العمليات",
+    "deposit_from_client": "إيداع من عميل",
+    "withdrawal": "سحب رصيد",
+    "status_completed": "مكتمل",
+    "withdrawal_amount": "مبلغ السحب",
+    "available_balance": "الرصيد المتاح",
+    "bank_account": "الحساب البنكي",
+    "withdrawal_success": "تم تقديم طلب السحب بنجاح"
+  },
+  "currency": "ر.س",
+  "view_all": "عرض الكل",
   "services": "خدمات متنوعة",
   "growth": "نمو مستمر",
   "quality": "جودة عالية",
@@ -299,10 +333,18 @@
       "approvedBadge": "تمت الموافقة",
       "cancelledArchived": "ملغي / مؤرشف"
     },
-    "description": { "label": "الوصف" },
-    "location": { "label": "الموقع" },
-    "date": { "label": "تاريخ المناسبة" },
-    "budget": { "label": "الميزانية" },
+    "description": {
+      "label": "الوصف"
+    },
+    "location": {
+      "label": "الموقع"
+    },
+    "date": {
+      "label": "تاريخ المناسبة"
+    },
+    "budget": {
+      "label": "الميزانية"
+    },
     "paymentStatus": {
       "label": "حالة الدفع",
       "deposited": "تم إيداع المبلغ لدى احترافي",
@@ -330,7 +372,9 @@
       "step2": "المصور سيستعد للموعد المحدد",
       "step3": "يمكنك التواصل معه عبر الرسائل"
     },
-    "requiredAmount": { "label": "المبلغ المطلوب" }
+    "requiredAmount": {
+      "label": "المبلغ المطلوب"
+    }
   },
   "time": {
     "minute": "دقيقة",

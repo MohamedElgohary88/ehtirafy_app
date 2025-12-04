@@ -13,8 +13,7 @@ import '../widgets/message_bubble.dart';
 class ChatRoomScreen extends StatefulWidget {
   final ConversationEntity conversation;
 
-  const ChatRoomScreen({Key? key, required this.conversation})
-    : super(key: key);
+  const ChatRoomScreen({super.key, required this.conversation});
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();

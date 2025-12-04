@@ -188,7 +188,6 @@ class _SocialDivider extends StatelessWidget {
 class _SocialButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Column(
       children: [
         _OutlinedIconButton(

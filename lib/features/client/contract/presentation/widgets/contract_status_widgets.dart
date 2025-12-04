@@ -4,7 +4,6 @@ import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_details_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 class ContractUnderReviewCard extends StatelessWidget {
   final ContractDetailsEntity contract;
@@ -136,7 +135,10 @@ class ContractUnderReviewCard extends StatelessWidget {
             DateFormat('dd MMMM yyyy - HH:mm a', 'ar').format(contract.date),
           ),
           SizedBox(height: 8.h),
-          _buildDetailRow(AppStrings.contractLocationLabel.tr(), contract.location),
+          _buildDetailRow(
+            AppStrings.contractLocationLabel.tr(),
+            contract.location,
+          ),
           SizedBox(height: 8.h),
           Container(
             padding: EdgeInsets.symmetric(vertical: 4.h),
@@ -490,7 +492,10 @@ class ContractAwaitingPaymentCard extends StatelessWidget {
             DateFormat('dd MMMM yyyy - HH:mm a', 'ar').format(contract.date),
           ),
           SizedBox(height: 8.h),
-          _buildDetailRow(AppStrings.contractLocationLabel.tr(), contract.location),
+          _buildDetailRow(
+            AppStrings.contractLocationLabel.tr(),
+            contract.location,
+          ),
           SizedBox(height: 8.h),
           Container(
             padding: EdgeInsets.symmetric(vertical: 4.h),

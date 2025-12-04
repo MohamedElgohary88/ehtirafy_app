@@ -9,10 +9,10 @@ class ConversationTile extends StatelessWidget {
   final VoidCallback onTap;
 
   const ConversationTile({
-    Key? key,
+    super.key,
     required this.conversation,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
