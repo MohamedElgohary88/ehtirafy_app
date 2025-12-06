@@ -75,9 +75,9 @@ class RoleSwitcherCard extends StatelessWidget {
                           : 'profile.role_freelancer'.tr(),
                       style: TextStyle(
                         color: const Color(0xFF2B2B2B),
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         fontFamily: 'Cairo',
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

@@ -54,7 +54,7 @@ class ProfileTile extends StatelessWidget {
                     color: isDestructive
                         ? const Color(0xFFDC3545)
                         : const Color(0xFF2B2B2B),
-                    fontSize: 16.sp,
+                    fontSize: 14.sp,
                     fontFamily: 'Cairo',
                     fontWeight: FontWeight.w400,
                     height: 1.50,

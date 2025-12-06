@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
-import 'package:ehtirafy_app/core/widgets/app_logo.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import '../cubits/splash_cubit.dart';
 
@@ -33,30 +33,37 @@ class _SplashView extends StatelessWidget {
           context.go('/home');
         }
       },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? AppColors.dark
-            : AppColors.backgroundLight,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const AppLogo(width: 145, fit: BoxFit.contain),
-              const Spacer(),
-              Padding(
-                padding: EdgeInsets.only(bottom: 80.h),
-                child: Text(
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light.copyWith(
+          statusBarColor: Colors.transparent,
+        ),
+        child: Scaffold(
+          backgroundColor: const Color(0xFF1C1D18),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo
+                Image.asset(
+                  'assets/images/logo.png',
+                  width: 180.w,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: 24.h),
+                // Tagline
+                Text(
                   AppStrings.splashTagline.tr(),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.grey400
-                        : AppColors.textSecondary,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Cairo',
+                    color: AppColors.gold,
+                    letterSpacing: 0.5,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

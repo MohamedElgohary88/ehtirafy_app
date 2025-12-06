@@ -78,7 +78,7 @@ class WalletScreen extends StatelessWidget {
                     '2,450.00 ${'currency'.tr()}',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 32.sp,
+                      fontSize: 26.sp,
                       fontFamily: 'Cairo',
                       fontWeight: FontWeight.w700,
                     ),
@@ -134,7 +134,7 @@ class WalletScreen extends StatelessWidget {
                   'wallet.recent_transactions'.tr(),
                   style: TextStyle(
                     color: const Color(0xFF2B2B2B),
-                    fontSize: 18.sp,
+                    fontSize: 16.sp,
                     fontFamily: 'Cairo',
                     fontWeight: FontWeight.w600,
                   ),
