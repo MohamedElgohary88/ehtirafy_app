@@ -62,7 +62,18 @@ final appRouter = GoRouter(
       currentRole = sl<RoleCubit>().selected;
     }
 
-    final isFreelancerRoute = state.uri.path.startsWith('/freelancer');
+    final path = state.uri.path;
+    final isFreelancerRoute = path.startsWith('/freelancer');
+
+    // List of freelancer management routes that should be blocked for clients
+    final freelancerManagementRoutes = [
+      '/freelancer/dashboard',
+      '/freelancer/gigs',
+      '/freelancer/orders',
+      '/freelancer/messages',
+      '/freelancer/account',
+      '/freelancer/portfolio',
+    ];
 
     // Role-based redirection
     if (currentRole == UserRole.freelancer) {
@@ -71,13 +82,21 @@ final appRouter = GoRouter(
       // But assuming client shell branches are "isClientRoute" roughly
 
       // Explicit check for client home
-      if (state.uri.path == '/home' || state.uri.path == '/') {
+      if (path == '/home' || path == '/') {
         return '/freelancer/dashboard';
       }
     } else {
-      // If user is client but tries to access any freelancer route, redirect to home
+      // If user is client but tries to access freelancer management routes, redirect to home
+      // BUT allow viewing freelancer profiles at /freelancer/:id
       if (isFreelancerRoute) {
-        return '/home';
+        // Check if it's a management route (not a profile view)
+        final isManagementRoute = freelancerManagementRoutes.any(
+          (route) => path.startsWith(route),
+        );
+        if (isManagementRoute) {
+          return '/home';
+        }
+        // Allow /freelancer/:id for viewing freelancer profiles
       }
     }
 
