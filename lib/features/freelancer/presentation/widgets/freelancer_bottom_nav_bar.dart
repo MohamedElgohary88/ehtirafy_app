@@ -4,11 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 
-class ClientBottomNavBar extends StatelessWidget {
+class FreelancerBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const ClientBottomNavBar({
+  const FreelancerBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
@@ -35,17 +35,17 @@ class ClientBottomNavBar extends StatelessWidget {
             children: [
               _buildNavItem(
                 context: context,
-                index: 3,
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home_filled,
-                label: AppStrings.navHome.tr(),
+                index: 0,
+                icon: Icons.dashboard_outlined,
+                activeIcon: Icons.dashboard,
+                label: AppStrings.navDashboard.tr(),
               ),
               _buildNavItem(
                 context: context,
                 index: 2,
-                icon: Icons.list_alt_outlined,
-                activeIcon: Icons.list_alt,
-                label: AppStrings.navRequests.tr(),
+                icon: Icons.assignment_outlined,
+                activeIcon: Icons.assignment,
+                label: AppStrings.navOrders.tr(),
               ),
               _buildNavItem(
                 context: context,
@@ -56,7 +56,7 @@ class ClientBottomNavBar extends StatelessWidget {
               ),
               _buildNavItem(
                 context: context,
-                index: 0,
+                index: 3,
                 icon: Icons.person_outline,
                 activeIcon: Icons.person,
                 label: AppStrings.navAccount.tr(),

@@ -249,8 +249,7 @@ class AppStrings {
       'contract.status.photographerApproved';
   static const String contractApprovedBadge = 'contract.status.approvedBadge';
   static const String contractPayNowAction = 'contract.action.payNow';
-  static const String contractPaymentSecureNote =
-      'contract.payment.secureNote';
+  static const String contractPaymentSecureNote = 'contract.payment.secureNote';
 
   static const String contractWhatHappensAfterPayment =
       'contract.timeline.title';
@@ -300,4 +299,153 @@ class AppStrings {
   static const String pendingViewTimelineStep1 = 'pending_view_timeline_step1';
   static const String pendingViewTimelineStep2 = 'pending_view_timeline_step2';
   static const String pendingViewTimelineStep3 = 'pending_view_timeline_step3';
+
+  // Freelancer Dashboard
+  static const String freelancerDashboardWelcome =
+      'freelancerDashboard.welcome';
+  static const String freelancerDashboardOnline = 'freelancerDashboard.online';
+  static const String freelancerDashboardOffline =
+      'freelancerDashboard.offline';
+  static const String freelancerDashboardTotalEarnings =
+      'freelancerDashboard.totalEarnings';
+  static const String freelancerDashboardActiveOrders =
+      'freelancerDashboard.activeOrders';
+  static const String freelancerDashboardProfileViews =
+      'freelancerDashboard.profileViews';
+  static const String freelancerDashboardPortfolioSection =
+      'freelancerDashboard.portfolioSection';
+  static const String freelancerDashboardManagePortfolio =
+      'freelancerDashboard.managePortfolio';
+  static const String freelancerDashboardServicesSection =
+      'freelancerDashboard.servicesSection';
+  static const String freelancerDashboardAddService =
+      'freelancerDashboard.addService';
+  static const String freelancerDashboardRecentRequests =
+      'freelancerDashboard.recentRequests';
+  static const String freelancerDashboardViewAll =
+      'freelancerDashboard.viewAll';
+  static const String freelancerDashboardEmptyPortfolio =
+      'freelancerDashboard.emptyPortfolio';
+  static const String freelancerDashboardEmptyServices =
+      'freelancerDashboard.emptyServices';
+  static const String freelancerDashboardAddFirstWork =
+      'freelancerDashboard.addFirstWork';
+
+  // Freelancer Gigs
+  static const String freelancerGigsTitle = 'freelancerGigs.title';
+  static const String freelancerGigsCreateTitle = 'freelancerGigs.createTitle';
+  static const String freelancerGigsEditTitle = 'freelancerGigs.editTitle';
+  static const String freelancerGigsTitleLabel = 'freelancerGigs.titleLabel';
+  static const String freelancerGigsTitleHint = 'freelancerGigs.titleHint';
+  static const String freelancerGigsDescriptionLabel =
+      'freelancerGigs.descriptionLabel';
+  static const String freelancerGigsDescriptionHint =
+      'freelancerGigs.descriptionHint';
+  static const String freelancerGigsPriceLabel = 'freelancerGigs.priceLabel';
+  static const String freelancerGigsPriceHint = 'freelancerGigs.priceHint';
+  static const String freelancerGigsCategoryLabel =
+      'freelancerGigs.categoryLabel';
+  static const String freelancerGigsCoverImageLabel =
+      'freelancerGigs.coverImageLabel';
+  static const String freelancerGigsSelectCoverImage =
+      'freelancerGigs.selectCoverImage';
+  static const String freelancerGigsStatusActive =
+      'freelancerGigs.statusActive';
+  static const String freelancerGigsStatusPending =
+      'freelancerGigs.statusPending';
+  static const String freelancerGigsStatusInactive =
+      'freelancerGigs.statusInactive';
+  static const String freelancerGigsSubmitForReview =
+      'freelancerGigs.submitForReview';
+  static const String freelancerGigsSaveChanges = 'freelancerGigs.saveChanges';
+  static const String freelancerGigsDeleteGig = 'freelancerGigs.deleteGig';
+  static const String freelancerGigsEmptyState = 'freelancerGigs.emptyState';
+  static const String freelancerGigsEmptyStateSubtitle =
+      'freelancerGigs.emptyStateSubtitle';
+  static const String freelancerGigsAddFirstGig = 'freelancerGigs.addFirstGig';
+  static const String freelancerGigsCharCount = 'freelancerGigs.charCount';
+
+  // Freelancer Portfolio
+  static const String freelancerPortfolioTitle = 'freelancerPortfolio.title';
+  static const String freelancerPortfolioAddWork =
+      'freelancerPortfolio.addWork';
+  static const String freelancerPortfolioAddWorkTitle =
+      'freelancerPortfolio.addWorkTitle';
+  static const String freelancerPortfolioAddWorkSubtitle =
+      'freelancerPortfolio.addWorkSubtitle';
+  static const String freelancerPortfolioEmptyTitle =
+      'freelancerPortfolio.emptyTitle';
+  static const String freelancerPortfolioEmptySubtitle =
+      'freelancerPortfolio.emptySubtitle';
+  static const String freelancerPortfolioAddButton =
+      'freelancerPortfolio.addButton';
+  static const String freelancerPortfolioWorkTitleLabel =
+      'freelancerPortfolio.workTitleLabel';
+  static const String freelancerPortfolioWorkTitleHint =
+      'freelancerPortfolio.workTitleHint';
+  static const String freelancerPortfolioCameraTypeLabel =
+      'freelancerPortfolio.cameraTypeLabel';
+  static const String freelancerPortfolioCameraTypeHint =
+      'freelancerPortfolio.cameraTypeHint';
+  static const String freelancerPortfolioWorkDescriptionLabel =
+      'freelancerPortfolio.workDescriptionLabel';
+  static const String freelancerPortfolioWorkDescriptionHint =
+      'freelancerPortfolio.workDescriptionHint';
+  static const String freelancerPortfolioUploadImages =
+      'freelancerPortfolio.uploadImages';
+  static const String freelancerPortfolioUploadHint =
+      'freelancerPortfolio.uploadHint';
+  static const String freelancerPortfolioSelectImages =
+      'freelancerPortfolio.selectImages';
+  static const String freelancerPortfolioImportantNote =
+      'freelancerPortfolio.importantNote';
+  static const String freelancerPortfolioReviewNote =
+      'freelancerPortfolio.reviewNote';
+  static const String freelancerPortfolioSubmitForReview =
+      'freelancerPortfolio.submitForReview';
+  static const String freelancerPortfolioCharCount =
+      'freelancerPortfolio.charCount';
+
+  // Freelancer Orders (new screen keys)
+  // Note: freelancerOrdersTitle is already defined above at line 157
+  static const String freelancerOrdersTabRequests =
+      'freelancerOrders.tabRequests';
+  static const String freelancerOrdersTabActive = 'freelancerOrders.tabActive';
+  static const String freelancerOrdersTabArchived =
+      'freelancerOrders.tabArchived';
+  static const String freelancerOrdersAccept = 'freelancerOrders.accept';
+  static const String freelancerOrdersReject = 'freelancerOrders.reject';
+  static const String freelancerOrdersViewDetails =
+      'freelancerOrders.viewDetails';
+  static const String freelancerOrdersChat = 'freelancerOrders.chat';
+  static const String freelancerOrdersClientLabel =
+      'freelancerOrders.clientLabel';
+  static const String freelancerOrdersStatusPending =
+      'freelancerOrders.statusPending';
+  static const String freelancerOrdersStatusInProgress =
+      'freelancerOrders.statusInProgress';
+  static const String freelancerOrdersStatusCompleted =
+      'freelancerOrders.statusCompleted';
+  static const String freelancerOrdersStatusCancelled =
+      'freelancerOrders.statusCancelled';
+  static const String freelancerOrdersNoRequests =
+      'freelancerOrders.noRequests';
+  static const String freelancerOrdersNoActiveOrders =
+      'freelancerOrders.noActiveOrders';
+  static const String freelancerOrdersNoArchivedOrders =
+      'freelancerOrders.noArchivedOrders';
+
+  // Delete confirmations
+  static const String delete = 'general.delete';
+  static const String deleteConfirmation = 'general.deleteConfirmation';
+  static const String deletePortfolioItemConfirmation =
+      'general.deletePortfolioItemConfirmation';
+
+  // Portfolio additional
+  static const String freelancerPortfolioWorkTitle =
+      'freelancerPortfolio.workTitle';
+  static const String freelancerPortfolioCameraType =
+      'freelancerPortfolio.cameraType';
+  static const String freelancerPortfolioWorkDescription =
+      'freelancerPortfolio.workDescription';
 }

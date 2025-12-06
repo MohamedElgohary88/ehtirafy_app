@@ -21,7 +21,7 @@ class ProfileMenu extends StatelessWidget {
             title: 'profile.menu.my_gigs'.tr(),
             icon: Icons.work_outline,
             onTap: () {
-              // Navigate to My Gigs
+              context.push('/freelancer/gigs');
             },
           ),
           SizedBox(height: 8.h),
@@ -29,7 +29,7 @@ class ProfileMenu extends StatelessWidget {
             title: 'profile.menu.portfolio'.tr(),
             icon: Icons.photo_library_outlined,
             onTap: () {
-              // Navigate to Portfolio
+              context.push('/freelancer/portfolio');
             },
           ),
           SizedBox(height: 8.h),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
+import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
 
 import '../cubit/chat_cubit.dart';
@@ -19,53 +21,85 @@ class ConversationsScreen extends StatefulWidget {
 class _ConversationsScreenState extends State<ConversationsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
-      appBar: AppBar(
-        title: Text(
-          AppStrings.chatListTitle.tr(),
-          style: TextStyle(
-            color: const Color(0xFF2B2B2B),
-            fontSize: 20.sp,
-            fontFamily: 'Cairo',
-            fontWeight: FontWeight.w600,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF9F9F9),
+        body: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: BlocBuilder<ChatCubit, ChatState>(
+                buildWhen: (previous, current) =>
+                    current is ConversationsLoaded ||
+                    current is ChatLoading ||
+                    current is ChatError,
+                builder: (context, state) {
+                  if (state is ChatLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is ChatError) {
+                    return Center(child: Text(state.message));
+                  } else if (state is ConversationsLoaded) {
+                    if (state.conversations.isEmpty) {
+                      return _buildEmptyState();
+                    }
+                    return ListView.separated(
+                      padding: EdgeInsets.all(24.w),
+                      itemCount: state.conversations.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 12.h),
+                      itemBuilder: (context, index) {
+                        final conv = state.conversations[index];
+                        return ConversationTile(
+                          conversation: conv,
+                          onTap: () {
+                            context.push(
+                              '/messages/chat/${conv.id}',
+                              extra: conv,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      color: AppColors.dark,
+      child: SafeArea(
+        bottom: false,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          decoration: const BoxDecoration(
+            color: AppColors.dark,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(24),
+              bottomRight: Radius.circular(24),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              AppStrings.chatListTitle.tr(),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400,
+                height: 1.50,
+              ),
+            ),
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: BlocBuilder<ChatCubit, ChatState>(
-        buildWhen: (previous, current) =>
-            current is ConversationsLoaded ||
-            current is ChatLoading ||
-            current is ChatError,
-        builder: (context, state) {
-          if (state is ChatLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ChatError) {
-            return Center(child: Text(state.message));
-          } else if (state is ConversationsLoaded) {
-            if (state.conversations.isEmpty) {
-              return _buildEmptyState();
-            }
-            return ListView.separated(
-              padding: EdgeInsets.all(24.w),
-              itemCount: state.conversations.length,
-              separatorBuilder: (context, index) => SizedBox(height: 12.h),
-              itemBuilder: (context, index) {
-                final conv = state.conversations[index];
-                return ConversationTile(
-                  conversation: conv,
-                  onTap: () {
-                    context.push('/messages/chat/${conv.id}', extra: conv);
-                  },
-                );
-              },
-            );
-          }
-          return const SizedBox.shrink();
-        },
       ),
     );
   }

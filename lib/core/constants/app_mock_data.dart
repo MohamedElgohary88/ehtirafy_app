@@ -257,4 +257,186 @@ class AppMockData {
       orElse: () => mockContractDetails.first,
     );
   }
+
+  // ========== FREELANCER MODULE MOCK DATA ==========
+
+  /// Freelancer dashboard statistics
+  static const Map<String, dynamic> mockFreelancerStats = {
+    'totalEarnings': 25000.0,
+    'activeOrders': 3,
+    'profileViews': 156,
+    'rating': 4.9,
+    'isOnline': true,
+  };
+
+  /// Freelancer gigs (services offered)
+  static final List<Map<String, dynamic>> mockFreelancerGigs = [
+    {
+      'id': 'gig-001',
+      'title': 'تصوير حفلات زفاف احترافي',
+      'description':
+          'تغطية شاملة لحفل الزفاف تشمل جميع اللحظات المميزة مع معدات احترافية وخبرة 10 سنوات.',
+      'price': 5000.0,
+      'category': 'أفراح',
+      'status': 'active',
+      'coverImage': 'https://placehold.co/300x200.png',
+      'createdAt': '2024-11-01T10:00:00.000',
+    },
+    {
+      'id': 'gig-002',
+      'title': 'جلسة تصوير عائلية',
+      'description':
+          'جلسة تصوير مميزة للعائلة في موقع خارجي أو استوديو مع تعديل احترافي للصور.',
+      'price': 1500.0,
+      'category': 'عائلات',
+      'status': 'active',
+      'coverImage': 'https://placehold.co/300x200.png',
+      'createdAt': '2024-11-15T10:00:00.000',
+    },
+    {
+      'id': 'gig-003',
+      'title': 'تصوير منتجات تجارية',
+      'description':
+          'تصوير احترافي للمنتجات للمتاجر الإلكترونية مع خلفية بيضاء وإضاءة مثالية.',
+      'price': 2500.0,
+      'category': 'منتجات',
+      'status': 'pending',
+      'coverImage': 'https://placehold.co/300x200.png',
+      'createdAt': '2024-12-01T10:00:00.000',
+    },
+  ];
+
+  /// Freelancer portfolio items
+  static final List<Map<String, dynamic>> mockFreelancerPortfolio = [
+    {
+      'id': 'portfolio-001',
+      'title': 'حفل زفاف خالد وسارة',
+      'description': 'تغطية كاملة لحفل زفاف فاخر في قصر الحكير بالرياض.',
+      'cameraType': 'Canon EOS R5',
+      'imageUrl': 'https://placehold.co/166x166.png',
+      'category': 'أفراح',
+      'createdAt': '2024-10-15T10:00:00.000',
+    },
+    {
+      'id': 'portfolio-002',
+      'title': 'جلسة تصوير عائلية',
+      'description': 'جلسة تصوير لعائلة من 5 أفراد في حديقة السلام.',
+      'cameraType': 'Sony A7 IV',
+      'imageUrl': 'https://placehold.co/166x166.png',
+      'category': 'عائلات',
+      'createdAt': '2024-09-20T10:00:00.000',
+    },
+    {
+      'id': 'portfolio-003',
+      'title': 'منتجات شركة القهوة',
+      'description': 'تصوير منتجات قهوة لمتجر إلكتروني.',
+      'cameraType': 'Canon EOS R5',
+      'imageUrl': 'https://placehold.co/166x166.png',
+      'category': 'منتجات',
+      'createdAt': '2024-08-10T10:00:00.000',
+    },
+    {
+      'id': 'portfolio-004',
+      'title': 'حفل تخرج جامعة الملك سعود',
+      'description': 'تصوير مناسبة تخرج مع أكثر من 200 صورة.',
+      'cameraType': 'Nikon Z8',
+      'imageUrl': 'https://placehold.co/166x166.png',
+      'category': 'مناسبات',
+      'createdAt': '2024-07-05T10:00:00.000',
+    },
+  ];
+
+  /// Freelancer incoming orders/requests
+  static final List<Map<String, dynamic>> mockFreelancerOrders = [
+    {
+      'id': 'order-f001',
+      'serviceTitle': 'جلسة تصوير عائلية',
+      'clientName': 'فاطمة السالم',
+      'clientImage': 'https://placehold.co/40x40.png',
+      'status': 'pending',
+      'price': 1500.0,
+      'location': 'الرياض',
+      'eventDate': '2024-12-28T16:00:00.000',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 5))
+          .toIso8601String(),
+    },
+    {
+      'id': 'order-f002',
+      'serviceTitle': 'تصوير حفل زفاف في الرياض',
+      'clientName': 'محمد العتيبي',
+      'clientImage': 'https://placehold.co/40x40.png',
+      'status': 'inProgress',
+      'price': 5000.0,
+      'location': 'الرياض',
+      'eventDate': '2025-01-05T18:00:00.000',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 3))
+          .toIso8601String(),
+    },
+    {
+      'id': 'order-f003',
+      'serviceTitle': 'تصوير حفل زفاف',
+      'clientName': 'عبدالله الشمري',
+      'clientImage': 'https://placehold.co/40x40.png',
+      'status': 'inProgress',
+      'price': 5000.0,
+      'location': 'جدة',
+      'eventDate': '2025-01-10T19:00:00.000',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 2))
+          .toIso8601String(),
+    },
+    {
+      'id': 'order-f004',
+      'serviceTitle': 'تصوير منتجات متجر',
+      'clientName': 'نورة الحربي',
+      'clientImage': 'https://placehold.co/40x40.png',
+      'status': 'pending',
+      'price': 2500.0,
+      'location': 'الدمام',
+      'eventDate': '2024-12-30T10:00:00.000',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 2))
+          .toIso8601String(),
+    },
+    {
+      'id': 'order-f005',
+      'serviceTitle': 'جلسة تصوير عائلية',
+      'clientName': 'سارة الأحمد',
+      'clientImage': 'https://placehold.co/40x40.png',
+      'status': 'completed',
+      'price': 1500.0,
+      'location': 'الرياض',
+      'eventDate': '2024-11-20T15:00:00.000',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 20))
+          .toIso8601String(),
+    },
+    {
+      'id': 'order-f006',
+      'serviceTitle': 'تصوير حفل تخرج',
+      'clientName': 'خالد القحطاني',
+      'clientImage': 'https://placehold.co/40x40.png',
+      'status': 'cancelled',
+      'price': 3000.0,
+      'location': 'الرياض',
+      'eventDate': '2024-11-15T14:00:00.000',
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 25))
+          .toIso8601String(),
+    },
+  ];
+
+  /// GIG categories for dropdown
+  static const List<String> gigCategories = [
+    'أفراح',
+    'عائلات',
+    'منتجات',
+    'مناسبات',
+    'عقارات',
+    'طعام',
+    'أزياء',
+    'رياضة',
+  ];
 }

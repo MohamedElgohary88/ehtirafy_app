@@ -26,9 +26,61 @@ import 'package:ehtirafy_app/features/client/booking/presentation/screens/bookin
 import 'package:ehtirafy_app/features/client/requests/presentation/pages/my_requests_screen.dart';
 import 'package:ehtirafy_app/features/client/booking/presentation/screens/order_details_screen.dart';
 
+// Freelancer mode imports
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/freelancer_main_layout.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/freelancer_dashboard_screen.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/my_gigs_screen.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/create_gig_screen.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/freelancer_orders_screen.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_dashboard_cubit.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_gigs_cubit.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_orders_cubit.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_portfolio_cubit.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/portfolio_screen.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/add_portfolio_item_screen.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/entities/user_role.dart';
+import 'package:ehtirafy_app/core/router/utils/go_router_refresh_stream.dart';
+
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
   initialLocation: '/onboarding',
+  refreshListenable: GoRouterRefreshStream(sl<RoleCubit>().stream),
+  redirect: (context, state) {
+    // Get current role state
+    final roleState = sl<RoleCubit>().state;
+    UserRole currentRole = UserRole.client;
+
+    if (roleState is RoleLoaded) {
+      currentRole = roleState.role;
+    } else if (roleState is RoleSaved) {
+      currentRole = roleState.role;
+    } else if (sl<RoleCubit>().selected != UserRole.client) {
+      // Fallback to locally selected role if state isn't emitted yet but value is set
+      currentRole = sl<RoleCubit>().selected;
+    }
+
+    final isFreelancerRoute = state.uri.path.startsWith('/freelancer');
+
+    // Role-based redirection
+    if (currentRole == UserRole.freelancer) {
+      // If user is freelancer but tries to access client routes, redirect to freelancer dashboard
+      // Allow access to common routes like /profile, /settings etc if they are shared
+      // But assuming client shell branches are "isClientRoute" roughly
+
+      // Explicit check for client home
+      if (state.uri.path == '/home' || state.uri.path == '/') {
+        return '/freelancer/dashboard';
+      }
+    } else {
+      // If user is client but tries to access any freelancer route, redirect to home
+      if (isFreelancerRoute) {
+        return '/home';
+      }
+    }
+
+    return null;
+  },
   routes: [
     // Onboarding screen - entry point
     GoRoute(
@@ -56,7 +108,7 @@ final appRouter = GoRouter(
       builder: (context, state) => const RoleSelectionScreen(),
     ),
 
-    // Shell Route for Persistent Bottom Navigation
+    // Shell Route for Client Bottom Navigation
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ClientMainLayout(navigationShell: navigationShell);
@@ -134,6 +186,116 @@ final appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+
+    // Shell Route for Freelancer Bottom Navigation
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return FreelancerMainLayout(navigationShell: navigationShell);
+      },
+      branches: [
+        // Tab 0: Dashboard
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/freelancer/dashboard',
+              builder: (context, state) => BlocProvider(
+                create: (_) => sl<FreelancerDashboardCubit>(),
+                child: const FreelancerDashboardScreen(),
+              ),
+            ),
+          ],
+        ),
+        // Tab 1: Messages
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/freelancer/messages',
+              builder: (context, state) => BlocProvider(
+                create: (_) => sl<ChatCubit>()..loadConversations(),
+                child: const ConversationsScreen(),
+              ),
+              routes: [
+                GoRoute(
+                  path: 'chat/:id',
+                  builder: (context, state) {
+                    final conversation = state.extra as ConversationEntity;
+                    return BlocProvider(
+                      create: (_) => sl<ChatCubit>(),
+                      child: ChatRoomScreen(conversation: conversation),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        // Tab 2: Orders
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/freelancer/orders',
+              builder: (context, state) => BlocProvider(
+                create: (_) => sl<FreelancerOrdersCubit>(),
+                child: const FreelancerOrdersScreen(),
+              ),
+            ),
+          ],
+        ),
+        // Tab 3: Profile (reuse shared profile)
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/freelancer/profile',
+              builder: (context, state) => const SharedProfileScreen(),
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) => const EditProfileScreen(),
+                ),
+                GoRoute(
+                  path: 'settings',
+                  builder: (context, state) => const SettingsScreen(),
+                ),
+                GoRoute(
+                  path: 'wallet',
+                  builder: (context, state) => const WalletScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+
+    // Freelancer standalone routes (not in shell)
+    GoRoute(
+      path: '/freelancer/gigs',
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<FreelancerGigsCubit>(),
+        child: const MyGigsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/freelancer/gigs/create',
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<FreelancerGigsCubit>(),
+        child: const CreateGigScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/freelancer/portfolio',
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<FreelancerPortfolioCubit>(),
+        child: const PortfolioScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/freelancer/portfolio/add',
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<FreelancerPortfolioCubit>(),
+        child: const AddPortfolioItemScreen(),
+      ),
     ),
 
     // Other routes
