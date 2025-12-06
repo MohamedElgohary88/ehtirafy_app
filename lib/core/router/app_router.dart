@@ -38,6 +38,8 @@ import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_o
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_portfolio_cubit.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/pages/portfolio_screen.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/pages/add_portfolio_item_screen.dart';
+import 'package:ehtirafy_app/features/freelancer/presentation/pages/freelancer_order_details_screen.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/entities/freelancer_order_entity.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/entities/user_role.dart';
 import 'package:ehtirafy_app/core/router/utils/go_router_refresh_stream.dart';
@@ -296,6 +298,13 @@ final appRouter = GoRouter(
         create: (_) => sl<FreelancerPortfolioCubit>(),
         child: const AddPortfolioItemScreen(),
       ),
+    ),
+    GoRoute(
+      path: '/freelancer/orders/details',
+      builder: (context, state) {
+        final order = state.extra as FreelancerOrderEntity;
+        return FreelancerOrderDetailsScreen(order: order);
+      },
     ),
 
     // Other routes

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -96,25 +97,38 @@ class _FreelancerOrdersScreenState extends State<FreelancerOrdersScreen> {
                                         SizedBox(height: 16.h),
                                     itemBuilder: (context, index) {
                                       final order = state.filteredOrders[index];
-                                      return FreelancerOrderCard(
-                                        order: order,
-                                        onAccept: state.selectedTabIndex == 0
-                                            ? () => context
-                                                  .read<FreelancerOrdersCubit>()
-                                                  .acceptOrder(order.id)
-                                            : null,
-                                        onReject: state.selectedTabIndex == 0
-                                            ? () => context
-                                                  .read<FreelancerOrdersCubit>()
-                                                  .rejectOrder(order.id)
-                                            : null,
-                                        onViewDetails:
-                                            state.selectedTabIndex == 1
-                                            ? () {}
-                                            : null,
-                                        onChat: state.selectedTabIndex == 1
-                                            ? () {}
-                                            : null,
+                                      return GestureDetector(
+                                        onTap: () => context.push(
+                                          '/freelancer/orders/details',
+                                          extra: order,
+                                        ),
+                                        child: FreelancerOrderCard(
+                                          order: order,
+                                          onAccept: state.selectedTabIndex == 0
+                                              ? () => context
+                                                    .read<
+                                                      FreelancerOrdersCubit
+                                                    >()
+                                                    .acceptOrder(order.id)
+                                              : null,
+                                          onReject: state.selectedTabIndex == 0
+                                              ? () => context
+                                                    .read<
+                                                      FreelancerOrdersCubit
+                                                    >()
+                                                    .rejectOrder(order.id)
+                                              : null,
+                                          onViewDetails:
+                                              state.selectedTabIndex == 1
+                                              ? () => context.push(
+                                                  '/freelancer/orders/details',
+                                                  extra: order,
+                                                )
+                                              : null,
+                                          onChat: state.selectedTabIndex == 1
+                                              ? () {}
+                                              : null,
+                                        ),
                                       );
                                     },
                                   ),

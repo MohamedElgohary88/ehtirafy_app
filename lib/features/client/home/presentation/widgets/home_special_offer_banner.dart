@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../../../../../../core/theme/app_colors.dart';
 
 class HomeSpecialOfferBanner extends StatelessWidget {
@@ -10,29 +11,35 @@ class HomeSpecialOfferBanner extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       width: double.infinity,
       height: 189,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        image: const DecorationImage(
-          image: NetworkImage("https://placehold.co/349x189.png"),
-          fit: BoxFit.cover,
-        ),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          // Gradient overlay for better text visibility
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Colors.black.withValues(alpha: 0.7),
-                  Colors.transparent,
-                ],
+          // Background image
+          Image.network(
+            'https://picsum.photos/seed/specialoffer/400/200',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) =>
+                Container(color: AppColors.primary.withValues(alpha: 0.3)),
+          ),
+          // Blur overlay for better text visibility
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.7),
+                    Colors.black.withValues(alpha: 0.3),
+                  ],
+                ),
               ),
             ),
           ),
+          // Content
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

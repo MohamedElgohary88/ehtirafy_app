@@ -68,7 +68,7 @@ class PortfolioScreen extends StatelessWidget {
                         return _buildPortfolioGrid(context, state.items);
                       }
 
-                      return const SizedBox.shrink();
+                      return SizedBox.fromSize(size: Size.zero);
                     },
                   ),
             ),
@@ -89,7 +89,7 @@ class PortfolioScreen extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
           decoration: const BoxDecoration(
             color: AppColors.dark,
             borderRadius: BorderRadius.only(
@@ -214,7 +214,7 @@ class PortfolioScreen extends StatelessWidget {
     List<PortfolioItemEntity> items,
   ) {
     return Padding(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 0.h, bottom: 0.h),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

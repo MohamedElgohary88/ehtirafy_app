@@ -16,7 +16,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       ConversationModel(
         id: '1',
         otherUserName: 'أحمد المصور',
-        otherUserImage: 'https://placehold.co/40x40.png',
+        otherUserImage: 'https://picsum.photos/seed/chat1/56/56',
         lastMessage: 'شكراً لك، سأكون جاهزاً',
         unreadCount: 2,
         lastMessageTime: DateTime.now().subtract(const Duration(minutes: 5)),
@@ -24,7 +24,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       ConversationModel(
         id: '2',
         otherUserName: 'سارة التصوير',
-        otherUserImage: 'https://placehold.co/40x40.png',
+        otherUserImage: 'https://picsum.photos/seed/chat2/56/56',
         lastMessage: 'تم استلام طلبك',
         unreadCount: 0,
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 1)),
@@ -32,7 +32,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       ConversationModel(
         id: '3',
         otherUserName: 'محمد الفوتوغرافي',
-        otherUserImage: 'https://placehold.co/40x40.png',
+        otherUserImage: 'https://picsum.photos/seed/chat3/56/56',
         lastMessage: 'الصور جاهزة',
         unreadCount: 1,
         lastMessageTime: DateTime.now().subtract(const Duration(hours: 3)),
