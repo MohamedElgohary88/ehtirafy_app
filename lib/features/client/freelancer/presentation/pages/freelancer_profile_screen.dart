@@ -96,7 +96,7 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
             // Header
             SliverAppBar(
               pinned: true,
-              expandedHeight: 260.h,
+              expandedHeight: 220.h,
               backgroundColor: const Color(0xFF2B2B2B),
               elevation: 0,
               scrolledUnderElevation: 0,
@@ -126,40 +126,34 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
               ),
             ),
 
-            // Profile Card
+            // Profile Card - NO overlap, just spacing
             SliverToBoxAdapter(
-              child: Transform.translate(
-                offset: Offset(0, -50.h),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: _buildEnhancedProfileCard(freelancer),
-                ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+                child: _buildEnhancedProfileCard(freelancer),
               ),
             ),
 
             // Tab Bar
             SliverToBoxAdapter(
-              child: Transform.translate(
-                offset: Offset(0, -34.h),
+              child: Padding(
+                padding: EdgeInsets.only(top: 16.h),
                 child: _buildTabBar(),
               ),
             ),
 
             // Tab Content
             SliverToBoxAdapter(
-              child: Transform.translate(
-                offset: Offset(0, -18.h),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  child: TabBarView(
-                    controller: _tabController,
-                    physics: const BouncingScrollPhysics(),
-                    children: [
-                      _buildPortfolioTab(freelancer),
-                      _buildServicesTab(),
-                      _buildReviewsTab(freelancer),
-                    ],
-                  ),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.55,
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    _buildPortfolioTab(freelancer),
+                    _buildServicesTab(),
+                    _buildReviewsTab(freelancer),
+                  ],
                 ),
               ),
             ),
@@ -202,43 +196,66 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
     return Stack(
       fit: StackFit.expand,
       children: [
+        // Background Image
         Image.network(
           'https://picsum.photos/seed/profilebg/800/400',
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) =>
               Container(color: const Color(0xFF2B2B2B)),
         ),
+        // Gradient Overlay
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.3),
-                Colors.black.withValues(alpha: 0.7),
+                Colors.black.withValues(alpha: 0.2),
+                Colors.black.withValues(alpha: 0.6),
               ],
             ),
           ),
         ),
+        // Profile Info - positioned at bottom of header
         Positioned(
-          bottom: 70.h,
+          bottom: 20.h,
           left: 20.w,
           right: 20.w,
           child: Row(
             children: [
+              // Avatar with gold border
               Container(
-                width: 70.w,
-                height: 70.w,
+                width: 64.w,
+                height: 64.w,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: Colors.white, width: 3),
-                  image: DecorationImage(
-                    image: NetworkImage(freelancer.imageUrl),
+                  borderRadius: BorderRadius.circular(14.r),
+                  border: Border.all(color: AppColors.gold, width: 2.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: Image.network(
+                    freelancer.imageUrl,
                     fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: AppColors.grey200,
+                      child: Icon(
+                        Icons.person,
+                        color: AppColors.textSecondary,
+                        size: 32.sp,
+                      ),
+                    ),
                   ),
                 ),
               ),
-              SizedBox(width: 16.w),
+              SizedBox(width: 14.w),
+              // Name and Title
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,15 +268,32 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
                             freelancer.name,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20.sp,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Cairo',
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.5),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         SizedBox(width: 6.w),
-                        Icon(Icons.verified, color: Colors.blue, size: 18.sp),
+                        Container(
+                          padding: EdgeInsets.all(2.w),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.verified,
+                            color: Colors.blue,
+                            size: 14.sp,
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 4.h),
@@ -267,10 +301,51 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
                       freelancer.title,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontFamily: 'Cairo',
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            blurRadius: 4,
+                          ),
+                        ],
                       ),
                       overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              // Rating Badge
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      color: AppColors.gold,
+                      size: 16.sp,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      freelancer.rating.toString(),
+                      style: TextStyle(
+                        color: const Color(0xFF2B2B2B),
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Cairo',
+                      ),
                     ),
                   ],
                 ),
@@ -535,22 +610,23 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
 
   Widget _buildBottomButton(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
+      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.r),
-          topRight: Radius.circular(24.r),
+          topLeft: Radius.circular(20.r),
+          topRight: Radius.circular(20.r),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 15,
+            offset: const Offset(0, -3),
           ),
         ],
       ),
       child: SafeArea(
+        top: false,
         child: BlocBuilder<FreelancerCubit, FreelancerState>(
           builder: (context, state) {
             return ElevatedButton(
@@ -569,9 +645,9 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.gold,
-                padding: EdgeInsets.symmetric(vertical: 16.h),
+                padding: EdgeInsets.symmetric(vertical: 14.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14.r),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 elevation: 0,
               ),
@@ -581,14 +657,14 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
                   Icon(
                     Icons.calendar_today_outlined,
                     color: Colors.white,
-                    size: 18.sp,
+                    size: 16.sp,
                   ),
                   SizedBox(width: 8.w),
                   Text(
                     AppStrings.freelancerProfileOrderNow.tr(),
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Cairo',
                     ),
