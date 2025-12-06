@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_profile_model.dart';
 import '../../domain/entities/user_profile_entity.dart';
 
@@ -7,22 +8,38 @@ abstract class ProfileRemoteDataSource {
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-  // Simulating a remote data source with in-memory state for the role
-  static UserRole _currentRole = UserRole.client;
+  static const String _roleKey = 'USER_ROLE';
+  final SharedPreferences sharedPreferences;
+
+  ProfileRemoteDataSourceImpl({required this.sharedPreferences});
 
   @override
   Future<UserProfileModel> getUserProfile() async {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 500));
-    return _getMockUser(_currentRole);
+
+    // Get persisted role from SharedPreferences
+    final roleString = sharedPreferences.getString(_roleKey);
+    UserRole currentRole = UserRole.client;
+    if (roleString != null) {
+      currentRole = UserRole.values.firstWhere(
+        (role) => role.name == roleString,
+        orElse: () => UserRole.client,
+      );
+    }
+
+    return _getMockUser(currentRole);
   }
 
   @override
   Future<UserProfileModel> switchUserRole(UserRole newRole) async {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 800));
-    _currentRole = newRole;
-    return _getMockUser(_currentRole);
+
+    // Persist the new role to SharedPreferences
+    await sharedPreferences.setString(_roleKey, newRole.name);
+
+    return _getMockUser(newRole);
   }
 
   UserProfileModel _getMockUser(UserRole role) {

@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/repositories/auth_repository.dart';
@@ -70,6 +71,10 @@ import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_p
 final sl = GetIt.instance;
 
 Future<void> setupLocator() async {
+  // External dependencies
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerSingleton<SharedPreferences>(sharedPreferences);
+
   // Data layer
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(),
@@ -165,7 +170,7 @@ Future<void> setupLocator() async {
     () => ProfileRepositoryImpl(sl()),
   );
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(),
+    () => ProfileRemoteDataSourceImpl(sharedPreferences: sl()),
   );
 
   // Features - Freelancer Dashboard
