@@ -12,6 +12,8 @@ class AppStrings {
   static const authLoginButton = 'auth.loginButton';
   static const authNoAccount = 'auth.noAccount';
   static const authCreateAccount = 'auth.createAccount';
+  static const authForgotPasswordSubtitle = 'auth.forgotPasswordSubtitle';
+  static const authSendResetLink = 'auth.sendResetLink';
 
   static const authSignupTitle = 'auth.signupTitle';
   static const authSignupSubtitle = 'auth.signupSubtitle';

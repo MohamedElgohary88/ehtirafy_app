@@ -14,17 +14,29 @@ class SignupCubit extends Cubit<SignupState> {
     required String email,
     required String phone,
     required String password,
+    required String passwordConfirmation,
+    required String sex,
+    required String materialStatus,
+    required String userType,
+    required String countryCode,
   }) async {
     emit(SignupLoading());
     final result = await signupUseCase(
-      fullName: fullName,
-      email: email,
-      phone: phone,
-      password: password,
+      SignupParams(
+        fullName: fullName,
+        email: email,
+        phone: phone,
+        password: password,
+        passwordConfirmation: passwordConfirmation,
+        sex: sex,
+        materialStatus: materialStatus,
+        userType: userType,
+        countryCode: countryCode,
+      ),
     );
     result.fold(
       (failure) => emit(SignupError(_mapFailureToMessage(failure))),
-      (loginResult) => emit(SignupSuccess(loginResult)),
+      (user) => emit(SignupSuccess(user)),
     );
   }
 

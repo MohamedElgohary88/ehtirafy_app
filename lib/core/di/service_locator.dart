@@ -3,10 +3,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/repositories/auth_repository.dart';
+import 'package:ehtirafy_app/core/network/dio_client.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/login_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/signup_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/usecases/forgot_password_usecase.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/forgot_password_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/otp_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/repositories/role_repository.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/repositories/role_repository_impl.dart';
@@ -77,20 +80,29 @@ Future<void> setupLocator() async {
 
   // Data layer
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(),
+    () => AuthRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
   sl.registerLazySingleton<RoleRepository>(() => RoleRepositoryImpl());
 
+  // Network
+  sl.registerLazySingleton<DioClient>(() => DioClient());
+
   // Domain layer
   sl.registerFactory<LoginUseCase>(() => LoginUseCase(sl<AuthRepository>()));
   sl.registerFactory<SignupUseCase>(() => SignupUseCase(sl<AuthRepository>()));
+  sl.registerFactory<ForgotPasswordUseCase>(
+    () => ForgotPasswordUseCase(sl<AuthRepository>()),
+  );
   sl.registerFactory<GetRoleUseCase>(() => GetRoleUseCase(sl()));
   sl.registerFactory<SetRoleUseCase>(() => SetRoleUseCase(sl()));
 
   // Presentation layer
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl<LoginUseCase>()));
   sl.registerFactory<SignupCubit>(() => SignupCubit(sl<SignupUseCase>()));
+  sl.registerFactory<ForgotPasswordCubit>(
+    () => ForgotPasswordCubit(sl<ForgotPasswordUseCase>()),
+  );
   sl.registerFactory<OtpCubit>(() => OtpCubit());
   sl.registerLazySingleton<RoleCubit>(
     () => RoleCubit(sl<GetRoleUseCase>(), sl<SetRoleUseCase>()),

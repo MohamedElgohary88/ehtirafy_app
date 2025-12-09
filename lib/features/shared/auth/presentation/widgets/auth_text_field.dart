@@ -9,6 +9,7 @@ class AuthTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
+  final Widget? prefixWidget;
 
   const AuthTextField({
     super.key,
@@ -18,6 +19,7 @@ class AuthTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
+    this.prefixWidget,
   });
 
   @override
@@ -47,6 +49,12 @@ class AuthTextField extends StatelessWidget {
             hintText: hint,
             filled: true,
             fillColor: Colors.white,
+            prefixIcon:
+                prefixWidget, // Changed to prefixIcon to allow widget inside border
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.transparent),
@@ -59,7 +67,10 @@ class AuthTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: AppColors.gold),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 12.w,
+              vertical: 12.h,
+            ),
           ),
         ),
       ],

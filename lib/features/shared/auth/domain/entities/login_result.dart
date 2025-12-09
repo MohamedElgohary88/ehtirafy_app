@@ -1,11 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'user.dart';
 
 class LoginResult extends Equatable {
+  final User user;
   final String token;
-  final String userName;
 
-  const LoginResult({required this.token, required this.userName});
+  const LoginResult({required this.user, required this.token});
 
   @override
-  List<Object?> get props => [token, userName];
+  List<Object?> get props => [user, token];
 }

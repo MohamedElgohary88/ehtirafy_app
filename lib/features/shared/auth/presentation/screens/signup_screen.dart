@@ -12,6 +12,8 @@ import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_text
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_state.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_selector.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/country_code_picker_dialog.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
@@ -69,6 +71,16 @@ class _SignupFormState extends State<_SignupForm> {
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
   late final TextEditingController _passwordController;
+
+  // UI State
+  String _selectedSex = 'male';
+  String _selectedMaterialStatus = 'single';
+  Country _selectedCountry = const Country(
+    name: 'Saudi Arabia',
+    code: 'SA',
+    dialCode: '966',
+    flag: '🇸🇦',
+  );
 
   @override
   void initState() {
@@ -130,6 +142,48 @@ class _SignupFormState extends State<_SignupForm> {
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               textInputAction: TextInputAction.next,
+              prefixWidget: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(width: 12.w),
+                  GestureDetector(
+                    onTap: () async {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => CountryCodePickerDialog(
+                          onCountrySelected: (country) {
+                            setState(() {
+                              _selectedCountry = country;
+                            });
+                          },
+                        ),
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          _selectedCountry.flag,
+                          style: TextStyle(fontSize: 20.sp),
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          '+${_selectedCountry.dialCode}',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        Icon(Icons.arrow_drop_down, color: AppColors.grey600),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 1.w,
+                    height: 24.h,
+                    color: Colors.grey[300],
+                    margin: EdgeInsets.symmetric(horizontal: 8.w),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 16.h),
             AuthTextField(
@@ -137,6 +191,41 @@ class _SignupFormState extends State<_SignupForm> {
               hint: AppStrings.authPasswordHint.tr(),
               controller: _passwordController,
               obscureText: true,
+            ),
+            SizedBox(height: 16.h),
+            // Sex Selector
+            AuthSelector<String>(
+              label: 'Sex', // TODO: Localize
+              groupValue: _selectedSex,
+              items: const [
+                AuthSelectorItem(
+                  label: 'Male',
+                  value: 'male',
+                ), // TODO: Localize
+                AuthSelectorItem(
+                  label: 'Female',
+                  value: 'female',
+                ), // TODO: Localize
+              ],
+              onChanged: (value) => setState(() => _selectedSex = value),
+            ),
+            SizedBox(height: 16.h),
+            // Material Status Selector
+            AuthSelector<String>(
+              label: 'Marital Status', // TODO: Localize
+              groupValue: _selectedMaterialStatus,
+              items: const [
+                AuthSelectorItem(
+                  label: 'Single',
+                  value: 'single',
+                ), // TODO: Localize
+                AuthSelectorItem(
+                  label: 'Married',
+                  value: 'married',
+                ), // TODO: Localize
+              ],
+              onChanged: (value) =>
+                  setState(() => _selectedMaterialStatus = value),
             ),
             SizedBox(height: 8.h),
             Align(
@@ -159,6 +248,11 @@ class _SignupFormState extends State<_SignupForm> {
                   email: _emailController.text.trim(),
                   phone: _phoneController.text.trim(),
                   password: _passwordController.text.trim(),
+                  passwordConfirmation: _passwordController.text.trim(),
+                  sex: _selectedSex,
+                  materialStatus: _selectedMaterialStatus,
+                  userType: 'client', // TODO: Add UI or dynamic role
+                  countryCode: _selectedCountry.dialCode,
                 );
               },
               isLoading: state is SignupLoading,

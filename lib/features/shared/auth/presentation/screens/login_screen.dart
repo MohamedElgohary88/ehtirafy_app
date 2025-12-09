@@ -73,6 +73,7 @@ class _LoginForm extends StatelessWidget {
     return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
+          // TODO: Save user/token to generic Cache Helper
           context.go('/home');
         } else if (state is LoginError) {
           ScaffoldMessenger.of(
@@ -105,7 +106,7 @@ class _LoginForm extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () => context.push('/auth/forgot-password'),
                 child: Text(
                   AppStrings.authForgotPassword.tr(),
                   style: theme.textTheme.titleMedium?.copyWith(

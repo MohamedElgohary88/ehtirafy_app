@@ -1,16 +1,22 @@
 import '../../domain/entities/login_result.dart';
+import '../models/register_response_model.dart';
 
 class LoginModel extends LoginResult {
-  const LoginModel({required super.token, required super.userName});
+  const LoginModel({required super.user, required super.token});
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(
+      user: RegisterResponseModel.fromJson(json['user']),
       token: json['token'] ?? '',
-      userName: json['user_name'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'token': token, 'user_name': userName};
+    // We can't fully revert to original JSON structure without the User.toJson method
+    // But typically models are for reading from API.
+    return {
+      'token': token,
+      // 'user': user.toJson(), // Assuming user has toJson or we cast to model
+    };
   }
 }

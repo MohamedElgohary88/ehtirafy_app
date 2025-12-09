@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/login_result.dart';
 
 abstract class SignupState extends Equatable {
   const SignupState();
@@ -13,12 +12,10 @@ class SignupInitial extends SignupState {}
 class SignupLoading extends SignupState {}
 
 class SignupSuccess extends SignupState {
-  final LoginResult result;
-
-  const SignupSuccess(this.result);
-
+  final dynamic user; // Using dynamic or User entity
+  const SignupSuccess(this.user);
   @override
-  List<Object> get props => [result];
+  List<Object> get props => [user];
 }
 
 class SignupError extends SignupState {
