@@ -13,10 +13,21 @@ abstract class FreelancerGigsRepository {
     required double price,
     required String category,
     String? coverImage,
+    List<String> availability = const [],
+    List<String> images = const [],
   });
 
   /// Update an existing gig
-  Future<Either<Failure, GigEntity>> updateGig(GigEntity gig);
+  Future<Either<Failure, GigEntity>> updateGig({
+    required String id,
+    required String title,
+    required String description,
+    required double price,
+    required String category,
+    String? coverImage,
+    List<String> availability = const [],
+    List<String> images = const [],
+  });
 
   /// Delete a gig
   Future<Either<Failure, void>> deleteGig(String gigId);

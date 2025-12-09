@@ -1,6 +1,9 @@
+import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_dashboard_repository_impl.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/repositories/freelancer_orders_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:ehtirafy_app/features/shared/auth/data/datasources/user_local_data_source.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/repositories/auth_repository.dart';
 import 'package:ehtirafy_app/core/network/dio_client.dart';
@@ -56,19 +59,18 @@ import 'package:ehtirafy_app/features/shared/profile/domain/repositories/profile
 import 'package:ehtirafy_app/features/shared/profile/domain/usecases/get_user_profile_usecase.dart';
 import 'package:ehtirafy_app/features/shared/profile/domain/usecases/switch_user_role_usecase.dart';
 import 'package:ehtirafy_app/features/shared/profile/presentation/manager/profile_cubit.dart';
-
-// Freelancer module imports
+import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_gigs_remote_data_source.dart';
+import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_gigs_repository_impl.dart';
 import 'package:ehtirafy_app/features/freelancer/domain/repositories/freelancer_dashboard_repository.dart';
 import 'package:ehtirafy_app/features/freelancer/domain/repositories/freelancer_gigs_repository.dart';
 import 'package:ehtirafy_app/features/freelancer/domain/repositories/freelancer_orders_repository.dart';
 import 'package:ehtirafy_app/features/freelancer/domain/repositories/freelancer_portfolio_repository.dart';
-import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_dashboard_repository_impl.dart';
-import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_gigs_repository_impl.dart';
 import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_orders_repository_impl.dart';
 import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_portfolio_repository_impl.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_dashboard_cubit.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_gigs_cubit.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_orders_cubit.dart';
+import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_portfolio_remote_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_portfolio_cubit.dart';
 
 final sl = GetIt.instance;
@@ -82,7 +84,9 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl()),
   );
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl(), sl()),
+  );
   sl.registerLazySingleton<RoleRepository>(() => RoleRepositoryImpl());
 
   // Network
@@ -107,6 +111,10 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton<RoleCubit>(
     () => RoleCubit(sl<GetRoleUseCase>(), sl<SetRoleUseCase>()),
   );
+  sl.registerLazySingleton<UserLocalDataSource>(
+    () => UserLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
   // Features - Notifications
   sl.registerFactory(() => NotificationsCubit(getNotificationsUseCase: sl()));
   sl.registerLazySingleton(() => GetNotificationsUseCase(sl()));
@@ -126,7 +134,12 @@ Future<void> setupLocator() async {
     () => SearchRemoteDataSourceImpl(),
   );
   // Features - Home
-  sl.registerFactory(() => HomeCubit(getFeaturedPhotographersUseCase: sl()));
+  sl.registerFactory(
+    () => HomeCubit(
+      getFeaturedPhotographersUseCase: sl(),
+      userLocalDataSource: sl(),
+    ),
+  );
   sl.registerLazySingleton(() => GetFeaturedPhotographersUseCase(sl()));
   sl.registerLazySingleton<HomeRepository>(
     () => HomeRepositoryImpl(remoteDataSource: sl()),
@@ -188,13 +201,20 @@ Future<void> setupLocator() async {
   // Features - Freelancer Dashboard
   sl.registerFactory(() => FreelancerDashboardCubit(repository: sl()));
   sl.registerLazySingleton<FreelancerDashboardRepository>(
-    () => FreelancerDashboardRepositoryImpl(),
+    () => FreelancerDashboardRepositoryImpl(
+      userLocalDataSource: sl(),
+      gigsRemoteDataSource: sl(),
+    ),
   );
 
   // Features - Freelancer Gigs
   sl.registerFactory(() => FreelancerGigsCubit(repository: sl()));
+  sl.registerLazySingleton<FreelancerGigsRemoteDataSource>(
+    () => FreelancerGigsRemoteDataSourceImpl(sl()),
+  );
+
   sl.registerLazySingleton<FreelancerGigsRepository>(
-    () => FreelancerGigsRepositoryImpl(),
+    () => FreelancerGigsRepositoryImpl(remoteDataSource: sl()),
   );
 
   // Features - Freelancer Orders
@@ -205,7 +225,11 @@ Future<void> setupLocator() async {
 
   // Features - Freelancer Portfolio
   sl.registerFactory(() => FreelancerPortfolioCubit(repository: sl()));
+  // Portfolio
+  sl.registerLazySingleton<FreelancerPortfolioRemoteDataSource>(
+    () => FreelancerPortfolioRemoteDataSourceImpl(sl()),
+  );
   sl.registerLazySingleton<FreelancerPortfolioRepository>(
-    () => FreelancerPortfolioRepositoryImpl(),
+    () => FreelancerPortfolioRepositoryImpl(remoteDataSource: sl()),
   );
 }

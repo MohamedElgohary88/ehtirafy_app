@@ -320,7 +320,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12.r),
       child: Image.network(
-        item.imageUrl,
+        item.image ?? '',
         width: 120.w,
         height: 120.h,
         fit: BoxFit.cover,
@@ -387,6 +387,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
           AppStrings.freelancerDashboardServicesSection.tr(),
           AppStrings.freelancerDashboardAddService.tr(),
           () => context.push('/freelancer/gigs/create'),
+          onTitleTap: () => context.push('/freelancer/gigs'),
         ),
         SizedBox(height: 12.h),
         if (gigs.isEmpty)
@@ -577,15 +578,15 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
               children: [
                 Text(
                   order.serviceTitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF2B2B2B),
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF2B2B2B),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                SizedBox(height: 2.h),
+                SizedBox(height: 4.h),
                 Text(
                   order.clientName,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -613,17 +614,21 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
     BuildContext context,
     String title,
     String actionText,
-    VoidCallback onAction,
-  ) {
+    VoidCallback onAction, {
+    VoidCallback? onTitleTap,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: const Color(0xFF2B2B2B),
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
+        InkWell(
+          onTap: onTitleTap,
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF2B2B2B),
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         TextButton(

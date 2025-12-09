@@ -240,22 +240,50 @@ class _SignupFormState extends State<_SignupForm> {
             SizedBox(height: 16.h),
             PrimaryButton(
               text: AppStrings.authSignupButton.tr(),
+              // Use builder to access the form state validation if needed, but controllers are here
               onPressed: () {
-                final current = context.read<SignupCubit>().state;
-                if (current is SignupLoading) return;
-                cubit.signup(
-                  fullName: _fullNameController.text.trim(),
-                  email: _emailController.text.trim(),
-                  phone: _phoneController.text.trim(),
-                  password: _passwordController.text.trim(),
-                  passwordConfirmation: _passwordController.text.trim(),
-                  sex: _selectedSex,
-                  materialStatus: _selectedMaterialStatus,
-                  userType: 'client', // TODO: Add UI or dynamic role
-                  countryCode: _selectedCountry.dialCode,
+                // Basic validation
+                if (_fullNameController.text.isEmpty ||
+                    _emailController.text.isEmpty ||
+                    _phoneController.text.isEmpty ||
+                    _passwordController.text.isEmpty ||
+                    _confirmPasswordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(AppStrings.validationRequired.tr())),
+                  );
+                  return;
+                }
+
+                if (_passwordController.text !=
+                    _confirmPasswordController.text) {
+                  // TODO: Add specific error string
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Passwords do not match')),
+                  );
+                  return;
+                }
+
+                final signupData = {
+                  'fullName': _fullNameController.text,
+                  'email': _emailController.text,
+                  'phone': _phoneController.text,
+                  'password': _passwordController.text,
+                  'passwordConfirmation': _confirmPasswordController.text,
+                  'sex': _selectedSex, // Defaults from state
+                  'maritalStatus':
+                      _selectedMaterialStatus, // Defaults from state
+                  'countryCode': _selectedCountry.dialCode,
+                  // 'userType' will be added in Role Selection screen
+                };
+
+                context.push(
+                  '/auth/otp?phone=${_phoneController.text}',
+                  extra: signupData,
                 );
               },
-              isLoading: state is SignupLoading,
+              isLoading:
+                  state
+                      is SignupLoading, // Kept this line as it's good practice and not explicitly removed
             ),
             SizedBox(height: 16.h),
             Center(

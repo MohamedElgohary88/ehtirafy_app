@@ -60,3 +60,23 @@ class FreelancerGigAddError extends FreelancerGigsState {
   @override
   List<Object?> get props => [message];
 }
+
+class FreelancerGigUpdating extends FreelancerGigsState {}
+
+class FreelancerGigUpdated extends FreelancerGigsState {
+  final GigEntity gig;
+
+  const FreelancerGigUpdated(this.gig);
+
+  @override
+  List<Object?> get props => [gig];
+}
+
+class FreelancerGigUpdateError extends FreelancerGigsState {
+  final String message;
+
+  const FreelancerGigUpdateError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

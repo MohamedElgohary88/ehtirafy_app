@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -20,13 +22,11 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _cameraTypeController = TextEditingController();
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _cameraTypeController.dispose();
     super.dispose();
   }
 
@@ -76,17 +76,17 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
                         ),
                         SizedBox(height: 16.h),
                         _buildTextField(
-                          controller: _cameraTypeController,
-                          label: AppStrings.freelancerPortfolioCameraType.tr(),
-                          hint: 'مثال: Sony A7III',
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildTextField(
                           controller: _descriptionController,
                           label: AppStrings.freelancerPortfolioWorkDescription
                               .tr(),
                           hint: 'وصف مختصر للعمل...',
                           maxLines: 4,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'يرجى إدخال وصف العمل';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: 24.h),
                         _buildNoteCard(context),
@@ -198,14 +198,24 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
     );
   }
 
+  File? _pickedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _pickedImage = File(image.path);
+      });
+    }
+  }
+
   Widget _buildImageUploadWidget() {
     return GestureDetector(
-      onTap: () {
-        // TODO: Implement image picker
-      },
+      onTap: _pickImage,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(24.w),
+        height: 200.h,
         decoration: ShapeDecoration(
           color: const Color(0x0CC8A44F),
           shape: RoundedRectangleBorder(
@@ -213,68 +223,76 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
             borderRadius: BorderRadius.circular(14.r),
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 64.w,
-              height: 64.h,
-              decoration: ShapeDecoration(
-                color: const Color(0x33C8A34E),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
+        child: _pickedImage != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: Image.file(_pickedImage!, fit: BoxFit.cover),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 64.w,
+                    height: 64.h,
+                    decoration: ShapeDecoration(
+                      color: const Color(0x33C8A34E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.cloud_upload_outlined,
+                      size: 32.sp,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    AppStrings.freelancerPortfolioUploadImages.tr(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: const Color(0xFF2B2B2B),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      height: 1.50,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    AppStrings.freelancerPortfolioUploadHint.tr(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF888888),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      height: 1.43,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
+                    decoration: ShapeDecoration(
+                      color: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.freelancerPortfolioSelectImages.tr(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontFamily: 'Cairo',
+                        fontWeight: FontWeight.w500,
+                        height: 1.43,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(
-                Icons.cloud_upload_outlined,
-                size: 32.sp,
-                color: AppColors.primary,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              AppStrings.freelancerPortfolioUploadImages.tr(),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF2B2B2B),
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.50,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              AppStrings.freelancerPortfolioUploadHint.tr(),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF888888),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.43,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: ShapeDecoration(
-                color: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              child: Text(
-                AppStrings.freelancerPortfolioSelectImages.tr(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                  fontFamily: 'Cairo',
-                  fontWeight: FontWeight.w500,
-                  height: 1.43,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -365,12 +383,7 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
       context.read<FreelancerPortfolioCubit>().addPortfolioItem(
         title: _titleController.text,
         description: _descriptionController.text,
-        cameraType: _cameraTypeController.text.isNotEmpty
-            ? _cameraTypeController.text
-            : 'غير محدد',
-        imageUrl:
-            'https://picsum.photos/400/400?random=${DateTime.now().millisecondsSinceEpoch}',
-        category: 'عام',
+        imagePath: _pickedImage?.path,
       );
     }
   }

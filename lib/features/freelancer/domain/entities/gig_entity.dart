@@ -10,7 +10,9 @@ class GigEntity extends Equatable {
   final String category;
   final GigStatus status;
   final String coverImage;
-  final DateTime createdAt;
+  final DateTime? createdAt;
+  final List<String> availability;
+  final List<String> images;
 
   const GigEntity({
     required this.id,
@@ -20,7 +22,9 @@ class GigEntity extends Equatable {
     required this.category,
     required this.status,
     required this.coverImage,
-    required this.createdAt,
+    this.createdAt,
+    this.availability = const [],
+    this.images = const [],
   });
 
   @override
@@ -33,5 +37,7 @@ class GigEntity extends Equatable {
     status,
     coverImage,
     createdAt,
+    availability,
+    images,
   ];
 }

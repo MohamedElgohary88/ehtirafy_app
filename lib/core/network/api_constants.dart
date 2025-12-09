@@ -6,4 +6,7 @@ class ApiConstants {
   static const String register = '/api/$version/auth/register';
   static const String login = '/api/$version/auth/login';
   static const String forgotPassword = '/api/$version/auth/forgot-password';
+  static const String freelancerAdvertisements =
+      '$baseUrl/front/advertisements';
+  static const String freelancerPortfolio = '$baseUrl/front/our-works';
 }

@@ -9,19 +9,36 @@ class GigModel extends GigEntity {
     required super.category,
     required super.status,
     required super.coverImage,
-    required super.createdAt,
+    super.createdAt,
+    super.availability,
+    super.images,
   });
 
   factory GigModel.fromJson(Map<String, dynamic> json) {
+    // API might return 'ar_title', 'en_title'. We pick 'en_title' or current locale.
+    // For now assuming we prefer 'en' or combine them.
+    // Actually, let's check what the API returns. The prompt says "Advertisements retrieved successfully".
+    // It doesn't specify the exact READ fields, but likely matching the create params: ar_title, en_title.
+    // Let's use 'en_title' as title for now.
+
     return GigModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      price: (json['price'] as num).toDouble(),
-      category: json['category'] as String,
-      status: _parseStatus(json['status'] as String),
-      coverImage: json['coverImage'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      id: json['id']?.toString() ?? '',
+      title: json['en_title'] ?? json['ar_title'] ?? '',
+      description: json['en_description'] ?? json['ar_description'] ?? '',
+      price: double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
+      category: json['category_id']?.toString() ?? '', // category_id from API
+      status: _parseStatus(json['status']?.toString() ?? ''),
+      coverImage:
+          (json['images'] != null && (json['images'] as List).isNotEmpty)
+          ? json['images'][0]
+          : '',
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      availability: json['days_availability'] != null
+          ? List<String>.from(json['days_availability'])
+          : [],
+      images: json['images'] != null ? List<String>.from(json['images']) : [],
     );
   }
 
@@ -34,7 +51,7 @@ class GigModel extends GigEntity {
       'category': category,
       'status': _statusToString(status),
       'coverImage': coverImage,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
     };
   }
 

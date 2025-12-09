@@ -20,4 +20,5 @@ abstract class FreelancerDashboardRepository {
 
   /// Toggle online/offline status
   Future<Either<Failure, bool>> toggleOnlineStatus(bool isOnline);
+  Future<String> getUserName();
 }

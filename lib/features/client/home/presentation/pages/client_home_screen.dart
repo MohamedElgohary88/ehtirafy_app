@@ -39,6 +39,7 @@ class ClientHomeContent extends StatelessWidget {
                     SliverPersistentHeader(
                       delegate: HomeSliverHeaderDelegate(
                         topPadding: topPadding,
+                        userName: state.userName,
                       ),
                       pinned: true,
                     ),

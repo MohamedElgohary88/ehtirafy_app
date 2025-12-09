@@ -4,8 +4,9 @@ import '../../../../../../core/theme/app_colors.dart';
 
 class HomeSliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double topPadding;
+  final String userName;
 
-  HomeSliverHeaderDelegate({this.topPadding = 0.0});
+  HomeSliverHeaderDelegate({this.topPadding = 0.0, required this.userName});
 
   @override
   Widget build(
@@ -124,9 +125,9 @@ class HomeSliverHeaderDelegate extends SliverPersistentHeaderDelegate {
                               ),
                             ],
                           ),
-                          const Text(
-                            'مساء الخير، أحمد',
-                            style: TextStyle(
+                          Text(
+                            'مساء الخير، $userName',
+                            style: const TextStyle(
                               color: Color(0xB2FFFFFF),
                               fontSize: 14,
                               fontFamily: 'Cairo',
@@ -193,6 +194,7 @@ class HomeSliverHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant HomeSliverHeaderDelegate oldDelegate) {
-    return oldDelegate.topPadding != topPadding;
+    return oldDelegate.topPadding != topPadding ||
+        oldDelegate.userName != userName;
   }
 }

@@ -4,17 +4,17 @@ import '../entities/portfolio_item_entity.dart';
 
 abstract class FreelancerPortfolioRepository {
   /// Get all portfolio items
-  Future<Either<Failure, List<PortfolioItemEntity>>> getPortfolioItems();
-
-  /// Add a new portfolio item
+  Future<Either<Failure, List<PortfolioItemEntity>>> getPortfolio();
   Future<Either<Failure, PortfolioItemEntity>> addPortfolioItem({
     required String title,
     required String description,
-    required String cameraType,
-    required String imageUrl,
-    required String category,
+    String? imagePath,
   });
-
-  /// Delete a portfolio item
-  Future<Either<Failure, void>> deletePortfolioItem(String itemId);
+  Future<Either<Failure, PortfolioItemEntity>> updatePortfolioItem({
+    required String id,
+    required String title,
+    required String description,
+    String? imagePath,
+  });
+  Future<Either<Failure, void>> deletePortfolioItem(String id);
 }

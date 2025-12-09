@@ -9,20 +9,31 @@ import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit
 import 'package:ehtirafy_app/core/di/service_locator.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_state.dart';
+
 class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({super.key});
+  final Map<String, dynamic>? signupData;
+
+  const RoleSelectionScreen({super.key, this.signupData});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<RoleCubit>(),
-      child: const _RoleSelectionView(),
+    // We need both RoleCubit (for selection UI) and SignupCubit (for API action)
+    // If signupData is present, we are in registration flow.
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<RoleCubit>()),
+        BlocProvider(create: (_) => sl<SignupCubit>()),
+      ],
+      child: _RoleSelectionView(signupData: signupData),
     );
   }
 }
 
 class _RoleSelectionView extends StatelessWidget {
-  const _RoleSelectionView();
+  final Map<String, dynamic>? signupData;
+  const _RoleSelectionView({this.signupData});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -35,9 +46,17 @@ class _RoleSelectionView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('roleSelection.title'.tr(), style: theme.textTheme.titleLarge?.copyWith(fontSize: 24.sp)),
+              Text(
+                'roleSelection.title'.tr(),
+                style: theme.textTheme.titleLarge?.copyWith(fontSize: 24.sp),
+              ),
               SizedBox(height: 8.h),
-              Text('roleSelection.subtitle'.tr(), style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey600)),
+              Text(
+                'roleSelection.subtitle'.tr(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.grey600,
+                ),
+              ),
               SizedBox(height: 32.h),
               Expanded(
                 child: BlocBuilder<RoleCubit, RoleState>(
@@ -57,8 +76,15 @@ class _RoleSelectionView extends StatelessWidget {
                             badge2: 'roleSelection.clientBadge2'.tr(),
                             onTap: () => cubit.select(UserRole.client),
                             gradient: (selected == UserRole.client)
-                                ? LinearGradient(colors: [AppColors.gold.withValues(alpha: 0.07), Colors.transparent])
-                                : LinearGradient(colors: [Colors.white, AppColors.grey100]),
+                                ? LinearGradient(
+                                    colors: [
+                                      AppColors.gold.withValues(alpha: 0.07),
+                                      Colors.transparent,
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    colors: [Colors.white, AppColors.grey100],
+                                  ),
                             borderColor: AppColors.grey300,
                           ),
                           SizedBox(height: 16.h),
@@ -72,8 +98,15 @@ class _RoleSelectionView extends StatelessWidget {
                             badge2: 'roleSelection.freelancerBadge2'.tr(),
                             onTap: () => cubit.select(UserRole.freelancer),
                             gradient: (selected == UserRole.freelancer)
-                                ? LinearGradient(colors: [AppColors.gold.withValues(alpha: 0.07), Colors.transparent])
-                                : LinearGradient(colors: [Colors.white, AppColors.grey100]),
+                                ? LinearGradient(
+                                    colors: [
+                                      AppColors.gold.withValues(alpha: 0.07),
+                                      Colors.transparent,
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    colors: [Colors.white, AppColors.grey100],
+                                  ),
                             borderColor: AppColors.grey300,
                           ),
                         ],
@@ -83,28 +116,87 @@ class _RoleSelectionView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 24.h),
-              BlocConsumer<RoleCubit, RoleState>(
-                listener: (context, state) {
-                  if (state is RoleSaved) {
+              SizedBox(height: 24.h),
+              BlocConsumer<SignupCubit, SignupState>(
+                listener: (context, signupState) {
+                  if (signupState is SignupSuccess) {
+                    // Saves role locally as well
+                    context
+                        .read<RoleCubit>()
+                        .save(); // We should await this or just let it happen?
+                    // Ideally we want to ensure role is saved in prefs too if that's what RoleCubit does.
+                    // But RoleCubit.save() emits RoleSaved.
+
+                    // We might need to listen to RoleCubit too if we want to wait for local save.
+                    // But usually successful signup implies we can go home.
+                    // However, the requested flow is: Signup API call on this screen.
+
+                    // Let's trigger role save first or parallel?
+                    // Actually, if signup success, we are logged in.
                     context.go('/home');
-                  } else if (state is RoleError) {
+                  } else if (signupState is SignupError) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.failureKey.tr())),
+                      SnackBar(content: Text(signupState.message.tr())),
                     );
                   }
                 },
-                builder: (context, state) {
-                  final saving = state is RoleSaving;
-                  final cubit = context.read<RoleCubit>();
-                  return PrimaryButton(
-                    text: 'roleSelection.confirm'.tr(),
-                    isLoading: saving,
-                    onPressed: saving ? () {} : () => cubit.save(),
+                builder: (context, signupState) {
+                  return BlocBuilder<RoleCubit, RoleState>(
+                    builder: (context, roleState) {
+                      final roleCubit = context.read<RoleCubit>();
+                      final isSaving =
+                          roleState is RoleSaving ||
+                          signupState is SignupLoading;
+
+                      return PrimaryButton(
+                        text: 'roleSelection.confirm'.tr(),
+                        isLoading: isSaving,
+                        onPressed: isSaving
+                            ? () {}
+                            : () async {
+                                final selectedRole = roleCubit.selected;
+                                if (signupData != null) {
+                                  // Registration Flow
+                                  final data = Map<String, dynamic>.from(
+                                    signupData!,
+                                  );
+                                  data['userType'] = selectedRole
+                                      .name; // 'client' or 'freelancer'
+
+                                  // Call Signup API
+                                  context.read<SignupCubit>().signup(
+                                    fullName: data['fullName'],
+                                    email: data['email'],
+                                    phone: data['phone'],
+                                    password: data['password'],
+                                    passwordConfirmation:
+                                        data['passwordConfirmation'],
+                                    sex: data['sex'],
+                                    materialStatus: data['maritalStatus'],
+                                    userType: data['userType'],
+                                    countryCode: data['countryCode'],
+                                  );
+
+                                  // Also save preference locally
+                                  roleCubit.save();
+                                } else {
+                                  // Just switching role flow (if accessed from settings)
+                                  roleCubit.save();
+                                  context.go('/home');
+                                }
+                              },
+                      );
+                    },
                   );
                 },
               ),
               SizedBox(height: 16.h),
-              Text('roleSelection.footerNote'.tr(), style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey600)),
+              Text(
+                'roleSelection.footerNote'.tr(),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.grey600,
+                ),
+              ),
             ],
           ),
         ),
@@ -149,7 +241,10 @@ class _RoleCard extends StatelessWidget {
         padding: EdgeInsets.all(24.w),
         decoration: BoxDecoration(
           gradient: gradient,
-          border: Border.all(color: selected ? AppColors.gold : borderColor, width: 2.w),
+          border: Border.all(
+            color: selected ? AppColors.gold : borderColor,
+            width: 2.w,
+          ),
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: Column(
@@ -163,7 +258,12 @@ class _RoleCard extends StatelessWidget {
                     children: [
                       Text(title, style: theme.textTheme.titleMedium),
                       SizedBox(height: 4.h),
-                      Text(subtitle, style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.grey600)),
+                      Text(
+                        subtitle,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.grey600,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -175,14 +275,19 @@ class _RoleCard extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: selected
-                          ? [AppColors.gold, AppColors.gold.withValues(alpha: 0.8)]
+                          ? [
+                              AppColors.gold,
+                              AppColors.gold.withValues(alpha: 0.8),
+                            ]
                           : [AppColors.grey100, AppColors.grey200],
                     ),
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                   alignment: Alignment.center,
                   child: Icon(
-                    role == UserRole.client ? Icons.person_search : Icons.camera_alt,
+                    role == UserRole.client
+                        ? Icons.person_search
+                        : Icons.camera_alt,
                     color: selected ? Colors.white : AppColors.grey600,
                     size: 32.sp,
                   ),
@@ -190,13 +295,22 @@ class _RoleCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16.h),
-            Text(description, style: theme.textTheme.bodySmall?.copyWith(color: AppColors.grey600)),
+            Text(
+              description,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.grey600,
+              ),
+            ),
             SizedBox(height: 16.h),
             Row(
               children: [
-                Expanded(child: _Badge(label: badge1, highlight: selected)),
+                Expanded(
+                  child: _Badge(label: badge1, highlight: selected),
+                ),
                 SizedBox(width: 8.w),
-                Expanded(child: _Badge(label: badge2, highlight: selected)),
+                Expanded(
+                  child: _Badge(label: badge2, highlight: selected),
+                ),
               ],
             ),
           ],
@@ -216,15 +330,17 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       decoration: BoxDecoration(
-        color: highlight ? AppColors.gold.withValues(alpha: 0.1) : AppColors.grey100,
+        color: highlight
+            ? AppColors.gold.withValues(alpha: 0.1)
+            : AppColors.grey100,
         borderRadius: BorderRadius.circular(10.r),
       ),
       alignment: Alignment.center,
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: highlight ? AppColors.gold : AppColors.grey600,
-            ),
+          color: highlight ? AppColors.gold : AppColors.grey600,
+        ),
       ),
     );
   }

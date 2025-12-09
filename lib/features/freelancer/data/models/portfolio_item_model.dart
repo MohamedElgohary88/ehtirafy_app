@@ -5,21 +5,29 @@ class PortfolioItemModel extends PortfolioItemEntity {
     required super.id,
     required super.title,
     required super.description,
-    required super.cameraType,
-    required super.imageUrl,
-    required super.category,
+    super.image,
     required super.createdAt,
   });
 
   factory PortfolioItemModel.fromJson(Map<String, dynamic> json) {
+    // Parse title and description which might be objects {ar:..., en:...} or strings
+    String parseLocalized(dynamic val) {
+      if (val is Map) {
+        return val['en']?.toString() ?? val['ar']?.toString() ?? '';
+      }
+      return val?.toString() ?? '';
+    }
+
     return PortfolioItemModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      cameraType: json['cameraType'] as String,
-      imageUrl: json['imageUrl'] as String,
-      category: json['category'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      id: json['id']?.toString() ?? '',
+      title: parseLocalized(json['title']),
+      description: parseLocalized(json['description']),
+      image: json['images'] != null && (json['images'] as List).isNotEmpty
+          ? json['images'][0]?.toString()
+          : (json['image']?.toString()), // Fallback
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
     );
   }
 
@@ -28,9 +36,7 @@ class PortfolioItemModel extends PortfolioItemEntity {
       'id': id,
       'title': title,
       'description': description,
-      'cameraType': cameraType,
-      'imageUrl': imageUrl,
-      'category': category,
+      'image': image,
       'createdAt': createdAt.toIso8601String(),
     };
   }

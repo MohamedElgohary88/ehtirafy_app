@@ -12,20 +12,25 @@ import 'package:flutter/services.dart';
 
 class OtpScreen extends StatelessWidget {
   final String phone;
-  const OtpScreen({super.key, required this.phone});
+  final Map<String, dynamic>?
+  signupData; // Optional, only present during signup flow
+
+  const OtpScreen({super.key, required this.phone, this.signupData});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<OtpCubit>(),
-      child: _OtpView(phone: phone),
+      child: _OtpView(phone: phone, signupData: signupData),
     );
   }
 }
 
 class _OtpView extends StatelessWidget {
   final String phone;
-  const _OtpView({required this.phone});
+  final Map<String, dynamic>? signupData;
+
+  const _OtpView({required this.phone, this.signupData});
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +232,14 @@ class _OtpActions extends StatelessWidget {
                       await cubit.verify();
                       final s = cubit.state;
                       if (s is OtpVerified) {
-                        context.go('/auth/select-role');
+                        if (signupData != null) {
+                          // Allow "verifying" placeholder logic for now
+                          // If verified, proceed to role selection with data
+                          context.go('/auth/select-role', extra: signupData);
+                        } else {
+                          // Login flow or other cases
+                          context.go('/home');
+                        }
                       } else if (s is OtpError) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(s.failureKey.tr())),

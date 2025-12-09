@@ -8,9 +8,12 @@ import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import '../cubit/freelancer_gigs_cubit.dart';
 import '../cubit/freelancer_gigs_state.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/entities/gig_entity.dart';
 
 class CreateGigScreen extends StatefulWidget {
-  const CreateGigScreen({super.key});
+  final GigEntity? gig;
+
+  const CreateGigScreen({super.key, this.gig});
 
   @override
   State<CreateGigScreen> createState() => _CreateGigScreenState();
@@ -22,6 +25,20 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   String? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.gig != null) {
+      _titleController.text = widget.gig!.title;
+      _descriptionController.text = widget.gig!.description;
+      _priceController.text = widget.gig!.price.toString();
+      // Ensure category exists in dropdown list (mock list) to avoid error
+      if (AppMockData.gigCategories.contains(widget.gig!.category)) {
+        _selectedCategory = widget.gig!.category;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -58,7 +75,16 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
               const SnackBar(content: Text('تم إضافة الخدمة بنجاح')),
             );
             context.pop();
+          } else if (state is FreelancerGigUpdated) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('تم تحديث الخدمة بنجاح')),
+            );
+            context.pop();
           } else if (state is FreelancerGigAddError) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is FreelancerGigUpdateError) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -384,12 +410,22 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      context.read<FreelancerGigsCubit>().addGig(
-        title: _titleController.text,
-        description: _descriptionController.text,
-        price: double.parse(_priceController.text),
-        category: _selectedCategory!,
-      );
+      if (widget.gig != null) {
+        context.read<FreelancerGigsCubit>().updateGig(
+          id: widget.gig!.id,
+          title: _titleController.text,
+          description: _descriptionController.text,
+          price: double.parse(_priceController.text),
+          category: _selectedCategory!,
+        );
+      } else {
+        context.read<FreelancerGigsCubit>().addGig(
+          title: _titleController.text,
+          description: _descriptionController.text,
+          price: double.parse(_priceController.text),
+          category: _selectedCategory!,
+        );
+      }
     }
   }
 }

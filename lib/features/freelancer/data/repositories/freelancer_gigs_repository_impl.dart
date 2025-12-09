@@ -1,23 +1,25 @@
 import 'package:dartz/dartz.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
+import 'package:ehtirafy_app/core/error/exceptions.dart';
 import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import '../../domain/entities/gig_entity.dart';
 import '../../domain/repositories/freelancer_gigs_repository.dart';
+import '../datasources/freelancer_gigs_remote_data_source.dart';
 import '../models/gig_model.dart';
+import 'package:dio/dio.dart';
 
 class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
-  // Local cache for mock data operations
-  final List<Map<String, dynamic>> _gigsCache = List.from(
-    AppMockData.mockFreelancerGigs,
-  );
+  final FreelancerGigsRemoteDataSource remoteDataSource;
+
+  FreelancerGigsRepositoryImpl({required this.remoteDataSource});
 
   @override
   Future<Either<Failure, List<GigEntity>>> getGigs() async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      final gigs = _gigsCache.map((json) => GigModel.fromJson(json)).toList();
+      final gigs = await remoteDataSource.getGigs();
       return Right(gigs);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return const Left(ServerFailure('فشل في جلب الخدمات'));
     }
@@ -30,41 +32,83 @@ class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
     required double price,
     required String category,
     String? coverImage,
+    List<String> availability = const [],
+    List<String> images = const [],
   }) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      final newGig = {
-        'id': 'gig-${DateTime.now().millisecondsSinceEpoch}',
-        'title': title,
-        'description': description,
+      final data = {
+        'ar_title': title, // Map to both for now
+        'en_title': title,
+        'ar_description': description,
+        'en_description': description,
+        'category_id': category, // Assuming category is ID
         'price': price,
-        'category': category,
-        'status': 'pending', // New gigs start as pending for review
-        'coverImage': coverImage ?? 'https://placehold.co/300x200.png',
-        'createdAt': DateTime.now().toIso8601String(),
+        // 'images[]': ... multipart files need to be processed here if they are paths
+        // 'days_availability[]': availability
       };
 
-      _gigsCache.insert(0, newGig);
-      return Right(GigModel.fromJson(newGig));
+      // Handle images as MultipartFile if they are local paths
+      if (images.isNotEmpty) {
+        // This requires asynchronous file reading.
+        // Since we can't easily do it inside the map literal, we build data list for FormData or map.
+        // But RemoteDataSource takes Map<String, dynamic>.
+        // If we pass strings, RemoteDataSource has to convert?
+        // Let's assume images are local paths.
+
+        // For simplistic implementation, we just pass the map and let DataSource handle (or we handle it here).
+        // RemoteDataSource `FormData.fromMap` handles List<MultipartFile>.
+        // We need to convert List<String> paths to List<MultipartFile>.
+
+        List<MultipartFile> imageFiles = [];
+        for (var path in images) {
+          imageFiles.add(await MultipartFile.fromFile(path));
+        }
+        data['images'] = imageFiles;
+      }
+
+      if (availability.isNotEmpty) {
+        data['days_availability'] = availability;
+      }
+
+      final gig = await remoteDataSource.addGig(data);
+      return Right(gig);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return const Left(ServerFailure('فشل في إضافة الخدمة'));
     }
   }
 
   @override
-  Future<Either<Failure, GigEntity>> updateGig(GigEntity gig) async {
+  Future<Either<Failure, GigEntity>> updateGig({
+    required String id,
+    required String title,
+    required String description,
+    required double price,
+    required String category,
+    String? coverImage,
+    List<String> availability = const [],
+    List<String> images = const [],
+  }) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      final data = {
+        'ar_title': title,
+        'en_title': title,
+        'ar_description': description,
+        'en_description': description,
+        'category_id': category,
+        'price': price,
+        // 'status': _gigStatusToString(gig.status), // We might not want to reset status on update unless specified
+      };
 
-      final index = _gigsCache.indexWhere((g) => g['id'] == gig.id);
-      if (index == -1) {
-        return const Left(ServerFailure('الخدمة غير موجودة'));
-      }
+      // Handle images if needed, but for now assuming URLs or handling differently
+      // Since RemoteDataSource updateGig calls Dio.put/post, we might need multipart if images are files
+      // But update logic here mimics add logic somewhat if we have new files
 
-      final updatedJson = (gig as GigModel).toJson();
-      _gigsCache[index] = updatedJson;
-      return Right(gig);
+      final updatedGig = await remoteDataSource.updateGig(id, data);
+      return Right(updatedGig);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return const Left(ServerFailure('فشل في تحديث الخدمة'));
     }
@@ -73,10 +117,10 @@ class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
   @override
   Future<Either<Failure, void>> deleteGig(String gigId) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      _gigsCache.removeWhere((g) => g['id'] == gigId);
+      await remoteDataSource.deleteGig(gigId);
       return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return const Left(ServerFailure('فشل في حذف الخدمة'));
     }

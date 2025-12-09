@@ -4,6 +4,7 @@ import 'package:ehtirafy_app/features/shared/auth/presentation/screens/login_scr
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/signup_screen.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/pages/client_home_screen.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/pages/client_main_layout.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/entities/gig_entity.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/pages/notifications_screen.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/pages/search_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -126,12 +127,16 @@ final appRouter = GoRouter(
       path: '/auth/otp',
       builder: (context, state) {
         final phone = state.uri.queryParameters['phone'] ?? '';
-        return OtpScreen(phone: phone);
+        final signupData = state.extra as Map<String, dynamic>?;
+        return OtpScreen(phone: phone, signupData: signupData);
       },
     ),
     GoRoute(
       path: '/auth/select-role',
-      builder: (context, state) => const RoleSelectionScreen(),
+      builder: (context, state) {
+        final signupData = state.extra as Map<String, dynamic>?;
+        return RoleSelectionScreen(signupData: signupData);
+      },
     ),
 
     // Shell Route for Client Bottom Navigation
@@ -304,10 +309,13 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/freelancer/gigs/create',
-      builder: (context, state) => BlocProvider(
-        create: (_) => sl<FreelancerGigsCubit>(),
-        child: const CreateGigScreen(),
-      ),
+      builder: (context, state) {
+        final gig = state.extra as GigEntity?;
+        return BlocProvider(
+          create: (_) => sl<FreelancerGigsCubit>(),
+          child: CreateGigScreen(gig: gig),
+        );
+      },
     ),
     GoRoute(
       path: '/freelancer/portfolio',

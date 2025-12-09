@@ -30,6 +30,8 @@ class FreelancerGigsCubit extends Cubit<FreelancerGigsState> {
     required double price,
     required String category,
     String? coverImage,
+    List<String> availability = const [],
+    List<String> images = const [],
   }) async {
     emit(FreelancerGigAdding());
 
@@ -39,11 +41,42 @@ class FreelancerGigsCubit extends Cubit<FreelancerGigsState> {
       price: price,
       category: category,
       coverImage: coverImage,
+      availability: availability,
+      images: images,
     );
 
     result.fold(
       (failure) => emit(FreelancerGigAddError(failure.message)),
       (gig) => emit(FreelancerGigAdded(gig)),
+    );
+  }
+
+  Future<void> updateGig({
+    required String id,
+    required String title,
+    required String description,
+    required double price,
+    required String category,
+    String? coverImage,
+    List<String> availability = const [],
+    List<String> images = const [],
+  }) async {
+    emit(FreelancerGigUpdating());
+
+    final result = await repository.updateGig(
+      id: id,
+      title: title,
+      description: description,
+      price: price,
+      category: category,
+      coverImage: coverImage,
+      availability: availability,
+      images: images,
+    );
+
+    result.fold(
+      (failure) => emit(FreelancerGigUpdateError(failure.message)),
+      (gig) => emit(FreelancerGigUpdated(gig)),
     );
   }
 

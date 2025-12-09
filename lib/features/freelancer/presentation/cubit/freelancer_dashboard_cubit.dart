@@ -20,6 +20,7 @@ class FreelancerDashboardCubit extends Cubit<FreelancerDashboardState> {
     final portfolioResult = await repository.getPortfolioPreview();
     final gigsResult = await repository.getGigsPreview();
     final ordersResult = await repository.getRecentOrders();
+    final userName = await repository.getUserName();
 
     // Check for any failures
     if (statsResult.isLeft()) {
@@ -43,6 +44,7 @@ class FreelancerDashboardCubit extends Cubit<FreelancerDashboardState> {
         ),
         gigs: gigsResult.getOrElse(() => <GigEntity>[]),
         recentOrders: ordersResult.getOrElse(() => <FreelancerOrderEntity>[]),
+        userName: userName,
       ),
     );
   }

@@ -11,7 +11,7 @@ class FreelancerPortfolioCubit extends Cubit<FreelancerPortfolioState> {
   Future<void> loadPortfolio() async {
     emit(FreelancerPortfolioLoading());
 
-    final result = await repository.getPortfolioItems();
+    final result = await repository.getPortfolio();
 
     result.fold(
       (failure) => emit(FreelancerPortfolioError(failure.message)),
@@ -22,41 +22,61 @@ class FreelancerPortfolioCubit extends Cubit<FreelancerPortfolioState> {
   Future<void> addPortfolioItem({
     required String title,
     required String description,
-    required String cameraType,
-    required String imageUrl,
-    required String category,
+    String? imagePath,
   }) async {
     emit(FreelancerPortfolioItemAdding());
 
     final result = await repository.addPortfolioItem(
       title: title,
       description: description,
-      cameraType: cameraType,
-      imageUrl: imageUrl,
-      category: category,
+      imagePath: imagePath,
     );
 
-    result.fold(
-      (failure) => emit(FreelancerPortfolioError(failure.message)),
-      (item) => emit(FreelancerPortfolioItemAdded(item)),
+    result.fold((failure) => emit(FreelancerPortfolioError(failure.message)), (
+      item,
+    ) {
+      emit(FreelancerPortfolioItemAdded(item));
+      loadPortfolio();
+    });
+  }
+
+  Future<void> updatePortfolioItem({
+    required String id,
+    required String title,
+    required String description,
+    String? imagePath,
+  }) async {
+    emit(
+      FreelancerPortfolioItemAdding(),
+    ); // Reuse Adding state or create Updating
+
+    final result = await repository.updatePortfolioItem(
+      id: id,
+      title: title,
+      description: description,
+      imagePath: imagePath,
     );
+
+    result.fold((failure) => emit(FreelancerPortfolioError(failure.message)), (
+      item,
+    ) {
+      emit(
+        FreelancerPortfolioItemAdded(item),
+      ); // Reuse Added state or create Updated
+      loadPortfolio();
+    });
   }
 
   Future<void> deletePortfolioItem(String itemId) async {
-    if (state is FreelancerPortfolioLoaded) {
-      final currentState = state as FreelancerPortfolioLoaded;
+    // Optimistic or waiting? Let's wait.
+    // emit(FreelancerPortfolioLoading()); // Maybe not full loading?
 
-      final result = await repository.deletePortfolioItem(itemId);
+    final result = await repository.deletePortfolioItem(itemId);
 
-      result.fold(
-        (failure) => emit(FreelancerPortfolioError(failure.message)),
-        (_) {
-          final updatedItems = currentState.items
-              .where((item) => item.id != itemId)
-              .toList();
-          emit(currentState.copyWith(items: updatedItems));
-        },
-      );
-    }
+    result.fold((failure) => emit(FreelancerPortfolioError(failure.message)), (
+      _,
+    ) {
+      loadPortfolio(); // Reload
+    });
   }
 }

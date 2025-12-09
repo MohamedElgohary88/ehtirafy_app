@@ -14,11 +14,15 @@ class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
   final List<PhotographerEntity> featuredPhotographers;
+  final String userName;
 
-  const HomeLoaded({required this.featuredPhotographers});
+  HomeLoaded({
+    required this.featuredPhotographers,
+    this.userName = 'عميلنا العزيز',
+  });
 
   @override
-  List<Object> get props => [featuredPhotographers];
+  List<Object> get props => [featuredPhotographers, userName];
 }
 
 class HomeError extends HomeState {
