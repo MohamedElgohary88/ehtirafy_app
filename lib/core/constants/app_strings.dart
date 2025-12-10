@@ -26,6 +26,17 @@ class AppStrings {
   static const authOtpSubtitle = 'auth.otpSubtitle';
   static const authOtpConfirm = 'auth.otpConfirm';
 
+  static const authResetPasswordTitle = 'auth.resetPasswordTitle';
+  static const authResetPasswordSubtitle = 'auth.resetPasswordSubtitle';
+  static const authResetPasswordButton = 'auth.resetPasswordButton';
+  static const authConfirmPasswordLabel = 'auth.confirmPasswordLabel';
+  static const authConfirmPasswordHint = 'auth.confirmPasswordHint';
+  static const authOtpLabel = 'auth.otpLabel';
+  static const authOtpHint = 'auth.otpHint';
+
+  static const validationPasswordLength = 'validation.passwordLength';
+  static const validationPasswordMismatch = 'validation.passwordMismatch';
+
   static const authPhoneLabel = 'auth.phoneLabel';
   static const authPhoneHint = 'auth.phoneHint';
   static const authHaveAccount = 'auth.haveAccount';

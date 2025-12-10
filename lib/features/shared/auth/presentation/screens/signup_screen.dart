@@ -71,6 +71,7 @@ class _SignupFormState extends State<_SignupForm> {
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
   late final TextEditingController _passwordController;
+  late final TextEditingController _confirmPasswordController;
 
   // UI State
   String _selectedSex = 'male';
@@ -89,6 +90,7 @@ class _SignupFormState extends State<_SignupForm> {
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
     _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
   }
 
   @override
@@ -97,6 +99,7 @@ class _SignupFormState extends State<_SignupForm> {
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -193,6 +196,13 @@ class _SignupFormState extends State<_SignupForm> {
               obscureText: true,
             ),
             SizedBox(height: 16.h),
+            AuthTextField(
+              label: AppStrings.authConfirmPasswordLabel.tr(),
+              hint: AppStrings.authConfirmPasswordHint.tr(),
+              controller: _confirmPasswordController,
+              obscureText: true,
+            ),
+            SizedBox(height: 16.h),
             // Sex Selector
             AuthSelector<String>(
               label: 'Sex', // TODO: Localize
@@ -256,9 +266,10 @@ class _SignupFormState extends State<_SignupForm> {
 
                 if (_passwordController.text !=
                     _confirmPasswordController.text) {
-                  // TODO: Add specific error string
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Passwords do not match')),
+                    SnackBar(
+                      content: Text(AppStrings.validationPasswordMismatch.tr()),
+                    ),
                   );
                   return;
                 }

@@ -136,7 +136,7 @@ class _RoleSelectionView extends StatelessWidget {
                     context.go('/home');
                   } else if (signupState is SignupError) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(signupState.message.tr())),
+                      SnackBar(content: Text(signupState.failureKey.tr())),
                     );
                   }
                 },

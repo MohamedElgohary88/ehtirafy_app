@@ -27,6 +27,7 @@ import 'package:ehtirafy_app/features/client/booking/presentation/screens/bookin
 import 'package:ehtirafy_app/features/client/requests/presentation/pages/my_requests_screen.dart';
 import 'package:ehtirafy_app/features/client/booking/presentation/screens/order_details_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/screens/reset_password_screen.dart';
 
 // Freelancer mode imports
 import 'package:ehtirafy_app/features/freelancer/presentation/pages/freelancer_main_layout.dart';
@@ -122,6 +123,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/auth/forgot-password',
       builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+    GoRoute(
+      path: '/auth/reset-password',
+      builder: (context, state) {
+        final email = state.extra as String;
+        return ResetPasswordScreen(email: email);
+      },
     ),
     GoRoute(
       path: '/auth/otp',

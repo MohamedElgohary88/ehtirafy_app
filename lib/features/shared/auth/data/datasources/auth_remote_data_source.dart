@@ -11,6 +11,12 @@ abstract class AuthRemoteDataSource {
   Future<LoginModel> login({required String email, required String password});
   Future<RegisterResponseModel> signup(RegisterRequestParams params);
   Future<String> forgotPassword(String email);
+  Future<String> resetPassword({
+    required String email,
+    required String otp,
+    required String password,
+    required String passwordConfirmation,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -101,6 +107,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return baseResponse.data!;
       }
       return baseResponse.message;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> resetPassword({
+    required String email,
+    required String otp,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final response = await _dioClient.post(
+        ApiConstants.resetPassword,
+        data: FormData.fromMap({
+          'email': email,
+          'otp': otp,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        }),
+      );
+
+      final baseResponse = BaseResponse<String>.fromJson(
+        response.data,
+        (json) => json.toString(),
+      );
+
+      if (baseResponse.status == 200) {
+        return baseResponse.message;
+      } else {
+        throw ServerException(baseResponse.message);
+      }
     } catch (e) {
       rethrow;
     }

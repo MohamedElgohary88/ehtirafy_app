@@ -79,6 +79,10 @@ class _ForgotPasswordViewState extends State<_ForgotPasswordView> {
                         ),
                       );
                       // Optionally navigate back or to verify code screen if that flow existed
+                      context.push(
+                        '/auth/reset-password',
+                        extra: _emailController.text.trim(),
+                      );
                     } else if (state is ForgotPasswordError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

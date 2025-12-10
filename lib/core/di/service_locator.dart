@@ -13,6 +13,7 @@ import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_cubi
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/forgot_password_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/reset_password_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/otp_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/repositories/role_repository.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/repositories/role_repository_impl.dart';
@@ -158,7 +159,7 @@ Future<void> setupLocator() async {
   );
   // Features - Booking
   // Booking Feature
-  sl.registerFactory(() => BookingCubit(sl()));
+  sl.registerFactory(() => ResetPasswordCubit(sl()));
   sl.registerLazySingleton(() => SubmitBookingRequestUseCase(sl()));
   sl.registerLazySingleton<BookingRepository>(
     () =>

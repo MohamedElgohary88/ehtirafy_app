@@ -54,7 +54,9 @@ class _OtpView extends StatelessWidget {
               SizedBox(height: 24.h),
               _OtpTimer(),
               SizedBox(height: 24.h),
-              _OtpActions(),
+              _OtpTimer(),
+              SizedBox(height: 24.h),
+              _OtpActions(signupData: signupData),
               const Spacer(),
               _OtpInfo(),
             ],
@@ -217,6 +219,10 @@ class _OtpTimer extends StatelessWidget {
 }
 
 class _OtpActions extends StatelessWidget {
+  final Map<String, dynamic>? signupData;
+
+  const _OtpActions({this.signupData});
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OtpCubit, OtpState>(
