@@ -43,6 +43,7 @@ import 'package:ehtirafy_app/features/client/booking/domain/repositories/booking
 import 'package:ehtirafy_app/features/client/booking/domain/usecases/submit_booking_request_usecase.dart';
 import 'package:ehtirafy_app/features/client/booking/presentation/cubit/booking_cubit.dart';
 import 'package:ehtirafy_app/features/client/contract/data/repositories/contract_repository_impl.dart';
+import 'package:ehtirafy_app/features/client/contract/data/datasources/contract_remote_data_source.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/repositories/contract_repository.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/usecases/get_contract_details_usecase.dart';
 import 'package:ehtirafy_app/features/client/contract/presentation/manager/contract_details_cubit.dart';
@@ -159,13 +160,21 @@ Future<void> setupLocator() async {
   // Booking Feature
   sl.registerFactory(() => BookingCubit(sl()));
   sl.registerLazySingleton(() => SubmitBookingRequestUseCase(sl()));
-  sl.registerLazySingleton<BookingRepository>(() => BookingRepositoryImpl());
+  sl.registerLazySingleton<BookingRepository>(
+    () =>
+        BookingRepositoryImpl(remoteDataSource: sl(), sharedPreferences: sl()),
+  );
   // Features - Contract
   sl.registerFactory(
     () => ContractDetailsCubit(getContractDetailsUseCase: sl()),
   );
   sl.registerLazySingleton(() => GetContractDetailsUseCase(sl()));
-  sl.registerLazySingleton<ContractRepository>(() => ContractRepositoryImpl());
+  sl.registerLazySingleton<ContractRepository>(
+    () => ContractRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<ContractRemoteDataSource>(
+    () => ContractRemoteDataSourceImpl(sl()),
+  );
 
   // Features - Chat
   sl.registerFactory(
@@ -219,7 +228,10 @@ Future<void> setupLocator() async {
   // Features - Freelancer Orders
   sl.registerFactory(() => FreelancerOrdersCubit(repository: sl()));
   sl.registerLazySingleton<FreelancerOrdersRepository>(
-    () => FreelancerOrdersRepositoryImpl(),
+    () => FreelancerOrdersRepositoryImpl(
+      remoteDataSource: sl(),
+      sharedPreferences: sl(),
+    ),
   );
 
   // Features - Freelancer Portfolio

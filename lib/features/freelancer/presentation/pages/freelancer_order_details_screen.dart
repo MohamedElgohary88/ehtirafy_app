@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import '../../domain/entities/freelancer_order_entity.dart';
+import '../cubit/freelancer_orders_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FreelancerOrderDetailsScreen extends StatelessWidget {
   final FreelancerOrderEntity order;
@@ -932,6 +934,7 @@ class FreelancerOrderDetailsScreen extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   // Accept order
+                  context.read<FreelancerOrdersCubit>().acceptOrder(order.id);
                   context.pop();
                 },
                 child: Container(
@@ -967,6 +970,7 @@ class FreelancerOrderDetailsScreen extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   // Reject order
+                  context.read<FreelancerOrdersCubit>().rejectOrder(order.id);
                   context.pop();
                 },
                 child: Container(

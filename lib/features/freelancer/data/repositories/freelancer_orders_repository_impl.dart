@@ -1,27 +1,70 @@
 import 'package:dartz/dartz.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
-import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
-import '../../domain/entities/freelancer_order_entity.dart';
-import '../../domain/repositories/freelancer_orders_repository.dart';
-import '../models/freelancer_order_model.dart';
+import 'package:ehtirafy_app/core/error/exceptions.dart';
+import 'package:ehtirafy_app/features/client/contract/data/datasources/contract_remote_data_source.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/entities/freelancer_order_entity.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/repositories/freelancer_orders_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
-  // Local cache for mock data operations
-  final List<Map<String, dynamic>> _ordersCache = List.from(
-    AppMockData.mockFreelancerOrders,
-  );
+  final ContractRemoteDataSource remoteDataSource;
+  final SharedPreferences sharedPreferences;
+
+  FreelancerOrdersRepositoryImpl({
+    required this.remoteDataSource,
+    required this.sharedPreferences,
+  });
 
   @override
   Future<Either<Failure, List<FreelancerOrderEntity>>> getOrders() async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      // If no user ID, maybe return empty or error.
+      // Assuming 'contracts-reltive' endpoint might filter by logged in user automatically (contracts relative to user).
+      // Or we pass publisher_id.
+      // Based on endpoint name 'contracts-reltive', it likely returns contracts relative to the authenticated user.
 
-      final orders = _ordersCache
-          .map((json) => FreelancerOrderModel.fromJson(json))
-          .toList();
+      final contracts = await remoteDataSource.getContracts({});
+
+      // Map ContractModel to FreelancerOrderEntity
+      // FreelancerOrderEntity likely needs updates to match Contract fields if they differ significantly.
+      // For now, mapping what we can.
+
+      final orders = contracts.map((c) {
+        FreelancerOrderStatus status;
+        switch (c.contrPubStatus?.toLowerCase()) {
+          case 'accepted':
+          case 'inprogress':
+            status = FreelancerOrderStatus.inProgress;
+            break;
+          case 'completed':
+            status = FreelancerOrderStatus.completed;
+            break;
+          case 'rejected':
+          case 'cancelled':
+            status = FreelancerOrderStatus.cancelled;
+            break;
+          default:
+            status = FreelancerOrderStatus.pending;
+        }
+
+        return FreelancerOrderEntity(
+          id: c.id.toString(),
+          clientName: c.clientName ?? 'Unknown Client',
+          serviceTitle: c.serviceTitle ?? 'Requested Service',
+          status: status,
+          price: double.tryParse(c.requestedAmount) ?? 0.0,
+          location: 'Remote', // Placeholder as location isn't in contract yet
+          eventDate: c.createdAt, // Using createdAt as event date for now
+          createdAt: c.createdAt,
+          clientImage: c.clientImage ?? '',
+        );
+      }).toList();
+
       return Right(orders);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return const Left(ServerFailure('فشل في جلب الطلبات'));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -30,36 +73,44 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
     String orderId,
   ) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      final contract = await remoteDataSource.updateContract(orderId, {
+        'contr_pub_status': 'accepted',
+        '_method': 'put',
+      });
 
-      final index = _ordersCache.indexWhere((o) => o['id'] == orderId);
-      if (index == -1) {
-        return const Left(ServerFailure('الطلب غير موجود'));
-      }
-
-      // Update status to inProgress
-      _ordersCache[index]['status'] = 'inProgress';
-      return Right(FreelancerOrderModel.fromJson(_ordersCache[index]));
+      // Assume updated status is accepted/inProgress
+      return Right(
+        FreelancerOrderEntity(
+          id: contract.id.toString(),
+          clientName: contract.clientName ?? 'Unknown Client',
+          serviceTitle: contract.serviceTitle ?? 'Requested Service',
+          status: FreelancerOrderStatus.inProgress,
+          price: double.tryParse(contract.requestedAmount) ?? 0.0,
+          location: 'Remote',
+          eventDate: contract.createdAt,
+          createdAt: contract.createdAt,
+          clientImage: contract.clientImage ?? '',
+        ),
+      );
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return const Left(ServerFailure('فشل في قبول الطلب'));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
   @override
   Future<Either<Failure, void>> rejectOrder(String orderId) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      final index = _ordersCache.indexWhere((o) => o['id'] == orderId);
-      if (index == -1) {
-        return const Left(ServerFailure('الطلب غير موجود'));
-      }
-
-      // Update status to cancelled
-      _ordersCache[index]['status'] = 'cancelled';
+      await remoteDataSource.updateContract(orderId, {
+        'contr_pub_status': 'rejected',
+        '_method': 'put',
+      });
       return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return const Left(ServerFailure('فشل في رفض الطلب'));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -68,15 +119,44 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
     String orderId,
   ) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 300));
+      final contracts = await remoteDataSource.getContracts({'id': orderId});
+      if (contracts.isNotEmpty) {
+        final c = contracts.first;
 
-      final orderJson = _ordersCache.firstWhere(
-        (o) => o['id'] == orderId,
-        orElse: () => throw Exception('Order not found'),
-      );
-      return Right(FreelancerOrderModel.fromJson(orderJson));
+        FreelancerOrderStatus status;
+        switch (c.contrPubStatus?.toLowerCase()) {
+          case 'accepted':
+          case 'inprogress':
+            status = FreelancerOrderStatus.inProgress;
+            break;
+          case 'completed':
+            status = FreelancerOrderStatus.completed;
+            break;
+          case 'rejected':
+          case 'cancelled':
+            status = FreelancerOrderStatus.cancelled;
+            break;
+          default:
+            status = FreelancerOrderStatus.pending;
+        }
+
+        return Right(
+          FreelancerOrderEntity(
+            id: c.id.toString(),
+            clientName: c.clientName ?? 'Unknown Client',
+            serviceTitle: c.serviceTitle ?? 'Requested Service',
+            status: status,
+            price: double.tryParse(c.requestedAmount) ?? 0.0,
+            location: 'Remote',
+            eventDate: c.createdAt,
+            createdAt: c.createdAt,
+            clientImage: c.clientImage ?? '',
+          ),
+        );
+      }
+      return const Left(ServerFailure('Order not found'));
     } catch (e) {
-      return const Left(ServerFailure('فشل في جلب تفاصيل الطلب'));
+      return Left(ServerFailure(e.toString()));
     }
   }
 }
