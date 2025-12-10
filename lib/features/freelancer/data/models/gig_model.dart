@@ -15,23 +15,38 @@ class GigModel extends GigEntity {
   });
 
   factory GigModel.fromJson(Map<String, dynamic> json) {
-    // API might return 'ar_title', 'en_title'. We pick 'en_title' or current locale.
-    // For now assuming we prefer 'en' or combine them.
-    // Actually, let's check what the API returns. The prompt says "Advertisements retrieved successfully".
-    // It doesn't specify the exact READ fields, but likely matching the create params: ar_title, en_title.
-    // Let's use 'en_title' as title for now.
+    // API might return 'title' directly or 'ar_title', 'en_title'
+    // Handle both formats for compatibility
+    String parseTitle() {
+      if (json['title'] != null) return json['title'].toString();
+      return json['en_title']?.toString() ?? json['ar_title']?.toString() ?? '';
+    }
+
+    String parseDescription() {
+      if (json['description'] != null) return json['description'].toString();
+      return json['en_description']?.toString() ??
+          json['ar_description']?.toString() ??
+          '';
+    }
+
+    // Extract cover image from images array
+    String parseCoverImage() {
+      if (json['images'] != null &&
+          json['images'] is List &&
+          (json['images'] as List).isNotEmpty) {
+        return json['images'][0].toString();
+      }
+      return '';
+    }
 
     return GigModel(
       id: json['id']?.toString() ?? '',
-      title: json['en_title'] ?? json['ar_title'] ?? '',
-      description: json['en_description'] ?? json['ar_description'] ?? '',
+      title: parseTitle(),
+      description: parseDescription(),
       price: double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
-      category: json['category_id']?.toString() ?? '', // category_id from API
+      category: json['category_id']?.toString() ?? '',
       status: _parseStatus(json['status']?.toString() ?? ''),
-      coverImage:
-          (json['images'] != null && (json['images'] as List).isNotEmpty)
-          ? json['images'][0]
-          : '',
+      coverImage: parseCoverImage(),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : DateTime.now(),

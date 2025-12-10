@@ -10,9 +10,12 @@ import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import '../cubit/freelancer_portfolio_cubit.dart';
 import '../cubit/freelancer_portfolio_state.dart';
+import '../../domain/entities/portfolio_item_entity.dart';
 
 class AddPortfolioItemScreen extends StatefulWidget {
-  const AddPortfolioItemScreen({super.key});
+  final PortfolioItemEntity? portfolioItem;
+
+  const AddPortfolioItemScreen({super.key, this.portfolioItem});
 
   @override
   State<AddPortfolioItemScreen> createState() => _AddPortfolioItemScreenState();
@@ -22,6 +25,15 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.portfolioItem != null) {
+      _titleController.text = widget.portfolioItem!.title;
+      _descriptionController.text = widget.portfolioItem!.description;
+    }
+  }
 
   @override
   void dispose() {
@@ -380,11 +392,20 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      context.read<FreelancerPortfolioCubit>().addPortfolioItem(
-        title: _titleController.text,
-        description: _descriptionController.text,
-        imagePath: _pickedImage?.path,
-      );
+      if (widget.portfolioItem != null) {
+        context.read<FreelancerPortfolioCubit>().updatePortfolioItem(
+          id: widget.portfolioItem!.id,
+          title: _titleController.text,
+          description: _descriptionController.text,
+          imagePath: _pickedImage?.path,
+        );
+      } else {
+        context.read<FreelancerPortfolioCubit>().addPortfolioItem(
+          title: _titleController.text,
+          description: _descriptionController.text,
+          imagePath: _pickedImage?.path,
+        );
+      }
     }
   }
 }

@@ -44,6 +44,7 @@ import 'package:ehtirafy_app/features/freelancer/presentation/pages/portfolio_sc
 import 'package:ehtirafy_app/features/freelancer/presentation/pages/add_portfolio_item_screen.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/pages/freelancer_order_details_screen.dart';
 import 'package:ehtirafy_app/features/freelancer/domain/entities/freelancer_order_entity.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/entities/portfolio_item_entity.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/entities/user_role.dart';
 import 'package:ehtirafy_app/core/router/utils/go_router_refresh_stream.dart';
@@ -337,10 +338,13 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/freelancer/portfolio/add',
-      builder: (context, state) => BlocProvider(
-        create: (_) => sl<FreelancerPortfolioCubit>(),
-        child: const AddPortfolioItemScreen(),
-      ),
+      builder: (context, state) {
+        final item = state.extra as PortfolioItemEntity?;
+        return BlocProvider(
+          create: (_) => sl<FreelancerPortfolioCubit>(),
+          child: AddPortfolioItemScreen(portfolioItem: item),
+        );
+      },
     ),
     GoRoute(
       path: '/freelancer/orders/details',

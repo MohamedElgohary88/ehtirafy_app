@@ -294,7 +294,7 @@ class _MyGigsScreenState extends State<MyGigsScreen> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () =>
-                        context.push('/freelancer/gigs/create', extra: gig.id),
+                        context.push('/freelancer/gigs/create', extra: gig),
                     child: Container(
                       height: 32.h,
                       decoration: ShapeDecoration(

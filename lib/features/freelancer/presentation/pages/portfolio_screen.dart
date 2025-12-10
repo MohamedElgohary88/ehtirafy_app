@@ -233,6 +233,7 @@ class PortfolioScreen extends StatelessWidget {
 
   Widget _buildPortfolioItem(BuildContext context, PortfolioItemEntity item) {
     return GestureDetector(
+      onTap: () => context.push('/freelancer/portfolio/add', extra: item),
       onLongPress: () => _showDeleteDialog(context, item),
       child: Container(
         decoration: BoxDecoration(
