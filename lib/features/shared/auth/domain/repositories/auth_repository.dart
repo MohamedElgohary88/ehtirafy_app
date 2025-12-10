@@ -29,4 +29,6 @@ abstract class AuthRepository {
     required String password,
     required String passwordConfirmation,
   });
+
+  Future<Either<Failure, String>> sendOtp(String phone, String countryCode);
 }

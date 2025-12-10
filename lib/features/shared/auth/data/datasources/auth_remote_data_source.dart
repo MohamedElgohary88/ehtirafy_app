@@ -17,6 +17,7 @@ abstract class AuthRemoteDataSource {
     required String password,
     required String passwordConfirmation,
   });
+  Future<String> sendOtp({required String phone, required String countryCode});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -137,6 +138,41 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (baseResponse.status == 200) {
         return baseResponse.message;
+      } else {
+        throw ServerException(baseResponse.message);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> sendOtp({
+    required String phone,
+    required String countryCode,
+  }) async {
+    try {
+      final response = await _dioClient.post(
+        ApiConstants.sendOtp,
+        data: FormData.fromMap({'phone': phone, 'country_code': countryCode}),
+      );
+
+      print('Sent OTP Response Data: ${response.data}');
+
+      final baseResponse = BaseResponse<String>.fromJson(response.data, (json) {
+        if (json is Map<String, dynamic>) {
+          // Handle if data is an object like {"code": "1234"} or {"otp": "1234"}
+          return json['code']?.toString() ??
+              json['otp']?.toString() ??
+              json.toString();
+        }
+        return json.toString();
+      });
+
+      if (baseResponse.status == 200) {
+        final otp = baseResponse.data ?? baseResponse.message;
+        print('Parsed OTP: $otp');
+        return otp;
       } else {
         throw ServerException(baseResponse.message);
       }

@@ -2,12 +2,15 @@ import 'package:bloc/bloc.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
 import '../../domain/usecases/signup_usecase.dart';
+import '../../domain/usecases/send_otp_usecase.dart';
+import '../../domain/usecases/send_otp_params.dart';
 import 'signup_state.dart';
 
 class SignupCubit extends Cubit<SignupState> {
   final SignupUseCase signupUseCase;
+  final SendOtpUseCase sendOtpUseCase;
 
-  SignupCubit(this.signupUseCase) : super(SignupInitial());
+  SignupCubit(this.signupUseCase, this.sendOtpUseCase) : super(SignupInitial());
 
   Future<void> signup({
     required String fullName,
@@ -37,6 +40,17 @@ class SignupCubit extends Cubit<SignupState> {
     result.fold(
       (failure) => emit(SignupError(_mapFailureToMessage(failure))),
       (user) => emit(SignupSuccess(user)),
+    );
+  }
+
+  Future<void> sendOtp(String phone, String countryCode) async {
+    emit(SignupLoading());
+    final result = await sendOtpUseCase(
+      SendOtpParams(phone: phone, countryCode: countryCode),
+    );
+    result.fold(
+      (failure) => emit(SignupError(_mapFailureToMessage(failure))),
+      (otp) => emit(SignupOtpSent(otp)),
     );
   }
 

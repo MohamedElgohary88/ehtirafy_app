@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
+import 'package:ehtirafy_app/core/di/service_locator.dart';
 import '../cubits/splash_cubit.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SplashCubit()..initSplash(),
+      create: (context) => sl<SplashCubit>()..initSplash(),
       child: const _SplashView(),
     );
   }
@@ -31,6 +32,8 @@ class _SplashView extends StatelessWidget {
           context.go('/onboarding');
         } else if (state is SplashNavigateToHome) {
           context.go('/home');
+        } else if (state is SplashNavigateToFreelancerDashboard) {
+          context.go('/freelancer/dashboard');
         }
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(

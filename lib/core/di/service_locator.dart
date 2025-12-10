@@ -11,6 +11,7 @@ import 'package:ehtirafy_app/features/shared/auth/domain/usecases/login_usecase.
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/signup_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/forgot_password_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/reset_password_cubit.dart';
@@ -42,7 +43,6 @@ import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/free
 import 'package:ehtirafy_app/features/client/booking/data/repositories/booking_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/booking/domain/repositories/booking_repository.dart';
 import 'package:ehtirafy_app/features/client/booking/domain/usecases/submit_booking_request_usecase.dart';
-import 'package:ehtirafy_app/features/client/booking/presentation/cubit/booking_cubit.dart';
 import 'package:ehtirafy_app/features/client/contract/data/repositories/contract_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/contract/data/datasources/contract_remote_data_source.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/repositories/contract_repository.dart';
@@ -73,6 +73,7 @@ import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_g
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_orders_cubit.dart';
 import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_portfolio_remote_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_portfolio_cubit.dart';
+import 'package:ehtirafy_app/features/shared/splash/presentation/cubits/splash_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -99,12 +100,17 @@ Future<void> setupLocator() async {
   sl.registerFactory<ForgotPasswordUseCase>(
     () => ForgotPasswordUseCase(sl<AuthRepository>()),
   );
+  sl.registerFactory<SendOtpUseCase>(
+    () => SendOtpUseCase(sl<AuthRepository>()),
+  );
   sl.registerFactory<GetRoleUseCase>(() => GetRoleUseCase(sl()));
   sl.registerFactory<SetRoleUseCase>(() => SetRoleUseCase(sl()));
 
   // Presentation layer
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl<LoginUseCase>()));
-  sl.registerFactory<SignupCubit>(() => SignupCubit(sl<SignupUseCase>()));
+  sl.registerFactory<SignupCubit>(
+    () => SignupCubit(sl<SignupUseCase>(), sl<SendOtpUseCase>()),
+  );
   sl.registerFactory<ForgotPasswordCubit>(
     () => ForgotPasswordCubit(sl<ForgotPasswordUseCase>()),
   );
@@ -114,6 +120,14 @@ Future<void> setupLocator() async {
   );
   sl.registerLazySingleton<UserLocalDataSource>(
     () => UserLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
+  // Splash
+  sl.registerFactory<SplashCubit>(
+    () => SplashCubit(
+      userLocalDataSource: sl<UserLocalDataSource>(),
+      getRoleUseCase: sl<GetRoleUseCase>(),
+    ),
   );
 
   // Features - Notifications

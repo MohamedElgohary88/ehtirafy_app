@@ -1,12 +1,26 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 
-abstract class OtpState { const OtpState(); }
+abstract class OtpState {
+  const OtpState();
+}
+
 class OtpInitial extends OtpState {}
-class OtpTick extends OtpState { final int remaining; const OtpTick(this.remaining); }
+
+class OtpTick extends OtpState {
+  final int remaining;
+  const OtpTick(this.remaining);
+}
+
 class OtpVerifying extends OtpState {}
+
 class OtpVerified extends OtpState {}
-class OtpError extends OtpState { final String failureKey; const OtpError(this.failureKey); }
+
+class OtpError extends OtpState {
+  final String failureKey;
+  const OtpError(this.failureKey);
+}
+
 class OtpResent extends OtpState {}
 
 class OtpCubit extends Cubit<OtpState> {
@@ -41,13 +55,26 @@ class OtpCubit extends Cubit<OtpState> {
   bool get canVerify => _digits.every((d) => d.isNotEmpty);
   String get code => _digits.join();
 
-  Future<void> verify() async {
+  Future<void> verify({String? expectedOtp}) async {
     if (!canVerify) return;
     emit(OtpVerifying());
     await Future.delayed(const Duration(milliseconds: 300));
-    if (code == '6666') {
-      emit(OtpVerified());
+
+    print('Verifying OTP. Entered: $code, Expected: $expectedOtp');
+
+    // Check against expected OTP if provided, otherwise default (or API in future)
+    if (expectedOtp != null) {
+      if (code == expectedOtp) {
+        emit(OtpVerified());
+      } else {
+        emit(const OtpError('failures.validation'));
+      }
+
+      // User deleted the fallback block, preserving that structure.
+      // However, if expectedOtp is null, we stay stuck in verifying or need to emit error?
+      // Added fallback error just in case expectedOtp is missing to avoid stuck state.
     } else {
+      print('Error: verify called but expectedOtp is null');
       emit(const OtpError('failures.validation'));
     }
   }

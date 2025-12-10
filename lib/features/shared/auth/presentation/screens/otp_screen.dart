@@ -54,8 +54,6 @@ class _OtpView extends StatelessWidget {
               SizedBox(height: 24.h),
               _OtpTimer(),
               SizedBox(height: 24.h),
-              _OtpTimer(),
-              SizedBox(height: 24.h),
               _OtpActions(signupData: signupData),
               const Spacer(),
               _OtpInfo(),
@@ -235,15 +233,19 @@ class _OtpActions extends StatelessWidget {
               text: 'auth.otpConfirm'.tr(),
               onPressed: canVerify
                   ? () async {
-                      await cubit.verify();
+                      // Extract received OTP
+                      final expectedOtp = signupData?['otp'] as String?;
+                      await cubit.verify(expectedOtp: expectedOtp);
+
                       final s = cubit.state;
                       if (s is OtpVerified) {
-                        if (signupData != null) {
-                          // Allow "verifying" placeholder logic for now
-                          // If verified, proceed to role selection with data
-                          context.go('/auth/select-role', extra: signupData);
+                        if (signupData != null &&
+                            signupData!.containsKey('signupParams')) {
+                          // Signup flow: Proceed to role selection
+                          final params = signupData!['signupParams'];
+                          context.go('/auth/select-role', extra: params);
                         } else {
-                          // Login flow or other cases
+                          // Other flows (e.g. Login)
                           context.go('/home');
                         }
                       } else if (s is OtpError) {

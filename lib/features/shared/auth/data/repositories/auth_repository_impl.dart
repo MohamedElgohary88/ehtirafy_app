@@ -62,6 +62,12 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final result = await remoteDataSource.signup(params);
       await localDataSource.saveUser(result);
+
+      // Save token if available (for auto-login)
+      if (result.token != null && result.token!.isNotEmpty) {
+        await localDataSource.saveToken(result.token!);
+      }
+
       return Right(result);
     } catch (e) {
       return Left(ApiErrorHandler.handle(e));
@@ -97,6 +103,22 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> sendOtp(
+    String phone,
+    String countryCode,
+  ) async {
+    try {
+      final response = await remoteDataSource.sendOtp(
+        phone: phone,
+        countryCode: countryCode,
+      );
+      return Right(response);
+    } catch (e) {
+      return Left(ApiErrorHandler.handle(e));
     }
   }
 }

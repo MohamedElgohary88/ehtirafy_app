@@ -1,6 +1,8 @@
 import '../../domain/entities/user.dart';
 
 class RegisterResponseModel extends User {
+  final String? token;
+
   const RegisterResponseModel({
     required super.id,
     required super.name,
@@ -9,6 +11,8 @@ class RegisterResponseModel extends User {
     super.countryCode,
     super.sex,
     super.materialStatus,
+    super.otp,
+    this.token,
   });
 
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,8 @@ class RegisterResponseModel extends User {
       countryCode: json['country_code'],
       sex: json['sex'],
       materialStatus: json['material_status'],
+      otp: json['otp']?.toString(),
+      token: json['token'],
     );
   }
 

@@ -107,9 +107,30 @@ class _SignupFormState extends State<_SignupForm> {
   Widget build(BuildContext context) {
     return BlocConsumer<SignupCubit, SignupState>(
       listener: (context, state) {
-        if (state is SignupSuccess) {
+        if (state is SignupOtpSent) {
+          // Show OTP if available (for debugging/fake backend)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('OTP: ${state.otp}'),
+              duration: const Duration(seconds: 10),
+            ),
+          );
+
           context.go(
             '/auth/otp?phone=${Uri.encodeComponent(_phoneController.text)}',
+            extra: {
+              'signupParams': {
+                'fullName': _fullNameController.text,
+                'email': _emailController.text,
+                'phone': _phoneController.text,
+                'password': _passwordController.text,
+                'passwordConfirmation': _confirmPasswordController.text,
+                'sex': _selectedSex,
+                'maritalStatus': _selectedMaterialStatus,
+                'countryCode': _selectedCountry.dialCode,
+              },
+              'otp': state.otp,
+            },
           );
         } else if (state is SignupError) {
           ScaffoldMessenger.of(
@@ -118,7 +139,6 @@ class _SignupFormState extends State<_SignupForm> {
         }
       },
       builder: (context, state) {
-        final cubit = context.read<SignupCubit>();
         final theme = Theme.of(context);
 
         return Column(
@@ -274,22 +294,9 @@ class _SignupFormState extends State<_SignupForm> {
                   return;
                 }
 
-                final signupData = {
-                  'fullName': _fullNameController.text,
-                  'email': _emailController.text,
-                  'phone': _phoneController.text,
-                  'password': _passwordController.text,
-                  'passwordConfirmation': _confirmPasswordController.text,
-                  'sex': _selectedSex, // Defaults from state
-                  'maritalStatus':
-                      _selectedMaterialStatus, // Defaults from state
-                  'countryCode': _selectedCountry.dialCode,
-                  // 'userType' will be added in Role Selection screen
-                };
-
-                context.push(
-                  '/auth/otp?phone=${_phoneController.text}',
-                  extra: signupData,
+                context.read<SignupCubit>().sendOtp(
+                  _phoneController.text,
+                  _selectedCountry.dialCode,
                 );
               },
               isLoading:

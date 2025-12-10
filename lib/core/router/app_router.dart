@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/features/shared/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:ehtirafy_app/features/shared/splash/presentation/screens/splash_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/login_screen.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/screens/signup_screen.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/pages/client_home_screen.dart';
@@ -49,7 +50,7 @@ import 'package:ehtirafy_app/core/router/utils/go_router_refresh_stream.dart';
 
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
-  initialLocation: '/onboarding',
+  initialLocation: '/splash',
   refreshListenable: GoRouterRefreshStream(sl<RoleCubit>().stream),
   redirect: (context, state) {
     // Get current role state
@@ -106,7 +107,9 @@ final appRouter = GoRouter(
     return null;
   },
   routes: [
-    // Onboarding screen - entry point
+    // Splash screen - initial entry point
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+    // Onboarding screen
     GoRoute(
       path: '/onboarding',
       builder: (context, state) => const OnboardingScreen(),

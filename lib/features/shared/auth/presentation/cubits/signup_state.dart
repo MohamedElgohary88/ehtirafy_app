@@ -18,6 +18,13 @@ class SignupSuccess extends SignupState {
   List<Object> get props => [user];
 }
 
+class SignupOtpSent extends SignupState {
+  final String otp;
+  const SignupOtpSent(this.otp);
+  @override
+  List<Object> get props => [otp];
+}
+
 class SignupError extends SignupState {
   final String failureKey;
 

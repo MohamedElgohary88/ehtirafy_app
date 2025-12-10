@@ -9,6 +9,8 @@ class User extends Equatable {
   final String? sex;
   final String? materialStatus;
 
+  final String? otp;
+
   const User({
     required this.id,
     required this.name,
@@ -17,6 +19,7 @@ class User extends Equatable {
     this.countryCode,
     this.sex,
     this.materialStatus,
+    this.otp,
   });
 
   @override
@@ -28,5 +31,6 @@ class User extends Equatable {
     countryCode,
     sex,
     materialStatus,
+    otp,
   ];
 }

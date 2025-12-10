@@ -8,9 +8,11 @@ class ApiConstants {
   static const String forgotPassword =
       '/api/$version/auth/forgot-password'; // Path only as per original pattern if used with dio base url, or full url if needed. Original was path.
   static const String resetPassword = '/api/$version/auth/reset-password';
+  static const String sendOtp = '/api/$version/auth/send-otp';
   static const String freelancerAdvertisements =
-      '$baseUrl/front/advertisements';
-  static const String freelancerPortfolio = '$baseUrl/front/our-works';
+      '$baseUrl/api/$version/advertisements';
+  static const String freelancerPortfolio =
+      '$baseUrl/api/$version/front/our-works';
   // Contract Endpoints
   static const String initialContract = '$baseUrl/front/initial-contract';
   static const String contractsRelative = '$baseUrl/front/contracts-reltive';
