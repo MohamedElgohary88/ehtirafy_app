@@ -21,18 +21,24 @@ class AppStrings {
   static const authFullNameHint = 'auth.fullNameHint';
   static const authSignupButton = 'auth.signupButton';
   static const authPasswordRequirements = 'auth.passwordRequirements';
+  static const authSexLabel = 'auth.sexLabel';
+  static const authMale = 'auth.male';
+  static const authFemale = 'auth.female';
+  static const authMaritalStatusLabel = 'auth.maritalStatusLabel';
+  static const authSingle = 'auth.single';
+  static const authMarried = 'auth.married';
 
   static const authOtpTitle = 'auth.otpTitle';
   static const authOtpSubtitle = 'auth.otpSubtitle';
   static const authOtpConfirm = 'auth.otpConfirm';
+  static const authOtpLabel = 'auth.otpLabel';
+  static const authOtpHint = 'auth.otpHint';
 
   static const authResetPasswordTitle = 'auth.resetPasswordTitle';
   static const authResetPasswordSubtitle = 'auth.resetPasswordSubtitle';
   static const authResetPasswordButton = 'auth.resetPasswordButton';
   static const authConfirmPasswordLabel = 'auth.confirmPasswordLabel';
   static const authConfirmPasswordHint = 'auth.confirmPasswordHint';
-  static const authOtpLabel = 'auth.otpLabel';
-  static const authOtpHint = 'auth.otpHint';
 
   static const validationPasswordLength = 'validation.passwordLength';
   static const validationPasswordMismatch = 'validation.passwordMismatch';

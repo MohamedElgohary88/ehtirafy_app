@@ -32,7 +32,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await _dioClient.post(
         ApiConstants.login,
-        data: {'email': email, 'password': password},
+        data: FormData.fromMap({'email': email, 'password': password}),
       );
 
       final baseResponse = BaseResponse<LoginModel>.fromJson(

@@ -75,8 +75,8 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
                 children: [
                   AuthHeader(
                     iconAsset: 'assets/icons/camera_icon.svg', // Reusing icon
-                    title: 'auth.resetPasswordTitle'.tr(),
-                    subtitle: 'auth.resetPasswordSubtitle'.tr(),
+                    title: AppStrings.authResetPasswordTitle.tr(),
+                    subtitle: AppStrings.authResetPasswordSubtitle.tr(),
                   ),
                   SizedBox(height: 32.h),
                   BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
@@ -102,8 +102,8 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
                       return Column(
                         children: [
                           AuthTextField(
-                            label: 'auth.otpLabel'.tr(),
-                            hint: 'auth.otpHint'.tr(),
+                            label: AppStrings.authOtpLabel.tr(),
+                            hint: AppStrings.authOtpHint.tr(),
                             controller: _otpController,
                             keyboardType: TextInputType.number,
                             validator: (value) {
@@ -149,7 +149,7 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
                           ),
                           SizedBox(height: 32.h),
                           PrimaryButton(
-                            text: 'auth.resetPasswordButton'.tr(),
+                            text: AppStrings.authResetPasswordButton.tr(),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 context

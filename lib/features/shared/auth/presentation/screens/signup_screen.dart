@@ -205,34 +205,34 @@ class _SignupFormState extends State<_SignupForm> {
             SizedBox(height: 16.h),
             // Sex Selector
             AuthSelector<String>(
-              label: 'Sex', // TODO: Localize
+              label: AppStrings.authSexLabel.tr(),
               groupValue: _selectedSex,
-              items: const [
+              items: [
                 AuthSelectorItem(
-                  label: 'Male',
+                  label: AppStrings.authMale.tr(),
                   value: 'male',
-                ), // TODO: Localize
+                ),
                 AuthSelectorItem(
-                  label: 'Female',
+                  label: AppStrings.authFemale.tr(),
                   value: 'female',
-                ), // TODO: Localize
+                ),
               ],
               onChanged: (value) => setState(() => _selectedSex = value),
             ),
             SizedBox(height: 16.h),
             // Material Status Selector
             AuthSelector<String>(
-              label: 'Marital Status', // TODO: Localize
+              label: AppStrings.authMaritalStatusLabel.tr(),
               groupValue: _selectedMaterialStatus,
-              items: const [
+              items: [
                 AuthSelectorItem(
-                  label: 'Single',
+                  label: AppStrings.authSingle.tr(),
                   value: 'single',
-                ), // TODO: Localize
+                ),
                 AuthSelectorItem(
-                  label: 'Married',
+                  label: AppStrings.authMarried.tr(),
                   value: 'married',
-                ), // TODO: Localize
+                ),
               ],
               onChanged: (value) =>
                   setState(() => _selectedMaterialStatus = value),
