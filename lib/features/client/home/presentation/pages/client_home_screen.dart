@@ -50,7 +50,10 @@ class ClientHomeContent extends StatelessWidget {
                           SizedBox(height: 24.h),
                           const HomeStatsSection(),
                           SizedBox(height: 24.h),
-                          const HomeCategoriesSection(),
+                          HomeCategoriesSection(
+                            categories: state.categories,
+                            locale: context.locale.languageCode,
+                          ),
                           SizedBox(height: 24.h),
                           const HomeSpecialOfferBanner(),
                           SizedBox(height: 24.h),
