@@ -7,7 +7,10 @@ import 'package:ehtirafy_app/core/network/base_response.dart';
 import 'package:ehtirafy_app/core/error/exceptions.dart';
 
 abstract class FreelancerGigsRemoteDataSource {
-  Future<List<GigModel>> getGigs();
+  /// Get gigs with user_type parameter
+  /// - user_type=freelancer → Freelancer sees their own gigs
+  /// - user_type=publisher → Client sees all available ads
+  Future<List<GigModel>> getGigs({String userType = 'freelancer'});
   Future<GigModel> addGig(Map<String, dynamic> data);
   Future<GigModel> updateGig(String id, Map<String, dynamic> data);
   Future<void> deleteGig(String id);
@@ -20,9 +23,10 @@ class FreelancerGigsRemoteDataSourceImpl
   FreelancerGigsRemoteDataSourceImpl(this._dioClient);
 
   @override
-  Future<List<GigModel>> getGigs() async {
+  Future<List<GigModel>> getGigs({String userType = 'freelancer'}) async {
     final response = await _dioClient.get(
-      ApiConstants.freelancerAdvertisements,
+      ApiConstants.advertisements,
+      queryParameters: {'user_type': userType},
     );
     final baseResponse = BaseResponse<List<dynamic>>.fromJson(
       response.data,
@@ -48,7 +52,7 @@ class FreelancerGigsRemoteDataSourceImpl
     // For now, let's treat it as a Map passed from Repository.
 
     final response = await _dioClient.post(
-      ApiConstants.freelancerAdvertisements,
+      ApiConstants.advertisements,
       data: formData,
     );
 
@@ -93,7 +97,7 @@ class FreelancerGigsRemoteDataSourceImpl
     final formData = FormData.fromMap(data);
 
     final response = await _dioClient.post(
-      '${ApiConstants.freelancerAdvertisements}/$id',
+      '${ApiConstants.advertisements}/$id',
       data: formData,
     );
 
@@ -120,7 +124,7 @@ class FreelancerGigsRemoteDataSourceImpl
 
   @override
   Future<void> deleteGig(String id) async {
-    await _dioClient.delete('${ApiConstants.freelancerAdvertisements}/$id');
+    await _dioClient.delete('${ApiConstants.advertisements}/$id');
     // Assuming delete also returns standard structure
     // If 200 OK
   }

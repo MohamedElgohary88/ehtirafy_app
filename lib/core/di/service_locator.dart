@@ -230,6 +230,7 @@ Future<void> setupLocator() async {
     () => FreelancerDashboardRepositoryImpl(
       userLocalDataSource: sl(),
       gigsRemoteDataSource: sl(),
+      portfolioRemoteDataSource: sl(),
     ),
   );
 

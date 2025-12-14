@@ -1,44 +1,37 @@
 import 'package:dartz/dartz.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
+import 'package:ehtirafy_app/core/error/exceptions.dart';
 import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/datasources/user_local_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_gigs_remote_data_source.dart';
+import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_portfolio_remote_data_source.dart';
 import '../../domain/entities/freelancer_stats_entity.dart';
 import '../../domain/entities/gig_entity.dart';
 import '../../domain/entities/portfolio_item_entity.dart';
 import '../../domain/entities/freelancer_order_entity.dart';
 import '../../domain/repositories/freelancer_dashboard_repository.dart';
 import '../models/freelancer_stats_model.dart';
-import '../models/portfolio_item_model.dart';
 import '../models/freelancer_order_model.dart';
 
+/// Dashboard repository implementation with real API data for gigs and portfolio
 class FreelancerDashboardRepositoryImpl
     implements FreelancerDashboardRepository {
   final UserLocalDataSource userLocalDataSource;
   final FreelancerGigsRemoteDataSource gigsRemoteDataSource;
+  final FreelancerPortfolioRemoteDataSource? portfolioRemoteDataSource;
 
   bool _isOnline = true;
 
   FreelancerDashboardRepositoryImpl({
     required this.userLocalDataSource,
     required this.gigsRemoteDataSource,
+    this.portfolioRemoteDataSource,
   });
 
   @override
   Future<Either<Failure, FreelancerStatsEntity>> getStats() async {
     try {
-      // Get user data from local storage
-      final user = await userLocalDataSource.getUser();
-      // We can use user.name here if needed, but getStats usually returns stats logic.
-      // But we can expose user name via a separate method or within stats if stats entity supports it.
-      // The DashboardCubit expects userName separately? checking state...
-      // FreelancerDashboardLoaded has userName.
-      // The Cubit gets userName directly from somewhere?
-      // Cubit calls `getStats`, `getPortfolioPreview`, etc.
-      // It doesn't seem to have `getUserName` method in Repository interface.
-      // I should add `getUserName` to repository interface and implementation.
-
-      // Simulate network delay for stats
+      // Simulate network delay for stats (still mock for now)
       await Future.delayed(const Duration(milliseconds: 500));
 
       final statsJson = Map<String, dynamic>.from(
@@ -56,15 +49,20 @@ class FreelancerDashboardRepositoryImpl
   Future<Either<Failure, List<PortfolioItemEntity>>>
   getPortfolioPreview() async {
     try {
-      await Future.delayed(const Duration(milliseconds: 300));
+      // Use real API if available
+      if (portfolioRemoteDataSource != null) {
+        final portfolioItems = await portfolioRemoteDataSource!.getPortfolio();
+        // Take top 4 for preview
+        final previewItems = portfolioItems.take(4).toList();
+        return Right(previewItems);
+      }
 
-      final portfolioItems = AppMockData.mockFreelancerPortfolio
-          .take(4)
-          .map((json) => PortfolioItemModel.fromJson(json))
-          .toList();
-      return Right(portfolioItems);
+      // Fallback to empty list if no remote source
+      return const Right([]);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return const Left(ServerFailure('فشل في جلب معرض الأعمال'));
+      return Left(ServerFailure('فشل في جلب معرض الأعمال'));
     }
   }
 
@@ -76,14 +74,17 @@ class FreelancerDashboardRepositoryImpl
       // Take top 3 for preview logic
       final List<GigEntity> previewGigs = gigs.take(3).toList();
       return Right(previewGigs);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return const Left(ServerFailure('فشل في جلب الخدمات'));
+      return Left(ServerFailure('فشل في جلب الخدمات'));
     }
   }
 
   @override
   Future<Either<Failure, List<FreelancerOrderEntity>>> getRecentOrders() async {
     try {
+      // Still using mock for orders (needs API endpoint)
       await Future.delayed(const Duration(milliseconds: 300));
 
       final orders = AppMockData.mockFreelancerOrders

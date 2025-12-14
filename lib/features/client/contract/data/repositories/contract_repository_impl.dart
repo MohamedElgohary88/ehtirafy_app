@@ -3,14 +3,23 @@ import 'package:ehtirafy_app/core/error/failures.dart';
 import 'package:ehtirafy_app/core/error/exceptions.dart';
 import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import 'package:ehtirafy_app/features/client/contract/data/models/contract_details_model.dart';
+import 'package:ehtirafy_app/features/client/contract/data/models/contract_model.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_details_entity.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_entity.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/repositories/contract_repository.dart';
 import 'package:ehtirafy_app/features/client/contract/data/datasources/contract_remote_data_source.dart';
+import 'package:ehtirafy_app/features/shared/profile/domain/entities/user_role.dart';
 
+/// Implementation of ContractRepository
+///
+/// ## Backend Naming Convention (IMPORTANT)
+/// The backend uses reversed naming:
+/// - `publisher` = Photographer who posts ads (our app's **Freelancer**)
+/// - `freelancer` = Client who requests services (our app's **Client**)
+///
+/// This mapping is handled internally to keep our app's naming clean.
 class ContractRepositoryImpl implements ContractRepository {
-  final ContractRemoteDataSource?
-  remoteDataSource; // Nullable for backward compatibility/mock usage if needed, but preferably required
+  final ContractRemoteDataSource? remoteDataSource;
 
   ContractRepositoryImpl({this.remoteDataSource});
 
@@ -19,12 +28,7 @@ class ContractRepositoryImpl implements ContractRepository {
     String id,
   ) async {
     try {
-      // Still using mock for details as remote source doesn't have it yet?
-      // Or we can try to use getContracts filtered by ID if API supports details there.
-      // Keeping mock logic for getContractDetails as requested in plan (NEW ContractRemoteDataSource didn't replace this explicitly to remote yet, or did it?)
-      // Plan said: Update ContractRepositoryImpl (Shared logic).
-      // Assuming getContracts is the new part.
-
+      // Using mock for details (remote source doesn't have details endpoint yet)
       await Future.delayed(const Duration(seconds: 1));
       final data = AppMockData.getContractDetails(id);
       final model = ContractDetailsModel.fromJson(data);
@@ -36,14 +40,35 @@ class ContractRepositoryImpl implements ContractRepository {
 
   @override
   Future<Either<Failure, List<ContractEntity>>> getContracts({
+    UserRole? userRole,
     Map<String, dynamic>? params,
   }) async {
     try {
       if (remoteDataSource == null) {
-        // Fallback or error
         return const Right([]);
       }
-      final contracts = await remoteDataSource!.getContracts(params ?? {});
+
+      // Build query parameters with user_type based on role
+      final queryParams = Map<String, dynamic>.from(params ?? {});
+
+      if (userRole != null) {
+        // Backend naming mapping:
+        // - App Freelancer (photographer) → Backend 'publisher'
+        // - App Client (customer) → Backend 'freelancer'
+        switch (userRole) {
+          case UserRole.freelancer:
+            queryParams['user_type'] = 'publisher';
+            break;
+          case UserRole.client:
+            queryParams['user_type'] = 'freelancer';
+            break;
+          case UserRole.guest:
+            // Guests shouldn't access contracts
+            return const Right([]);
+        }
+      }
+
+      final contracts = await remoteDataSource!.getContracts(queryParams);
       return Right(contracts);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -56,20 +81,21 @@ class ContractRepositoryImpl implements ContractRepository {
   Future<Either<Failure, ContractEntity>> updateContractStatus(
     String id,
     String status, {
-    bool isPublisher = false,
+    bool isPhotographer = false,
+    String? noteText,
   }) async {
     try {
       if (remoteDataSource == null) {
         throw Exception("RemoteDataSource not initialized");
       }
 
-      final Map<String, dynamic> body = {'_method': 'put'};
-
-      if (isPublisher) {
-        body['contr_pub_status'] = status;
-      } else {
-        body['contr_cust_status'] = status;
-      }
+      // Use ContractModel helper to create the status update body
+      // This maps: isPhotographer → publisher, !isPhotographer → customer
+      final body = ContractModel.createStatusUpdateBody(
+        isPhotographer: isPhotographer,
+        status: status,
+        noteText: noteText,
+      );
 
       final contract = await remoteDataSource!.updateContract(id, body);
       return Right(contract);

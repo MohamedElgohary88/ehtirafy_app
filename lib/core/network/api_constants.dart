@@ -10,8 +10,11 @@ class ApiConstants {
   static const String sendOtp = '/api/$version/auth/send-otp';
 
   // Freelancer Endpoints
-  static const String freelancerAdvertisements =
-      '$baseUrl/api/$version/advertisements';
+  // Advertisements endpoint - requires user_type query param:
+  // - user_type=freelancer → Freelancer sees their own gigs
+  // - user_type=publisher → Client sees all available ads
+  static const String advertisements =
+      '$baseUrl/api/$version/front/advertisements';
   static const String freelancerPortfolio =
       '$baseUrl/api/$version/front/our-works';
 
@@ -19,8 +22,10 @@ class ApiConstants {
   static const String categories = '$baseUrl/api/$version/categories';
 
   // Contract Endpoints
-  static const String initialContract = '$baseUrl/front/initial-contract';
-  static const String contractsRelative = '$baseUrl/front/contracts-reltive';
+  static const String initialContract =
+      '$baseUrl/api/$version/front/initial-contract';
+  static const String contractsRelative =
+      '$baseUrl/api/$version/front/contracts-relative';
   static String updateContract(String id) =>
-      '$baseUrl/front/contract/$id/update';
+      '$baseUrl/api/$version/front/contract/$id/update';
 }

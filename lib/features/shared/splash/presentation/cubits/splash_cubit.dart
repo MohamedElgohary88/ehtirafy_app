@@ -16,31 +16,36 @@ class SplashCubit extends Cubit<SplashState> {
   Future<void> initSplash() async {
     emit(SplashLoading());
 
-    // Small delay for splash branding
-    await Future.delayed(const Duration(milliseconds: 1500));
+    try {
+      // Small delay for splash branding
+      await Future.delayed(const Duration(milliseconds: 1500));
 
-    // Check for saved token
-    final token = await userLocalDataSource.getToken();
+      // Check for saved token
+      final token = await userLocalDataSource.getToken();
 
-    if (token != null && token.isNotEmpty) {
-      // User is authenticated, check their role
-      final roleResult = await getRoleUseCase.call();
+      if (token != null && token.isNotEmpty) {
+        // User is authenticated, check their role
+        final roleResult = await getRoleUseCase.call();
 
-      roleResult.fold(
-        (failure) {
-          // If role fetch fails, default to client home
-          emit(SplashNavigateToHome());
-        },
-        (role) {
-          if (role == UserRole.freelancer) {
-            emit(SplashNavigateToFreelancerDashboard());
-          } else {
+        roleResult.fold(
+          (failure) {
+            // If role fetch fails, default to client home
             emit(SplashNavigateToHome());
-          }
-        },
-      );
-    } else {
-      // No token, go to onboarding
+          },
+          (role) {
+            if (role == UserRole.freelancer) {
+              emit(SplashNavigateToFreelancerDashboard());
+            } else {
+              emit(SplashNavigateToHome());
+            }
+          },
+        );
+      } else {
+        // No token, go to onboarding
+        emit(SplashNavigateToOnboarding());
+      }
+    } catch (e) {
+      // On any error, navigate to onboarding as fallback
       emit(SplashNavigateToOnboarding());
     }
   }

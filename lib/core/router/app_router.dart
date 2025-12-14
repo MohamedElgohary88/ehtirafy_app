@@ -372,8 +372,9 @@ final appRouter = GoRouter(
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return RequestBookingScreen(
-          freelancerId: extra['freelancerId'],
-          freelancerName: extra['freelancerName'],
+          advertisementId: extra['advertisementId'],
+          photographerId: extra['photographerId'],
+          photographerName: extra['photographerName'],
           serviceName: extra['serviceName'],
           price: extra['price'],
         );

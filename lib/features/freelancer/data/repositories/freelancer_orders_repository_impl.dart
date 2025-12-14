@@ -18,12 +18,11 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
   @override
   Future<Either<Failure, List<FreelancerOrderEntity>>> getOrders() async {
     try {
-      // If no user ID, maybe return empty or error.
-      // Assuming 'contracts-reltive' endpoint might filter by logged in user automatically (contracts relative to user).
-      // Or we pass publisher_id.
-      // Based on endpoint name 'contracts-reltive', it likely returns contracts relative to the authenticated user.
-
-      final contracts = await remoteDataSource.getContracts({});
+      // For freelancer/photographer, we use user_type=publisher
+      // Backend naming: publisher = photographer who posts ads (our app's Freelancer)
+      final contracts = await remoteDataSource.getContracts({
+        'user_type': 'publisher',
+      });
 
       // Map ContractModel to FreelancerOrderEntity
       // FreelancerOrderEntity likely needs updates to match Contract fields if they differ significantly.
@@ -119,7 +118,11 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
     String orderId,
   ) async {
     try {
-      final contracts = await remoteDataSource.getContracts({'id': orderId});
+      // Add user_type for freelancer + order ID filter
+      final contracts = await remoteDataSource.getContracts({
+        'user_type': 'publisher',
+        'id': orderId,
+      });
       if (contracts.isNotEmpty) {
         final c = contracts.first;
 

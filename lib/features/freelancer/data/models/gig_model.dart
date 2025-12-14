@@ -39,6 +39,32 @@ class GigModel extends GigEntity {
       return '';
     }
 
+    // Handle days_availability which can be List OR Map (object)
+    // API returns: [saturday] or {0: saturday, 2: sunday}
+    List<String> parseAvailability() {
+      final daysAvail = json['days_availability'];
+      if (daysAvail == null) return [];
+
+      if (daysAvail is List) {
+        return daysAvail.map((e) => e.toString()).toList();
+      } else if (daysAvail is Map) {
+        // Convert map values to list: {0: "saturday", 2: "sunday"} -> ["saturday", "sunday"]
+        return daysAvail.values.map((e) => e.toString()).toList();
+      }
+      return [];
+    }
+
+    // Parse images which should be a list
+    List<String> parseImages() {
+      final images = json['images'];
+      if (images == null) return [];
+
+      if (images is List) {
+        return images.map((e) => e.toString()).toList();
+      }
+      return [];
+    }
+
     return GigModel(
       id: json['id']?.toString() ?? '',
       title: parseTitle(),
@@ -48,12 +74,10 @@ class GigModel extends GigEntity {
       status: _parseStatus(json['status']?.toString() ?? ''),
       coverImage: parseCoverImage(),
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
+          ? DateTime.tryParse(json['created_at'].toString())
           : DateTime.now(),
-      availability: json['days_availability'] != null
-          ? List<String>.from(json['days_availability'])
-          : [],
-      images: json['images'] != null ? List<String>.from(json['images']) : [],
+      availability: parseAvailability(),
+      images: parseImages(),
     );
   }
 
@@ -71,12 +95,15 @@ class GigModel extends GigEntity {
   }
 
   static GigStatus _parseStatus(String status) {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'active':
+      case 'published': // API uses 'published' for active gigs
         return GigStatus.active;
       case 'pending':
+      case 'draft':
         return GigStatus.pending;
       case 'inactive':
+      case 'unpublished':
         return GigStatus.inactive;
       default:
         return GigStatus.pending;

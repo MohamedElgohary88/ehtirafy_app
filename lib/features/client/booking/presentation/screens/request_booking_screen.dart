@@ -8,16 +8,26 @@ import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../cubit/booking_cubit.dart';
 
+/// Screen for creating a booking request (initial contract)
+///
+/// Required parameters:
+/// - [advertisementId]: The Gig ID being booked
+/// - [photographerId]: The photographer (publisher) ID receiving the request
+/// - [photographerName]: Display name of the photographer
+/// - [serviceName]: Name of the service/gig being booked
+/// - [price]: Service price (requested_amount and actual_amount)
 class RequestBookingScreen extends StatefulWidget {
-  final String freelancerId;
-  final String freelancerName;
+  final String advertisementId;
+  final String photographerId;
+  final String photographerName;
   final String serviceName;
   final double price;
 
   const RequestBookingScreen({
     super.key,
-    required this.freelancerId,
-    required this.freelancerName,
+    required this.advertisementId,
+    required this.photographerId,
+    required this.photographerName,
     required this.serviceName,
     required this.price,
   });
@@ -82,7 +92,7 @@ class _RequestBookingScreenState extends State<RequestBookingScreen> {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      '${AppStrings.bookingPhotographerLabel.tr()}: ${widget.freelancerName}',
+                      '${AppStrings.bookingPhotographerLabel.tr()}: ${widget.photographerName}',
                       style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                     ),
                     SizedBox(height: 24.h),
@@ -160,8 +170,8 @@ class _RequestBookingScreenState extends State<RequestBookingScreen> {
                             : () {
                                 if (_formKey.currentState!.validate()) {
                                   context.read<BookingCubit>().submitBooking(
-                                    freelancerId: widget.freelancerId,
-                                    serviceName: widget.serviceName,
+                                    advertisementId: widget.advertisementId,
+                                    photographerId: widget.photographerId,
                                     price: widget.price,
                                     date: _dateController.text,
                                     time: _timeController.text,

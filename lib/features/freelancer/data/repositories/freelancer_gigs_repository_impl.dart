@@ -5,7 +5,6 @@ import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import '../../domain/entities/gig_entity.dart';
 import '../../domain/repositories/freelancer_gigs_repository.dart';
 import '../datasources/freelancer_gigs_remote_data_source.dart';
-import '../models/gig_model.dart';
 import 'package:dio/dio.dart';
 
 class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {

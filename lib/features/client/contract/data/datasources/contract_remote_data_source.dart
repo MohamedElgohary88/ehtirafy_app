@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:ehtirafy_app/core/error/exceptions.dart';
 import 'package:ehtirafy_app/core/network/api_constants.dart';
 import 'package:ehtirafy_app/core/network/dio_client.dart';
@@ -59,6 +60,11 @@ class ContractRemoteDataSourceImpl implements ContractRemoteDataSource {
 
   @override
   Future<List<ContractModel>> getContracts(Map<String, dynamic> params) async {
+    debugPrint('🔍 ContractRemoteDataSource.getContracts - params: $params');
+    debugPrint(
+      '🔍 ContractRemoteDataSource.getContracts - URL: ${ApiConstants.contractsRelative}',
+    );
+
     final response = await _dioClient.get(
       ApiConstants.contractsRelative,
       queryParameters: params,

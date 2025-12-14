@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
@@ -26,6 +28,10 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
   final _priceController = TextEditingController();
   String? _selectedCategory;
 
+  // Image picker
+  File? _pickedImage;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +52,15 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
     _descriptionController.dispose();
     _priceController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _pickedImage = File(image.path);
+      });
+    }
   }
 
   @override
@@ -193,10 +208,10 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
                 Container(
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -285,12 +300,10 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
 
   Widget _buildImageUploadWidget() {
     return GestureDetector(
-      onTap: () {
-        // TODO: Implement image picker
-      },
+      onTap: _pickImage,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(24.w),
+        height: 200.h,
         decoration: ShapeDecoration(
           color: const Color(0x0CC8A44F),
           shape: RoundedRectangleBorder(
@@ -298,68 +311,76 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
             borderRadius: BorderRadius.circular(14.r),
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 64.w,
-              height: 64.h,
-              decoration: ShapeDecoration(
-                color: const Color(0x33C8A34E),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
+        child: _pickedImage != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: Image.file(_pickedImage!, fit: BoxFit.cover),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 64.w,
+                    height: 64.h,
+                    decoration: ShapeDecoration(
+                      color: const Color(0x33C8A34E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.cloud_upload_outlined,
+                      size: 32.sp,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    AppStrings.freelancerPortfolioUploadImages.tr(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: const Color(0xFF2B2B2B),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      height: 1.50,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    AppStrings.freelancerPortfolioUploadHint.tr(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF888888),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      height: 1.43,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
+                    decoration: ShapeDecoration(
+                      color: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.freelancerPortfolioSelectImages.tr(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontFamily: 'Cairo',
+                        fontWeight: FontWeight.w500,
+                        height: 1.43,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(
-                Icons.cloud_upload_outlined,
-                size: 32.sp,
-                color: AppColors.primary,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              AppStrings.freelancerPortfolioUploadImages.tr(),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF2B2B2B),
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.50,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              AppStrings.freelancerPortfolioUploadHint.tr(),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF888888),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.43,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: ShapeDecoration(
-                color: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              child: Text(
-                AppStrings.freelancerPortfolioSelectImages.tr(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                  fontFamily: 'Cairo',
-                  fontWeight: FontWeight.w500,
-                  height: 1.43,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -417,6 +438,7 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
           description: _descriptionController.text,
           price: double.parse(_priceController.text),
           category: _selectedCategory!,
+          coverImage: _pickedImage?.path,
         );
       } else {
         context.read<FreelancerGigsCubit>().addGig(
@@ -424,6 +446,7 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
           description: _descriptionController.text,
           price: double.parse(_priceController.text),
           category: _selectedCategory!,
+          coverImage: _pickedImage?.path,
         );
       }
     }

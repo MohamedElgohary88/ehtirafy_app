@@ -6,6 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
+import 'package:ehtirafy_app/core/di/service_locator.dart';
+import 'package:ehtirafy_app/features/client/contract/data/datasources/contract_remote_data_source.dart';
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/entities/user_role.dart'
+    as auth_role;
+import 'package:ehtirafy_app/features/shared/profile/domain/entities/user_role.dart';
 import '../../data/repositories/requests_repository_impl.dart';
 import '../../domain/usecases/get_my_requests_usecase.dart';
 import '../cubit/requests_cubit.dart';
@@ -13,15 +19,41 @@ import '../cubit/requests_state.dart';
 import '../../../booking/presentation/widgets/request_card.dart';
 import '../widgets/requests_filter_tab.dart';
 
+/// My Requests Screen - Shows contracts for both clients and freelancers
+///
+/// 3 Tabs:
+/// - Tab 0: Active (accepted, payment required)
+/// - Tab 1: Under Review (pending)
+/// - Tab 2: Completed (completed/cancelled)
 class MyRequestsScreen extends StatelessWidget {
   const MyRequestsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Get current user role to determine which contracts to fetch
+    // Use the RoleCubit's selected getter directly (always has current role)
+    final roleCubit = sl<RoleCubit>();
+    final authRole = roleCubit.selected;
+
+    // Debug log
+    debugPrint('🔍 MyRequestsScreen - authRole from RoleCubit: $authRole');
+
+    // Map from auth.UserRole to profile.UserRole
+    UserRole currentRole = authRole == auth_role.UserRole.freelancer
+        ? UserRole.freelancer
+        : UserRole.client;
+
+    debugPrint('🔍 MyRequestsScreen - mapped currentRole: $currentRole');
+
     return BlocProvider(
-      create: (context) =>
-          RequestsCubit(GetMyRequestsUseCase(RequestsRepositoryImpl()))
-            ..getRequests(),
+      create: (context) => RequestsCubit(
+        GetMyRequestsUseCase(
+          RequestsRepositoryImpl(
+            remoteDataSource: sl<ContractRemoteDataSource>(),
+            userRole: currentRole,
+          ),
+        ),
+      )..getRequests(),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
@@ -37,7 +69,34 @@ class MyRequestsScreen extends StatelessWidget {
                     if (state is RequestsLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is RequestsError) {
-                      return Center(child: Text(state.message));
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 48.sp,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              state.message,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            ElevatedButton(
+                              onPressed: () {
+                                context.read<RequestsCubit>().getRequests();
+                              },
+                              child: Text('إعادة المحاولة'),
+                            ),
+                          ],
+                        ),
+                      );
                     } else if (state is RequestsLoaded) {
                       return Column(
                         children: [
