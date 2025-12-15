@@ -121,4 +121,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ApiErrorHandler.handle(e));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> logout() async {
+    try {
+      await localDataSource.clearUserData();
+      return const Right(null);
+    } catch (e) {
+      return Left(CacheFailure(e.toString()));
+    }
+  }
 }

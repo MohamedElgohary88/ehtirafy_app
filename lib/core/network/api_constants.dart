@@ -18,6 +18,15 @@ class ApiConstants {
   static const String freelancerPortfolio =
       '$baseUrl/api/$version/front/our-works';
 
+  // Profile Endpoints
+  static const String profileData = '/api/$version/front/profile-data';
+  static const String updateProfile = '/api/$version/front/update-data';
+
+  // Settings Endpoints
+  static const String privacyPolicy = '/api/$version/privacy-policy';
+  static const String termsConditions = '/api/$version/terms-conditions';
+  static const String contactUs = '/api/$version/contact-us';
+
   // Categories Endpoint
   static const String categories = '$baseUrl/api/$version/categories';
 
@@ -28,4 +37,13 @@ class ApiConstants {
       '$baseUrl/api/$version/front/contracts-relative';
   static String updateContract(String id) =>
       '$baseUrl/api/$version/front/contract/$id/update';
+
+  // Dashboard & Search & Home
+  static String freelancerStatistics(String id) =>
+      '$baseUrl/api/$version/freelancer/$id/statistics';
+  static String freelancerLastContracts(String id) =>
+      '$baseUrl/api/$version/freelancer/$id/last-contracts';
+  static const String search = '$baseUrl/api/$version/search';
+  static const String bestFreelancers =
+      '$baseUrl/api/$version/best-freelancers';
 }

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
+import 'package:ehtirafy_app/features/shared/reviews/presentation/cubits/reviews_cubit.dart';
+import 'package:ehtirafy_app/features/shared/reviews/presentation/cubits/reviews_state.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
@@ -55,9 +56,14 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          sl<FreelancerCubit>()..getFreelancerProfile(widget.freelancerId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              sl<FreelancerCubit>()..getFreelancerProfile(widget.freelancerId),
+        ),
+        BlocProvider(create: (context) => sl<ReviewsCubit>()),
+      ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
@@ -561,7 +567,14 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
   }
 
   Widget _buildServicesTab() {
-    final services = AppMockData.mockFreelancerProfile['services'] as List;
+    final services = (context.read<FreelancerCubit>().state as FreelancerLoaded)
+        .freelancer
+        .services;
+
+    if (services.isEmpty) {
+      return Center(child: Text(AppStrings.noDataFound.tr()));
+    }
+
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 20.h),
@@ -571,9 +584,9 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
         return Padding(
           padding: EdgeInsets.only(bottom: 12.h),
           child: ServiceCard(
-            title: service['title'],
-            price: (service['price'] as num).toDouble(),
-            description: service['description'],
+            title: service.title,
+            price: service.price,
+            description: service.description,
           ),
         );
       },
@@ -581,31 +594,184 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
   }
 
   Widget _buildReviewsTab(FreelancerEntity freelancer) {
-    final reviews = AppMockData.mockFreelancerProfile['reviews'] as List;
-    return ListView(
+    final reviews = freelancer.reviews;
+
+    return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 20.h),
-      children: [
-        ReviewsSummaryWidget(
-          rating: freelancer.rating,
-          reviewsCount: freelancer.reviewsCount,
-          ratingDistribution: const {5: 0.8, 4: 0.15, 3: 0.05, 2: 0.0, 1: 0.0},
-        ),
-        SizedBox(height: 20.h),
-        ...reviews.map(
-          (review) => Padding(
-            padding: EdgeInsets.only(bottom: 12.h),
-            child: ReviewCard(
-              userName: review['userName'],
-              userImage: review['userImage'],
-              rating: (review['rating'] as num).toDouble(),
-              date: review['date'],
-              comment: review['comment'],
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 80.h),
+      child: Column(
+        children: [
+          ReviewsSummaryWidget(
+            rating: freelancer.rating,
+            reviewsCount: freelancer.reviewsCount,
+            ratingDistribution: const {
+              5: 0.8,
+              4: 0.15,
+              3: 0.05,
+              2: 0.0,
+              1: 0.0,
+            },
+          ),
+          SizedBox(height: 20.h),
+          if (reviews.isEmpty)
+            Center(
+              child: Text(
+                AppStrings.noDataFound.tr(),
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+          ...reviews.map(
+            (review) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: ReviewCard(
+                userName: review.userName,
+                userImage: review.userImage ?? '',
+                rating: review.rating,
+                date: review.date,
+                comment: review.comment,
+              ),
             ),
           ),
-        ),
-      ],
+          SizedBox(height: 20.h),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () => _showAddReviewDialog(context, freelancer.id),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: AppColors.primary),
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              child: Text(
+                'أضف تقييم', // localized ideally
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  void _showAddReviewDialog(BuildContext context, String freelancerId) {
+    final commentController = TextEditingController();
+    double currentRating = 0;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BlocProvider.value(
+        value: context.read<ReviewsCubit>(),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('أضف تقييمك'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        icon: Icon(
+                          index < currentRating
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: AppColors.primary,
+                          size: 30.sp,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            currentRating = index + 1;
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                  SizedBox(height: 16.h),
+                  TextField(
+                    controller: commentController,
+                    decoration: InputDecoration(
+                      hintText: 'اكتب تعليقك هنا...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    AppStrings.cancel.tr(),
+                    style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                ),
+                BlocConsumer<ReviewsCubit, ReviewsState>(
+                  listener: (context, state) {
+                    if (state is ReviewsActionSuccess) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message)));
+                      // Refresh profile
+                      // Since we are popping dialog, we need access to FreelancerCubit from page context
+                      // But FreelancerProfileScreen rebuilds? No.
+                      // We need to trigger reload in parent.
+                      // Accessing FreelancerCubit?
+                    } else if (state is ReviewsError) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message)));
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is ReviewsLoading) {
+                      return const CircularProgressIndicator();
+                    }
+                    return TextButton(
+                      onPressed: () {
+                        if (currentRating > 0) {
+                          context.read<ReviewsCubit>().addRate(
+                            ratedUserId: freelancerId,
+                            rating: currentRating,
+                            comment: commentController.text,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('الرجاء اختيار التقييم'),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        AppStrings.confirm.tr(),
+                        style: TextStyle(color: AppColors.primary),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    ).then((_) {
+      // Refresh freelancer profile after dialog closes if success?
+      // Better to listen to ReviewsCubit in the main screen
+      context.read<FreelancerCubit>().getFreelancerProfile(freelancerId);
+    });
   }
 
   Widget _buildBottomButton(BuildContext context) {

@@ -5,4 +5,7 @@ import '../entities/user_profile_entity.dart';
 abstract class ProfileRepository {
   Future<Either<Failure, UserProfileEntity>> getUserProfile();
   Future<Either<Failure, UserProfileEntity>> switchUserRole(UserRole newRole);
+  Future<Either<Failure, UserProfileEntity>> updateProfile(
+    Map<String, dynamic> body,
+  );
 }

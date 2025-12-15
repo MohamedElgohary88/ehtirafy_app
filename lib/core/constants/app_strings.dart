@@ -106,6 +106,7 @@ class AppStrings {
   static const growth = 'growth';
   static const quality = 'quality';
   static const validationRequired = 'validation_required';
+  static const String noDataFound = 'general.noDataFound';
 
   // Booking / Requests
   static const bookingRequestsTitle = 'booking.requests.title';

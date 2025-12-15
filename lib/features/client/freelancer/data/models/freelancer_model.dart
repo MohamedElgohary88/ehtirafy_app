@@ -1,4 +1,6 @@
 import 'package:ehtirafy_app/features/client/freelancer/domain/entities/freelancer_entity.dart';
+import 'package:ehtirafy_app/features/client/freelancer/data/models/service_model.dart';
+import 'package:ehtirafy_app/features/client/freelancer/data/models/review_model.dart';
 
 class FreelancerModel extends FreelancerEntity {
   const FreelancerModel({
@@ -13,25 +15,39 @@ class FreelancerModel extends FreelancerEntity {
     required super.responseTime,
     required super.memberSince,
     required super.imageUrl,
-    required List<PortfolioItemModel> portfolio,
-  }) : super(portfolio: portfolio);
+    required List<PortfolioItemModel> super.portfolio,
+    List<ServiceModel> super.services = const [],
+    List<ReviewModel> super.reviews = const [],
+  });
 
   factory FreelancerModel.fromJson(Map<String, dynamic> json) {
+    var rawPortfolio = json['our_works'] ?? json['portfolio'];
+    var rawServices = json['advertisements'] ?? json['services'];
+    var rawReviews = json['reviews'];
+
     return FreelancerModel(
-      id: json['id'],
-      name: json['name'],
-      title: json['title'],
-      location: json['location'],
-      bio: json['bio'],
-      rating: (json['rating'] as num).toDouble(),
-      reviewsCount: json['reviewsCount'],
-      projectsCount: json['projectsCount'],
-      responseTime: json['responseTime'],
-      memberSince: json['memberSince'],
-      imageUrl: json['imageUrl'],
-      portfolio: (json['portfolio'] as List)
-          .map((e) => PortfolioItemModel.fromJson(e))
-          .toList(),
+      id: json['id']?.toString() ?? '',
+      name: json['name'] ?? '',
+      title: json['title'] ?? json['job_title'] ?? '',
+      location: json['location'] ?? '',
+      bio: json['bio'] ?? '',
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      reviewsCount: json['reviews_count'] ?? json['reviewsCount'] ?? 0,
+      projectsCount: json['projects_count'] ?? json['projectsCount'] ?? 0,
+      responseTime: json['response_time'] ?? json['responseTime'] ?? '',
+      memberSince: json['created_at'] ?? json['memberSince'] ?? '',
+      imageUrl: json['avatar'] ?? json['imageUrl'] ?? '',
+      portfolio: rawPortfolio != null
+          ? (rawPortfolio as List)
+                .map((e) => PortfolioItemModel.fromJson(e))
+                .toList()
+          : [],
+      services: rawServices != null
+          ? (rawServices as List).map((e) => ServiceModel.fromJson(e)).toList()
+          : [],
+      reviews: rawReviews != null
+          ? (rawReviews as List).map((e) => ReviewModel.fromJson(e)).toList()
+          : [],
     );
   }
 
@@ -43,14 +59,18 @@ class FreelancerModel extends FreelancerEntity {
       'location': location,
       'bio': bio,
       'rating': rating,
-      'reviewsCount': reviewsCount,
-      'projectsCount': projectsCount,
-      'responseTime': responseTime,
-      'memberSince': memberSince,
-      'imageUrl': imageUrl,
-      'portfolio': portfolio
+      'reviews_count': reviewsCount,
+      'projects_count': projectsCount,
+      'response_time': responseTime,
+      'created_at': memberSince,
+      'avatar': imageUrl,
+      'our_works': portfolio
           .map((e) => (e as PortfolioItemModel).toJson())
           .toList(),
+      'advertisements': services
+          .map((e) => (e as ServiceModel).toJson())
+          .toList(),
+      'reviews': reviews.map((e) => (e as ReviewModel).toJson()).toList(),
     };
   }
 }
@@ -65,19 +85,14 @@ class PortfolioItemModel extends PortfolioItemEntity {
 
   factory PortfolioItemModel.fromJson(Map<String, dynamic> json) {
     return PortfolioItemModel(
-      id: json['id'],
-      title: json['title'],
-      category: json['category'],
-      imageUrl: json['imageUrl'],
+      id: json['id']?.toString() ?? '',
+      title: json['title'] ?? '',
+      category: json['category'] ?? '',
+      imageUrl: json['image'] ?? json['imageUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'category': category,
-      'imageUrl': imageUrl,
-    };
+    return {'id': id, 'title': title, 'category': category, 'image': imageUrl};
   }
 }

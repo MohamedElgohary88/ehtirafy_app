@@ -48,7 +48,7 @@ class ClientHomeContent extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 24.h),
-                          const HomeStatsSection(),
+                          HomeStatsSection(statistics: state.appStatistics),
                           SizedBox(height: 24.h),
                           HomeCategoriesSection(
                             categories: state.categories,

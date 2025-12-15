@@ -1,5 +1,8 @@
 import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_dashboard_repository_impl.dart';
+import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_dashboard_remote_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/domain/repositories/freelancer_orders_repository.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/usecases/get_freelancer_statistics_usecase.dart';
+import 'package:ehtirafy_app/features/freelancer/domain/usecases/get_freelancer_last_contracts_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/datasources/auth_remote_data_source.dart';
@@ -8,10 +11,12 @@ import 'package:ehtirafy_app/features/shared/auth/data/repositories/auth_reposit
 import 'package:ehtirafy_app/features/shared/auth/domain/repositories/auth_repository.dart';
 import 'package:ehtirafy_app/core/network/dio_client.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/login_usecase.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/usecases/logout_usecase.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/usecases/reset_password_usecase.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/signup_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/signup_cubit.dart';
-import 'package:ehtirafy_app/features/shared/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/forgot_password_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/reset_password_cubit.dart';
@@ -34,6 +39,7 @@ import 'package:ehtirafy_app/features/client/home/data/datasources/home_remote_d
 import 'package:ehtirafy_app/features/client/home/data/repositories/home_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/home/domain/repositories/home_repository.dart';
 import 'package:ehtirafy_app/features/client/home/domain/usecases/get_featured_photographers_usecase.dart';
+import 'package:ehtirafy_app/features/client/home/domain/usecases/get_app_statistics_usecase.dart';
 import 'package:ehtirafy_app/features/client/home/domain/usecases/get_categories_usecase.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/cubits/home_cubit.dart';
 import 'package:ehtirafy_app/features/client/freelancer/data/datasources/freelancer_remote_data_source.dart';
@@ -53,14 +59,14 @@ import 'package:ehtirafy_app/features/shared/chat/data/datasources/chat_remote_d
 import 'package:ehtirafy_app/features/shared/chat/data/repositories/chat_repository_impl.dart';
 import 'package:ehtirafy_app/features/shared/chat/domain/repositories/chat_repository.dart';
 import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_conversations_usecase.dart';
-import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_messages_usecase.dart';
-import 'package:ehtirafy_app/features/shared/chat/domain/usecases/send_message_usecase.dart';
+
 import 'package:ehtirafy_app/features/shared/chat/presentation/cubit/chat_cubit.dart';
 import 'package:ehtirafy_app/features/shared/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:ehtirafy_app/features/shared/profile/data/repositories/profile_repository_impl.dart';
 import 'package:ehtirafy_app/features/shared/profile/domain/repositories/profile_repository.dart';
 import 'package:ehtirafy_app/features/shared/profile/domain/usecases/get_user_profile_usecase.dart';
 import 'package:ehtirafy_app/features/shared/profile/domain/usecases/switch_user_role_usecase.dart';
+import 'package:ehtirafy_app/features/shared/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:ehtirafy_app/features/shared/profile/presentation/manager/profile_cubit.dart';
 import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_gigs_remote_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/data/repositories/freelancer_gigs_repository_impl.dart';
@@ -75,6 +81,19 @@ import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_o
 import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_portfolio_remote_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/presentation/cubit/freelancer_portfolio_cubit.dart';
 import 'package:ehtirafy_app/features/shared/splash/presentation/cubits/splash_cubit.dart';
+import 'package:ehtirafy_app/features/shared/settings/data/datasources/settings_remote_datasource.dart';
+import 'package:ehtirafy_app/features/shared/settings/data/repositories/settings_repository_impl.dart';
+import 'package:ehtirafy_app/features/shared/settings/domain/repositories/settings_repository.dart';
+import 'package:ehtirafy_app/features/shared/settings/domain/usecases/get_contact_us_usecase.dart';
+import 'package:ehtirafy_app/features/shared/settings/domain/usecases/get_privacy_policy_usecase.dart';
+import 'package:ehtirafy_app/features/shared/settings/domain/usecases/get_terms_conditions_usecase.dart';
+import 'package:ehtirafy_app/features/shared/settings/presentation/cubit/settings_cubit.dart';
+import 'package:ehtirafy_app/features/shared/reviews/data/datasources/reviews_remote_data_source.dart';
+import 'package:ehtirafy_app/features/shared/reviews/data/repositories/reviews_repository_impl.dart';
+import 'package:ehtirafy_app/features/shared/reviews/domain/repositories/reviews_repository.dart';
+import 'package:ehtirafy_app/features/shared/reviews/domain/usecases/add_rate_usecase.dart';
+import 'package:ehtirafy_app/features/shared/reviews/domain/usecases/get_user_rates_usecase.dart';
+import 'package:ehtirafy_app/features/shared/reviews/presentation/cubits/reviews_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -97,7 +116,9 @@ Future<void> setupLocator() async {
 
   // Domain layer
   sl.registerFactory<LoginUseCase>(() => LoginUseCase(sl<AuthRepository>()));
-  sl.registerFactory<SignupUseCase>(() => SignupUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton<SignupUseCase>(
+    () => SignupUseCase(sl<AuthRepository>()),
+  );
   sl.registerFactory<ForgotPasswordUseCase>(
     () => ForgotPasswordUseCase(sl<AuthRepository>()),
   );
@@ -154,11 +175,13 @@ Future<void> setupLocator() async {
     () => HomeCubit(
       getFeaturedPhotographersUseCase: sl(),
       getCategoriesUseCase: sl(),
+      getAppStatisticsUseCase: sl(),
       userLocalDataSource: sl(),
     ),
   );
   sl.registerLazySingleton(() => GetFeaturedPhotographersUseCase(sl()));
   sl.registerLazySingleton(() => GetCategoriesUseCase(sl()));
+  sl.registerLazySingleton(() => GetAppStatisticsUseCase(sl()));
   sl.registerLazySingleton<HomeRepository>(
     () => HomeRepositoryImpl(remoteDataSource: sl()),
   );
@@ -172,7 +195,7 @@ Future<void> setupLocator() async {
     () => FreelancerRepositoryImpl(remoteDataSource: sl()),
   );
   sl.registerLazySingleton<FreelancerRemoteDataSource>(
-    () => FreelancerRemoteDataSourceImpl(),
+    () => FreelancerRemoteDataSourceImpl(dioClient: sl()),
   );
   // Features - Booking
   // Booking Feature
@@ -203,8 +226,9 @@ Future<void> setupLocator() async {
     ),
   );
   sl.registerLazySingleton(() => GetConversationsUseCase(sl()));
-  sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
-  sl.registerLazySingleton(() => SendMessageUseCase(sl()));
+  sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => SendOtpUseCase(sl()));
   sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(sl()));
   sl.registerLazySingleton<ChatRemoteDataSource>(
     () => ChatRemoteDataSourceImpl(),
@@ -212,27 +236,44 @@ Future<void> setupLocator() async {
 
   // Features - Profile
   sl.registerFactory(
-    () =>
-        ProfileCubit(getUserProfileUseCase: sl(), switchUserRoleUseCase: sl()),
+    () => ProfileCubit(
+      getUserProfileUseCase: sl(),
+      switchUserRoleUseCase: sl(),
+      updateProfileUseCase: sl(),
+      logoutUseCase: sl(),
+    ),
   );
   sl.registerLazySingleton(() => GetUserProfileUseCase(sl()));
   sl.registerLazySingleton(() => SwitchUserRoleUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(sl()),
   );
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(sharedPreferences: sl()),
+    () => ProfileRemoteDataSourceImpl(sharedPreferences: sl(), dioClient: sl()),
   );
 
   // Features - Freelancer Dashboard
-  sl.registerFactory(() => FreelancerDashboardCubit(repository: sl()));
+  sl.registerFactory(
+    () => FreelancerDashboardCubit(
+      repository: sl(),
+      getFreelancerStatisticsUseCase: sl(),
+      getFreelancerLastContractsUseCase: sl(),
+    ),
+  );
   sl.registerLazySingleton<FreelancerDashboardRepository>(
     () => FreelancerDashboardRepositoryImpl(
       userLocalDataSource: sl(),
       gigsRemoteDataSource: sl(),
       portfolioRemoteDataSource: sl(),
+      dashboardRemoteDataSource: sl(),
     ),
   );
+  sl.registerLazySingleton<FreelancerDashboardRemoteDataSource>(
+    () => FreelancerDashboardRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton(() => GetFreelancerStatisticsUseCase(sl()));
+  sl.registerLazySingleton(() => GetFreelancerLastContractsUseCase(sl()));
 
   // Features - Freelancer Gigs
   sl.registerFactory(() => FreelancerGigsCubit(repository: sl()));
@@ -261,5 +302,36 @@ Future<void> setupLocator() async {
   );
   sl.registerLazySingleton<FreelancerPortfolioRepository>(
     () => FreelancerPortfolioRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  // Features - Settings
+  sl.registerFactory(
+    () => SettingsCubit(
+      getPrivacyPolicyUseCase: sl(),
+      getTermsConditionsUseCase: sl(),
+      getContactUsUseCase: sl(),
+    ),
+  );
+  sl.registerLazySingleton(() => GetPrivacyPolicyUseCase(sl()));
+  sl.registerLazySingleton(() => GetTermsConditionsUseCase(sl()));
+  sl.registerLazySingleton(() => GetContactUsUseCase(sl()));
+  sl.registerLazySingleton<SettingsRepository>(
+    () => SettingsRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<SettingsRemoteDataSource>(
+    () => SettingsRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  // Features - Reviews
+  sl.registerFactory(
+    () => ReviewsCubit(addRateUseCase: sl(), getUserRatesUseCase: sl()),
+  );
+  sl.registerLazySingleton(() => AddRateUseCase(sl()));
+  sl.registerLazySingleton(() => GetUserRatesUseCase(sl()));
+  sl.registerLazySingleton<ReviewsRepository>(
+    () => ReviewsRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<ReviewsRemoteDataSource>(
+    () => ReviewsRemoteDataSourceImpl(dioClient: sl()),
   );
 }

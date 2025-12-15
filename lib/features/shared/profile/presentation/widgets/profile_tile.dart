@@ -6,12 +6,18 @@ class ProfileTile extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final bool isDestructive;
+  final Widget? trailing;
+  final Color? textColor;
+  final Color? iconColor;
 
   const ProfileTile({
     super.key,
     required this.title,
     required this.icon,
     required this.onTap,
+    this.trailing,
+    this.textColor,
+    this.iconColor,
     this.isDestructive = false,
   });
 
@@ -40,24 +46,30 @@ class ProfileTile extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  icon,
-                  color: isDestructive
-                      ? const Color(0xFFDC3545)
-                      : const Color(0xFF2B2B2B),
-                  size: 20.sp,
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: (iconColor ?? const Color(0xFFC8A44F)).withOpacity(
+                      0.1,
+                    ),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: iconColor ?? const Color(0xFFC8A44F),
+                    size: 20.sp,
+                  ),
                 ),
-                SizedBox(width: 12.w),
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isDestructive
-                        ? const Color(0xFFDC3545)
-                        : const Color(0xFF2B2B2B),
-                    fontSize: 14.sp,
-                    fontFamily: 'Cairo',
-                    fontWeight: FontWeight.w400,
-                    height: 1.50,
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: textColor ?? const Color(0xFF2B2B2B),
+                      fontSize: 14.sp,
+                      fontFamily: 'Cairo',
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

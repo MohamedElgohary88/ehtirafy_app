@@ -31,4 +31,6 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, String>> sendOtp(String phone, String countryCode);
+
+  Future<Either<Failure, void>> logout();
 }

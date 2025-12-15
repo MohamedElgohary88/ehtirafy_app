@@ -5,9 +5,16 @@ class UserProfileModel extends UserProfileEntity {
     required super.id,
     required super.name,
     required super.email,
-    required super.avatarUrl,
+    super.avatarUrl,
     required super.phone,
     required super.currentRole,
+    super.sex,
+    super.materialStatus,
+    super.countryCode,
+    super.userType,
+    super.ipAddress,
+    super.createdAt,
+    super.updatedAt,
     super.rating,
     super.reviewCount,
     super.bio,
@@ -15,15 +22,21 @@ class UserProfileModel extends UserProfileEntity {
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     return UserProfileModel(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      avatarUrl: json['avatarUrl'],
-      phone: json['phone'],
-      currentRole: UserRole.values.firstWhere(
-        (e) => e.toString().split('.').last == json['currentRole'],
-        orElse: () => UserRole.client,
-      ),
+      id: json['id'].toString(), // Convert int to String
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      avatarUrl: json['avatar_url'], // Assuming key, or null
+      phone: json['phone'] ?? '',
+      // Map user_type to UserRole or use default
+      currentRole: _mapUserTypeToRole(json['user_type']),
+      sex: json['sex'],
+      materialStatus: json['material_status'],
+      countryCode: json['country_code'],
+      userType: json['user_type'],
+      ipAddress: json['ip_address'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
+      // Keep existing logic for these if they exist
       rating: (json['rating'] as num?)?.toDouble(),
       reviewCount: json['reviewCount'],
       bio: json['bio'],
@@ -35,12 +48,26 @@ class UserProfileModel extends UserProfileEntity {
       'id': id,
       'name': name,
       'email': email,
-      'avatarUrl': avatarUrl,
+      'avatar_url': avatarUrl,
       'phone': phone,
-      'currentRole': currentRole.toString().split('.').last,
+      'user_type': userType,
+      // 'currentRole': currentRole.toString().split('.').last, // Keep if needed for local storage
+      'sex': sex,
+      'material_status': materialStatus,
+      'country_code': countryCode,
+      'ip_address': ipAddress,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
       'rating': rating,
       'reviewCount': reviewCount,
       'bio': bio,
     };
+  }
+
+  static UserRole _mapUserTypeToRole(String? userType) {
+    if (userType == 'freelancer') {
+      return UserRole.freelancer;
+    }
+    return UserRole.client; // Default to client if 'user' or null
   }
 }

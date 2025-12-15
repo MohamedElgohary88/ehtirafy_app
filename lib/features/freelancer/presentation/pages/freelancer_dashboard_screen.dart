@@ -11,7 +11,7 @@ import '../cubit/freelancer_dashboard_state.dart';
 import '../widgets/stat_card.dart';
 import '../../domain/entities/gig_entity.dart';
 import '../../domain/entities/portfolio_item_entity.dart';
-import '../../domain/entities/freelancer_order_entity.dart';
+import '../../domain/entities/freelancer_last_contract.dart';
 
 class FreelancerDashboardScreen extends StatefulWidget {
   const FreelancerDashboardScreen({super.key});
@@ -93,7 +93,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
                                 SizedBox(height: 24.h),
                                 _buildRecentOrdersSection(
                                   context,
-                                  state.recentOrders,
+                                  state.lastContracts,
                                 ),
                                 SizedBox(height: 32.h),
                               ],
@@ -173,7 +173,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
                     Icon(Icons.star, color: AppColors.primary, size: 16.sp),
                     SizedBox(width: 2.w),
                     Text(
-                      '${state.stats.rating}',
+                      '${state.stats.averageRating}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: const Color(0xFF2B2B2B),
                         fontSize: 12.sp,
@@ -199,12 +199,12 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: state.stats.isOnline
+        color: state.isOnline
             ? const Color(0xFF28A745).withOpacity(0.1)
             : const Color(0xFF888888).withOpacity(0.1),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
-          color: state.stats.isOnline
+          color: state.isOnline
               ? const Color(0xFF28A745).withOpacity(0.3)
               : const Color(0xFF888888).withOpacity(0.3),
         ),
@@ -212,7 +212,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
       child: InkWell(
         onTap: () {
           context.read<FreelancerDashboardCubit>().toggleOnlineStatus(
-            !state.stats.isOnline,
+            !state.isOnline,
           );
         },
         child: Row(
@@ -222,7 +222,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
               width: 8.w,
               height: 8.h,
               decoration: BoxDecoration(
-                color: state.stats.isOnline
+                color: state.isOnline
                     ? const Color(0xFF28A745)
                     : const Color(0xFF888888),
                 shape: BoxShape.circle,
@@ -230,11 +230,11 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
             ),
             SizedBox(width: 6.w),
             Text(
-              state.stats.isOnline
+              state.isOnline
                   ? AppStrings.freelancerDashboardOnline.tr()
                   : AppStrings.freelancerDashboardOffline.tr(),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: state.stats.isOnline
+                color: state.isOnline
                     ? const Color(0xFF28A745)
                     : const Color(0xFF888888),
                 fontSize: 12.sp,
@@ -265,7 +265,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
         Expanded(
           child: StatCard(
             title: AppStrings.freelancerDashboardActiveOrders.tr(),
-            value: '${state.stats.activeOrders}',
+            value: '${state.stats.activeGigs}',
             icon: Icons.assignment_outlined,
             iconColor: const Color(0xFF28A745),
           ),
@@ -274,7 +274,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
         Expanded(
           child: StatCard(
             title: AppStrings.freelancerDashboardProfileViews.tr(),
-            value: '${state.stats.profileViews}',
+            value: '${0}', // Profile views not in API
             icon: Icons.visibility_outlined,
             iconColor: const Color(0xFF17A2B8),
           ),
@@ -509,7 +509,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
 
   Widget _buildRecentOrdersSection(
     BuildContext context,
-    List<FreelancerOrderEntity> orders,
+    List<FreelancerLastContract> orders,
   ) {
     if (orders.isEmpty) return const SizedBox.shrink();
 
@@ -537,7 +537,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
 
   Widget _buildOrderPreviewCard(
     BuildContext context,
-    FreelancerOrderEntity order,
+    FreelancerLastContract order,
   ) {
     return Container(
       padding: EdgeInsets.all(12.w),
@@ -564,7 +564,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
               child: Image.network(
-                order.clientImage,
+                order.clientAvatar ?? '',
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) =>
                     Icon(Icons.person, size: 20.sp, color: Colors.grey),
@@ -577,7 +577,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  order.serviceTitle,
+                  order.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -598,7 +598,7 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
             ),
           ),
           Text(
-            '${order.price.toInt()} ر.س',
+            '${order.amount.toInt()} ر.س',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppColors.primary,
               fontSize: 12.sp,

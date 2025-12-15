@@ -18,7 +18,11 @@ class ProfileLoaded extends ProfileState {
   const ProfileLoaded(this.userProfile);
 
   @override
-  List<Object?> get props => [userProfile];
+  List<Object> get props => [userProfile];
+}
+
+class ProfileUpdateSuccess extends ProfileLoaded {
+  const ProfileUpdateSuccess(super.userProfile);
 }
 
 class ProfileRoleSwitching extends ProfileState {
@@ -38,3 +42,5 @@ class ProfileError extends ProfileState {
   @override
   List<Object?> get props => [message];
 }
+
+class ProfileLoggedOut extends ProfileState {}

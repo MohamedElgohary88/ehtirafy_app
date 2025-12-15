@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:ehtirafy_app/features/client/freelancer/domain/entities/service_entity.dart';
+import 'package:ehtirafy_app/features/client/freelancer/domain/entities/review_entity.dart';
 
 class FreelancerEntity extends Equatable {
   final String id;
@@ -13,6 +15,8 @@ class FreelancerEntity extends Equatable {
   final String memberSince;
   final String imageUrl;
   final List<PortfolioItemEntity> portfolio;
+  final List<ServiceEntity> services;
+  final List<ReviewEntity> reviews;
 
   const FreelancerEntity({
     required this.id,
@@ -27,6 +31,8 @@ class FreelancerEntity extends Equatable {
     required this.memberSince,
     required this.imageUrl,
     required this.portfolio,
+    this.services = const [],
+    this.reviews = const [],
   });
 
   @override
@@ -43,6 +49,8 @@ class FreelancerEntity extends Equatable {
     memberSince,
     imageUrl,
     portfolio,
+    services,
+    reviews,
   ];
 }
 

@@ -51,7 +51,9 @@ class ProfileHeader extends StatelessWidget {
               child: Container(
                 decoration: ShapeDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(user.avatarUrl),
+                    image: NetworkImage(
+                      user.avatarUrl ?? "https://i.pravatar.cc/300",
+                    ),
                     fit: BoxFit.cover,
                   ),
                   shape: RoundedRectangleBorder(

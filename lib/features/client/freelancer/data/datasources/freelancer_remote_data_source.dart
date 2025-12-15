@@ -1,4 +1,5 @@
-import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
+import 'package:ehtirafy_app/core/network/dio_client.dart';
+import 'package:ehtirafy_app/core/error/exceptions.dart';
 import 'package:ehtirafy_app/features/client/freelancer/data/models/freelancer_model.dart';
 
 abstract class FreelancerRemoteDataSource {
@@ -6,10 +7,24 @@ abstract class FreelancerRemoteDataSource {
 }
 
 class FreelancerRemoteDataSourceImpl implements FreelancerRemoteDataSource {
+  final DioClient dioClient;
+
+  FreelancerRemoteDataSourceImpl({required this.dioClient});
+
   @override
   Future<FreelancerModel> getFreelancerProfile(String id) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
-    return FreelancerModel.fromJson(AppMockData.mockFreelancerProfile);
+    try {
+      final response = await dioClient.get(
+        '/api/v1/get-freelancer-profile/$id',
+      );
+
+      if (response.statusCode == 200) {
+        return FreelancerModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException(response.data['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
   }
 }

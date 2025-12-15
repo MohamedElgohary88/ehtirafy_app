@@ -1,11 +1,12 @@
 import 'package:bloc/bloc.dart';
-import 'package:ehtirafy_app/features/shared/auth/domain/repositories/auth_repository.dart';
+import '../../domain/usecases/reset_password_usecase.dart';
 import 'reset_password_state.dart';
 
 class ResetPasswordCubit extends Cubit<ResetPasswordState> {
-  final AuthRepository _authRepository;
+  final ResetPasswordUseCase _resetPasswordUseCase;
 
-  ResetPasswordCubit(this._authRepository) : super(ResetPasswordInitial());
+  ResetPasswordCubit(this._resetPasswordUseCase)
+    : super(ResetPasswordInitial());
 
   Future<void> resetPassword({
     required String email,
@@ -15,7 +16,7 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   }) async {
     emit(ResetPasswordLoading());
 
-    final result = await _authRepository.resetPassword(
+    final result = await _resetPasswordUseCase(
       email: email,
       otp: otp,
       password: password,

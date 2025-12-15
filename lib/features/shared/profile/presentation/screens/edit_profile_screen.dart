@@ -90,17 +90,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    // Save logic here
-                    context.pop();
+                    final data = {
+                      'name': _nameController.text,
+                      'phone': _phoneController.text,
+                      'bio': _bioController.text,
+                    };
+                    context.read<ProfileCubit>().updateProfile(data);
                   },
-                  child: Text(
-                    'save'.tr(),
-                    style: TextStyle(
-                      color: _primaryGold,
-                      fontSize: 16.sp,
-                      fontFamily: 'Cairo',
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: BlocConsumer<ProfileCubit, ProfileState>(
+                    listener: (context, state) {
+                      if (state is ProfileUpdateSuccess) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('profile.update_success'.tr()),
+                          ),
+                        );
+                      } else if (state is ProfileError) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is ProfileLoading) {
+                        return SizedBox(
+                          width: 20.w,
+                          height: 20.w,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        );
+                      }
+                      return Text(
+                        'save'.tr(),
+                        style: TextStyle(
+                          color: _primaryGold,
+                          fontSize: 16.sp,
+                          fontFamily: 'Cairo',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -128,8 +158,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               shape: BoxShape.circle,
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  state is ProfileLoaded
-                                      ? state.userProfile.avatarUrl
+                                  state is ProfileLoaded &&
+                                          state.userProfile.avatarUrl != null
+                                      ? state.userProfile.avatarUrl!
                                       : "https://i.pravatar.cc/300",
                                 ),
                                 fit: BoxFit.cover,

@@ -1,17 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
 import 'package:ehtirafy_app/core/error/exceptions.dart';
-import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import 'package:ehtirafy_app/features/shared/auth/data/datasources/user_local_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_gigs_remote_data_source.dart';
 import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_portfolio_remote_data_source.dart';
-import '../../domain/entities/freelancer_stats_entity.dart';
 import '../../domain/entities/gig_entity.dart';
 import '../../domain/entities/portfolio_item_entity.dart';
-import '../../domain/entities/freelancer_order_entity.dart';
 import '../../domain/repositories/freelancer_dashboard_repository.dart';
-import '../models/freelancer_stats_model.dart';
-import '../models/freelancer_order_model.dart';
+
+import 'package:ehtirafy_app/features/freelancer/data/datasources/freelancer_dashboard_remote_data_source.dart';
+import '../../domain/entities/freelancer_statistics.dart';
+import '../../domain/entities/freelancer_last_contract.dart';
 
 /// Dashboard repository implementation with real API data for gigs and portfolio
 class FreelancerDashboardRepositoryImpl
@@ -19,6 +18,7 @@ class FreelancerDashboardRepositoryImpl
   final UserLocalDataSource userLocalDataSource;
   final FreelancerGigsRemoteDataSource gigsRemoteDataSource;
   final FreelancerPortfolioRemoteDataSource? portfolioRemoteDataSource;
+  final FreelancerDashboardRemoteDataSource? dashboardRemoteDataSource;
 
   bool _isOnline = true;
 
@@ -26,22 +26,44 @@ class FreelancerDashboardRepositoryImpl
     required this.userLocalDataSource,
     required this.gigsRemoteDataSource,
     this.portfolioRemoteDataSource,
+    this.dashboardRemoteDataSource,
   });
 
   @override
-  Future<Either<Failure, FreelancerStatsEntity>> getStats() async {
+  Future<Either<Failure, FreelancerStatistics>> getStatistics(
+    int freelancerId,
+  ) async {
     try {
-      // Simulate network delay for stats (still mock for now)
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      final statsJson = Map<String, dynamic>.from(
-        AppMockData.mockFreelancerStats,
+      if (dashboardRemoteDataSource != null) {
+        final result = await dashboardRemoteDataSource!.getStatistics(
+          freelancerId,
+        );
+        return Right(result);
+      }
+      return const Left(
+        ServerFailure("Dashboard remote data source not available"),
       );
-      statsJson['isOnline'] = _isOnline;
-      final stats = FreelancerStatsModel.fromJson(statsJson);
-      return Right(stats);
     } catch (e) {
-      return const Left(ServerFailure('فشل في جلب الإحصائيات'));
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<FreelancerLastContract>>> getLastContracts(
+    int freelancerId,
+  ) async {
+    try {
+      if (dashboardRemoteDataSource != null) {
+        final result = await dashboardRemoteDataSource!.getLastContracts(
+          freelancerId,
+        );
+        return Right(result);
+      }
+      return const Left(
+        ServerFailure("Dashboard remote data source not available"),
+      );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -82,23 +104,6 @@ class FreelancerDashboardRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<FreelancerOrderEntity>>> getRecentOrders() async {
-    try {
-      // Still using mock for orders (needs API endpoint)
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      final orders = AppMockData.mockFreelancerOrders
-          .where((o) => o['status'] == 'pending' || o['status'] == 'inProgress')
-          .take(2)
-          .map((json) => FreelancerOrderModel.fromJson(json))
-          .toList();
-      return Right(orders);
-    } catch (e) {
-      return const Left(ServerFailure('فشل في جلب الطلبات'));
-    }
-  }
-
-  @override
   Future<Either<Failure, bool>> toggleOnlineStatus(bool isOnline) async {
     try {
       await Future.delayed(const Duration(milliseconds: 200));
@@ -116,6 +121,16 @@ class FreelancerDashboardRepositoryImpl
       return user?.name ?? 'مستخدم';
     } catch (_) {
       return 'مستخدم';
+    }
+  }
+
+  @override
+  Future<int?> getUserId() async {
+    try {
+      final user = await userLocalDataSource.getUser();
+      return user?.id;
+    } catch (_) {
+      return null;
     }
   }
 }
