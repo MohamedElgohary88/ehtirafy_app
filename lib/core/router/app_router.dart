@@ -47,6 +47,8 @@ import 'package:ehtirafy_app/features/freelancer/domain/entities/freelancer_orde
 import 'package:ehtirafy_app/features/freelancer/domain/entities/portfolio_item_entity.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/domain/entities/user_role.dart';
+import 'package:ehtirafy_app/features/shared/profile/presentation/manager/profile_cubit.dart';
+import 'package:ehtirafy_app/core/notifications/token_debug_screen.dart';
 import 'package:ehtirafy_app/core/router/utils/go_router_refresh_stream.dart';
 
 /// GoRouter configuration for the app
@@ -170,7 +172,10 @@ final appRouter = GoRouter(
                 ),
                 GoRoute(
                   path: 'settings',
-                  builder: (context, state) => const SettingsScreen(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => sl<ProfileCubit>(),
+                    child: const SettingsScreen(),
+                  ),
                 ),
                 GoRoute(
                   path: 'wallet',
@@ -298,7 +303,10 @@ final appRouter = GoRouter(
                 ),
                 GoRoute(
                   path: 'settings',
-                  builder: (context, state) => const SettingsScreen(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => sl<ProfileCubit>(),
+                    child: const SettingsScreen(),
+                  ),
                 ),
                 GoRoute(
                   path: 'wallet',
@@ -390,6 +398,10 @@ final appRouter = GoRouter(
         final id = state.pathParameters['id']!;
         return OrderDetailsScreen(orderId: id);
       },
+    ),
+    GoRoute(
+      path: '/debug/token',
+      builder: (context, state) => const TokenDebugScreen(),
     ),
   ],
 );

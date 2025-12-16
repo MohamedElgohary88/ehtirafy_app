@@ -39,7 +39,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         // strict logic depends on app requirements.
         // For now, let's defer to the API but allow switching.
         // Actually, the UI uses currentRole to toggle views.
-        return profile.copyWith(currentRole: localRole) as UserProfileModel;
+        return profile.copyWith(currentRole: localRole);
       } else {
         throw Exception(response.data['message'] ?? 'Failed to load profile');
       }
@@ -87,7 +87,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     // Let's fetch fresh data to be safe, but force the role.
     try {
       final profile = await getUserProfile();
-      return profile.copyWith(currentRole: newRole) as UserProfileModel;
+      return profile.copyWith(currentRole: newRole);
     } catch (e) {
       // If fetch fails (offline), return a minimal profile or cached one (not implemented yet).
       // For now, construct one or rethrow.

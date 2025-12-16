@@ -44,35 +44,37 @@ class ProfileTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: (iconColor ?? const Color(0xFFC8A44F)).withOpacity(
-                      0.1,
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: (iconColor ?? const Color(0xFFC8A44F)).withOpacity(
+                        0.1,
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: iconColor ?? const Color(0xFFC8A44F),
-                    size: 20.sp,
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      color: textColor ?? const Color(0xFF2B2B2B),
-                      fontSize: 14.sp,
-                      fontFamily: 'Cairo',
-                      fontWeight: FontWeight.w600,
+                    child: Icon(
+                      icon,
+                      color: iconColor ?? const Color(0xFFC8A44F),
+                      size: 20.sp,
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: textColor ?? const Color(0xFF2B2B2B),
+                        fontSize: 14.sp,
+                        fontFamily: 'Cairo',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Icon(
               Icons.arrow_forward_ios,

@@ -5,9 +5,24 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:ehtirafy_app/firebase_options.dart';
+import 'package:ehtirafy_app/core/notifications/background_handler.dart';
+import 'package:ehtirafy_app/core/notifications/notification_service.dart';
+
+Future<void> main() async {
   // 1. Minimal initialization required for runApp
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase (Critical ordered step 1)
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Register Background Handler (Critical ordered step 2)
+  FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
+
+  // Initialize Notification Service (Critical ordered step 3)
+  await NotificationService().initialize();
 
   // 2. Run immediately without awaiting anything else
   // This forces the native splash to dismiss as soon as possible

@@ -80,6 +80,14 @@ class SettingsScreen extends StatelessWidget {
               ),
               SizedBox(height: 12.h),
               ProfileTile(
+                title: 'Debug FCM Token',
+                icon: Icons.bug_report,
+                onTap: () {
+                  context.push('/debug/token');
+                },
+              ),
+              SizedBox(height: 12.h),
+              ProfileTile(
                 title: 'settings.help_support'.tr(),
                 icon: Icons.help_outline,
                 onTap: () {
@@ -134,6 +142,7 @@ class SettingsScreen extends StatelessWidget {
                 textColor: Colors.red,
                 iconColor: Colors.red,
                 onTap: () {
+                  final cubit = context.read<ProfileCubit>();
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -147,7 +156,7 @@ class SettingsScreen extends StatelessWidget {
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context); // Close dialog
-                            context.read<ProfileCubit>().logout();
+                            cubit.logout();
                           },
                           child: Text(
                             'profile.menu.logout'.tr(),

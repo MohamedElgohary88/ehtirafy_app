@@ -64,6 +64,45 @@ class UserProfileModel extends UserProfileEntity {
     };
   }
 
+  @override
+  UserProfileModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? avatarUrl,
+    String? phone,
+    UserRole? currentRole,
+    String? sex,
+    String? materialStatus,
+    String? countryCode,
+    String? userType,
+    String? ipAddress,
+    String? createdAt,
+    String? updatedAt,
+    double? rating,
+    int? reviewCount,
+    String? bio,
+  }) {
+    return UserProfileModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      phone: phone ?? this.phone,
+      currentRole: currentRole ?? this.currentRole,
+      sex: sex ?? this.sex,
+      materialStatus: materialStatus ?? this.materialStatus,
+      countryCode: countryCode ?? this.countryCode,
+      userType: userType ?? this.userType,
+      ipAddress: ipAddress ?? this.ipAddress,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rating: rating ?? this.rating,
+      reviewCount: reviewCount ?? this.reviewCount,
+      bio: bio ?? this.bio,
+    );
+  }
+
   static UserRole _mapUserTypeToRole(String? userType) {
     if (userType == 'freelancer') {
       return UserRole.freelancer;
