@@ -41,15 +41,25 @@ class FreelancerGigsRemoteDataSourceImpl
 
   @override
   Future<GigModel> addGig(Map<String, dynamic> data) async {
-    final formData = FormData.fromMap(data);
+    final Map<String, dynamic> requestData = Map.from(data);
 
-    // Handle images list if present (API expects images[0], images[1] etc.)
-    // But Dio FormData handles List<MultipartFile> automatically if key is "images[]".
-    // User request: images[0], days_availability[0] format.
-    // We might need manual loop if Dio doesn't match the exact format:
-    // "images[0]": file1, "images[1]": file2
-    // Let's assume passed data is already formatted or we format it in Repos.
-    // For now, let's treat it as a Map passed from Repository.
+    // Handle images
+    if (requestData.containsKey('images') && requestData['images'] is List) {
+      final List<String> imagePaths = requestData['images'];
+      requestData.remove('images');
+
+      final List<MultipartFile> files = [];
+      for (var path in imagePaths) {
+        files.add(await MultipartFile.fromFile(path));
+      }
+
+      // Using 'images[]' as key for array of files as per common backend conventions
+      // If specific indexed keys are needed (images[0]), we would loop and add keys.
+      // But Dio FormData usually handles 'images[]' with list of files well.
+      requestData['images[]'] = files;
+    }
+
+    final formData = FormData.fromMap(requestData);
 
     final response = await _dioClient.post(
       ApiConstants.advertisements,
@@ -93,8 +103,22 @@ class FreelancerGigsRemoteDataSourceImpl
 
   @override
   Future<GigModel> updateGig(String id, Map<String, dynamic> data) async {
-    data['_method'] = 'put';
-    final formData = FormData.fromMap(data);
+    final Map<String, dynamic> requestData = Map.from(data);
+    requestData['_method'] = 'put';
+
+    // Handle images for update
+    if (requestData.containsKey('images') && requestData['images'] is List) {
+      final List<String> imagePaths = requestData['images'];
+      requestData.remove('images');
+
+      final List<MultipartFile> files = [];
+      for (var path in imagePaths) {
+        files.add(await MultipartFile.fromFile(path));
+      }
+      requestData['images[]'] = files;
+    }
+
+    final formData = FormData.fromMap(requestData);
 
     final response = await _dioClient.post(
       '${ApiConstants.advertisements}/$id',

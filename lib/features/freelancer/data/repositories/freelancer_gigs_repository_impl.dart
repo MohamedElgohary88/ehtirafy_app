@@ -5,7 +5,6 @@ import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import '../../domain/entities/gig_entity.dart';
 import '../../domain/repositories/freelancer_gigs_repository.dart';
 import '../datasources/freelancer_gigs_remote_data_source.dart';
-import 'package:dio/dio.dart';
 
 class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
   final FreelancerGigsRemoteDataSource remoteDataSource;
@@ -46,23 +45,9 @@ class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
         // 'days_availability[]': availability
       };
 
-      // Handle images as MultipartFile if they are local paths
+      // Pass image paths directly to RemoteDataSource to handle conversion
       if (images.isNotEmpty) {
-        // This requires asynchronous file reading.
-        // Since we can't easily do it inside the map literal, we build data list for FormData or map.
-        // But RemoteDataSource takes Map<String, dynamic>.
-        // If we pass strings, RemoteDataSource has to convert?
-        // Let's assume images are local paths.
-
-        // For simplistic implementation, we just pass the map and let DataSource handle (or we handle it here).
-        // RemoteDataSource `FormData.fromMap` handles List<MultipartFile>.
-        // We need to convert List<String> paths to List<MultipartFile>.
-
-        List<MultipartFile> imageFiles = [];
-        for (var path in images) {
-          imageFiles.add(await MultipartFile.fromFile(path));
-        }
-        data['images'] = imageFiles;
+        data['images'] = images;
       }
 
       if (availability.isNotEmpty) {
@@ -100,9 +85,13 @@ class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
         // 'status': _gigStatusToString(gig.status), // We might not want to reset status on update unless specified
       };
 
-      // Handle images if needed, but for now assuming URLs or handling differently
-      // Since RemoteDataSource updateGig calls Dio.put/post, we might need multipart if images are files
-      // But update logic here mimics add logic somewhat if we have new files
+      if (images.isNotEmpty) {
+        data['images'] = images;
+      }
+
+      if (availability.isNotEmpty) {
+        data['days_availability'] = availability;
+      }
 
       final updatedGig = await remoteDataSource.updateGig(id, data);
       return Right(updatedGig);

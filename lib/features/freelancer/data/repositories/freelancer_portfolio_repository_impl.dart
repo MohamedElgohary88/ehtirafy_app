@@ -80,7 +80,9 @@ class FreelancerPortfolioRepositoryImpl
         'ar_description': description,
         'en_description': description,
       };
-      // Image update logic would go here
+      if (imagePath != null) {
+        data['image'] = imagePath;
+      }
 
       final item = await remoteDataSource.updatePortfolioItem(id, data);
       return Right(item);
