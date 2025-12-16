@@ -32,12 +32,9 @@ class RequestsRepositoryImpl implements RequestsRepository {
   @override
   Future<Either<Failure, List<RequestEntity>>> getMyRequests() async {
     try {
-      // Backend naming mapping:
-      // App Freelancer (photographer) → Backend 'publisher'
-      // App Client (customer) → Backend 'freelancer'
-      final userType = userRole == UserRole.freelancer
-          ? 'publisher'
-          : 'freelancer';
+      // Backend API accepts: 'publisher' or 'freelancer'
+      // Both roles use 'publisher' to get their relative contracts
+      final userType = 'publisher';
 
       // Debug log
       debugPrint('🔍 RequestsRepositoryImpl - userRole: $userRole');

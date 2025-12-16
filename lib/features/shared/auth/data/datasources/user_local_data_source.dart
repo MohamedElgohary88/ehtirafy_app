@@ -57,16 +57,38 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
   Future<User?> getUser() async {
     final jsonString = sharedPreferences.getString(_userKey);
     if (jsonString != null) {
-      final jsonMap = json.decode(jsonString);
-      return User(
-        id: jsonMap['id'],
-        name: jsonMap['name'],
-        email: jsonMap['email'],
-        phone: jsonMap['phone'],
-        countryCode: jsonMap['country_code'],
-        sex: jsonMap['sex'],
-        materialStatus: jsonMap['material_status'],
-      );
+      try {
+        final jsonMap = json.decode(jsonString);
+
+        // Helper to safely get string value, handling potential Map types
+        String? safeString(dynamic value) {
+          if (value == null) return null;
+          if (value is String) return value;
+          if (value is Map) return null; // Skip if it's a Map (localized data)
+          return value.toString();
+        }
+
+        // Helper to get int value
+        int safeInt(dynamic value) {
+          if (value == null) return 0;
+          if (value is int) return value;
+          if (value is String) return int.tryParse(value) ?? 0;
+          return 0;
+        }
+
+        return User(
+          id: safeInt(jsonMap['id']),
+          name: safeString(jsonMap['name']) ?? '',
+          email: safeString(jsonMap['email']) ?? '',
+          phone: safeString(jsonMap['phone']) ?? '',
+          countryCode: safeString(jsonMap['country_code']),
+          sex: safeString(jsonMap['sex']),
+          materialStatus: safeString(jsonMap['material_status']),
+        );
+      } catch (e) {
+        // JSON parsing failed
+        return null;
+      }
     }
     return null;
   }

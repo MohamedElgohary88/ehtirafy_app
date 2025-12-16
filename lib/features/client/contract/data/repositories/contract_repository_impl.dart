@@ -52,15 +52,14 @@ class ContractRepositoryImpl implements ContractRepository {
       final queryParams = Map<String, dynamic>.from(params ?? {});
 
       if (userRole != null) {
-        // Backend naming mapping:
-        // - App Freelancer (photographer) → Backend 'publisher'
-        // - App Client (customer) → Backend 'freelancer'
+        // Backend API accepts: 'publisher' or 'freelancer'
+        // Both roles use 'publisher' to get their relative contracts
         switch (userRole) {
           case UserRole.freelancer:
             queryParams['user_type'] = 'publisher';
             break;
           case UserRole.client:
-            queryParams['user_type'] = 'freelancer';
+            queryParams['user_type'] = 'publisher';
             break;
           case UserRole.guest:
             // Guests shouldn't access contracts
