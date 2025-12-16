@@ -8,15 +8,21 @@ class SearchUseCase {
 
   SearchUseCase(this.repository);
 
-  Future<Either<Failure, List<SearchResultEntity>>> getRecentSearches() async {
-    return await repository.getRecentSearches();
-  }
-
-  Future<Either<Failure, List<SearchResultEntity>>> getPopularTags() async {
-    return await repository.getPopularTags();
+  Future<Either<Failure, List<SearchResultEntity>>> getSearchHistory() async {
+    return await repository.getSearchHistory();
   }
 
   Future<Either<Failure, List<SearchResultEntity>>> search(String query) async {
+    // Save to history before searching
+    await repository.saveSearchToHistory(query);
     return await repository.search(query);
+  }
+
+  Future<Either<Failure, void>> deleteFromHistory(String query) async {
+    return await repository.deleteSearchFromHistory(query);
+  }
+
+  Future<Either<Failure, void>> clearHistory() async {
+    return await repository.clearSearchHistory();
   }
 }

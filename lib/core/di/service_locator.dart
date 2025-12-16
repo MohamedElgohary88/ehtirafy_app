@@ -31,6 +31,7 @@ import 'package:ehtirafy_app/features/client/notifications/domain/repositories/n
 import 'package:ehtirafy_app/features/client/notifications/domain/usecases/get_notifications_usecase.dart';
 import 'package:ehtirafy_app/features/client/notifications/presentation/cubits/notifications_cubit.dart';
 import 'package:ehtirafy_app/features/client/search/data/datasources/search_remote_data_source.dart';
+import 'package:ehtirafy_app/features/client/search/data/datasources/search_local_data_source.dart';
 import 'package:ehtirafy_app/features/client/search/data/repositories/search_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/search/domain/repositories/search_repository.dart';
 import 'package:ehtirafy_app/features/client/search/domain/usecases/search_usecase.dart';
@@ -50,6 +51,7 @@ import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/free
 import 'package:ehtirafy_app/features/client/booking/data/repositories/booking_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/booking/domain/repositories/booking_repository.dart';
 import 'package:ehtirafy_app/features/client/booking/domain/usecases/submit_booking_request_usecase.dart';
+import 'package:ehtirafy_app/features/client/booking/presentation/cubit/booking_cubit.dart';
 import 'package:ehtirafy_app/features/client/contract/data/repositories/contract_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/contract/data/datasources/contract_remote_data_source.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/repositories/contract_repository.dart';
@@ -59,6 +61,8 @@ import 'package:ehtirafy_app/features/shared/chat/data/datasources/chat_remote_d
 import 'package:ehtirafy_app/features/shared/chat/data/repositories/chat_repository_impl.dart';
 import 'package:ehtirafy_app/features/shared/chat/domain/repositories/chat_repository.dart';
 import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_conversations_usecase.dart';
+import 'package:ehtirafy_app/features/shared/chat/domain/usecases/get_messages_usecase.dart';
+import 'package:ehtirafy_app/features/shared/chat/domain/usecases/send_message_usecase.dart';
 
 import 'package:ehtirafy_app/features/shared/chat/presentation/cubit/chat_cubit.dart';
 import 'package:ehtirafy_app/features/shared/profile/data/datasources/profile_remote_datasource.dart';
@@ -165,10 +169,13 @@ Future<void> setupLocator() async {
   sl.registerFactory(() => SearchCubit(searchUseCase: sl()));
   sl.registerLazySingleton(() => SearchUseCase(sl()));
   sl.registerLazySingleton<SearchRepository>(
-    () => SearchRepositoryImpl(remoteDataSource: sl()),
+    () => SearchRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
   );
   sl.registerLazySingleton<SearchRemoteDataSource>(
-    () => SearchRemoteDataSourceImpl(),
+    () => SearchRemoteDataSourceImpl(dioClient: sl()),
+  );
+  sl.registerLazySingleton<SearchLocalDataSource>(
+    () => SearchLocalDataSourceImpl(sharedPreferences: sl()),
   );
   // Features - Home
   sl.registerFactory(
@@ -200,6 +207,7 @@ Future<void> setupLocator() async {
   // Features - Booking
   // Booking Feature
   sl.registerFactory(() => ResetPasswordCubit(sl()));
+  sl.registerFactory(() => BookingCubit(sl()));
   sl.registerLazySingleton(() => SubmitBookingRequestUseCase(sl()));
   sl.registerLazySingleton<BookingRepository>(
     () =>
@@ -226,6 +234,8 @@ Future<void> setupLocator() async {
     ),
   );
   sl.registerLazySingleton(() => GetConversationsUseCase(sl()));
+  sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
+  sl.registerLazySingleton(() => SendMessageUseCase(sl()));
   sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
 

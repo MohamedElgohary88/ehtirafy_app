@@ -90,11 +90,22 @@ class _PhotographerCard extends StatelessWidget {
               height: 80.w,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.r),
-                image: DecorationImage(
-                  image: NetworkImage(photographer.imageUrl),
-                  fit: BoxFit.cover,
-                ),
+                color: const Color(0xFFF5F5F5),
+                image: photographer.imageUrl.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(photographer.imageUrl),
+                        fit: BoxFit.cover,
+                        onError: (exception, stackTrace) {},
+                      )
+                    : null,
               ),
+              child: photographer.imageUrl.isEmpty
+                  ? Icon(
+                      Icons.person,
+                      color: const Color(0xFFBDBDBD),
+                      size: 40.w,
+                    )
+                  : null,
             ),
             SizedBox(width: 16.w),
             Expanded(

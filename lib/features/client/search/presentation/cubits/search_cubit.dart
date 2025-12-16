@@ -9,41 +9,72 @@ class SearchCubit extends Cubit<SearchState> {
 
   SearchCubit({required this.searchUseCase}) : super(SearchInitial());
 
-  Future<void> loadInitialData() async {
+  Future<void> loadSearchHistory() async {
     emit(SearchLoading());
-    final recentResult = await searchUseCase.getRecentSearches();
-    final popularResult = await searchUseCase.getPopularTags();
+    final result = await searchUseCase.getSearchHistory();
 
-    recentResult.fold(
+    result.fold(
       (failure) => emit(SearchError(_mapFailureToMessage(failure))),
-      (recent) {
-        popularResult.fold(
-          (failure) => emit(SearchError(_mapFailureToMessage(failure))),
-          (popular) {
-            emit(SearchLoaded(recentSearches: recent, popularTags: popular));
-          },
-        );
-      },
+      (history) => emit(SearchLoaded(searchHistory: history)),
     );
   }
 
   Future<void> search(String query) async {
+    if (query.trim().isEmpty) return;
+
     if (state is SearchLoaded) {
       final currentState = state as SearchLoaded;
-      emit(SearchLoading());
+      emit(currentState.copyWith(isSearching: true));
+
       final result = await searchUseCase.search(query);
+
       result.fold(
         (failure) => emit(SearchError(_mapFailureToMessage(failure))),
-        (results) {
+        (results) async {
+          // Reload history since a new search was saved
+          final historyResult = await searchUseCase.getSearchHistory();
+          final updatedHistory = historyResult.getOrElse(
+            () => currentState.searchHistory,
+          );
+
           emit(
             SearchLoaded(
-              recentSearches: currentState.recentSearches,
-              popularTags: currentState.popularTags,
+              searchHistory: updatedHistory,
               searchResults: results,
+              isSearching: false,
             ),
           );
         },
       );
+    }
+  }
+
+  Future<void> deleteFromHistory(String query) async {
+    if (state is SearchLoaded) {
+      final currentState = state as SearchLoaded;
+
+      await searchUseCase.deleteFromHistory(query);
+
+      // Reload history
+      final historyResult = await searchUseCase.getSearchHistory();
+      historyResult.fold(
+        (failure) => null,
+        (history) => emit(currentState.copyWith(searchHistory: history)),
+      );
+    }
+  }
+
+  Future<void> clearHistory() async {
+    if (state is SearchLoaded) {
+      await searchUseCase.clearHistory();
+      emit(const SearchLoaded(searchHistory: []));
+    }
+  }
+
+  void clearSearchResults() {
+    if (state is SearchLoaded) {
+      final currentState = state as SearchLoaded;
+      emit(currentState.copyWith(clearResults: true));
     }
   }
 

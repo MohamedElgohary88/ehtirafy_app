@@ -1,4 +1,3 @@
-import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
 import 'package:ehtirafy_app/core/network/api_constants.dart';
 import 'package:ehtirafy_app/core/network/dio_client.dart';
 import 'package:ehtirafy_app/features/client/home/data/models/photographer_model.dart';
@@ -19,10 +18,23 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Future<List<PhotographerModel>> getFeaturedPhotographers() async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    return AppMockData.photographers
-        .map((e) => PhotographerModel.fromJson(e))
-        .toList();
+    try {
+      final response = await dioClient.get(ApiConstants.bestFreelancers);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['data'] != null && data['data'] is List) {
+          return (data['data'] as List)
+              // Filter out entries without advertisement
+              .where((json) => json['advertisement'] != null)
+              .map((json) => PhotographerModel.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
   }
 
   @override

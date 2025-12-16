@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
 import 'package:ehtirafy_app/core/error/exceptions.dart';
@@ -29,8 +30,17 @@ class BookingRepositoryImpl implements BookingRepository {
     String? notes,
   }) async {
     try {
-      // Get current user ID (client/customer)
-      final clientId = sharedPreferences.getString('user_id') ?? '';
+      // Get current user ID from cached_user JSON object
+      String clientId = '';
+      final userJson = sharedPreferences.getString('cached_user');
+      if (userJson != null) {
+        try {
+          final userData = json.decode(userJson);
+          clientId = userData['id']?.toString() ?? '';
+        } catch (e) {
+          // JSON parsing failed
+        }
+      }
 
       if (clientId.isEmpty) {
         return const Left(ServerFailure('User not authenticated'));

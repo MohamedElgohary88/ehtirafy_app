@@ -157,7 +157,7 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
                   physics: const BouncingScrollPhysics(),
                   children: [
                     _buildPortfolioTab(freelancer),
-                    _buildServicesTab(),
+                    _buildServicesTab(freelancer),
                     _buildReviewsTab(freelancer),
                   ],
                 ),
@@ -566,10 +566,8 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
     );
   }
 
-  Widget _buildServicesTab() {
-    final services = (context.read<FreelancerCubit>().state as FreelancerLoaded)
-        .freelancer
-        .services;
+  Widget _buildServicesTab(FreelancerEntity freelancer) {
+    final services = freelancer.services;
 
     if (services.isEmpty) {
       return Center(child: Text(AppStrings.noDataFound.tr()));
@@ -584,9 +582,22 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
         return Padding(
           padding: EdgeInsets.only(bottom: 12.h),
           child: ServiceCard(
+            id: service.id,
             title: service.title,
             price: service.price,
             description: service.description,
+            onTap: () {
+              context.push(
+                '/booking/request',
+                extra: {
+                  'advertisementId': service.id,
+                  'photographerId': freelancer.id,
+                  'photographerName': freelancer.name,
+                  'serviceName': service.title,
+                  'price': service.price,
+                },
+              );
+            },
           ),
         );
       },
@@ -798,15 +809,32 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
             return ElevatedButton(
               onPressed: () {
                 if (state is FreelancerLoaded) {
-                  context.push(
-                    '/booking/request',
-                    extra: {
-                      'freelancerId': widget.freelancerId,
-                      'freelancerName': state.freelancer.name,
-                      'serviceName': state.freelancer.title,
-                      'price': 100.0,
-                    },
-                  );
+                  final services = state.freelancer.services;
+                  if (services.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('لا توجد خدمات متاحة للحجز'),
+                      ),
+                    );
+                    return;
+                  }
+                  if (services.length == 1) {
+                    // Only one service, navigate directly
+                    final service = services.first;
+                    context.push(
+                      '/booking/request',
+                      extra: {
+                        'advertisementId': service.id,
+                        'photographerId': state.freelancer.id,
+                        'photographerName': state.freelancer.name,
+                        'serviceName': service.title,
+                        'price': service.price,
+                      },
+                    );
+                  } else {
+                    // Multiple services, show selection bottom sheet
+                    _showServiceSelectionSheet(context, state.freelancer);
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -839,6 +867,108 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  void _showServiceSelectionSheet(
+    BuildContext context,
+    FreelancerEntity freelancer,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) => Container(
+        padding: EdgeInsets.all(24.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'اختر الخدمة',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Cairo',
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16.h),
+            ...freelancer.services.map(
+              (service) => GestureDetector(
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  context.push(
+                    '/booking/request',
+                    extra: {
+                      'advertisementId': service.id,
+                      'photographerId': freelancer.id,
+                      'photographerName': freelancer.name,
+                      'serviceName': service.title,
+                      'price': service.price,
+                    },
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 12.h),
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAFAFA),
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: const Color(0xFFE5E5E5)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              service.title,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Cairo',
+                              ),
+                            ),
+                            if (service.description.isNotEmpty) ...[
+                              SizedBox(height: 4.h),
+                              Text(
+                                service.description,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '${service.price} ر.س',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.gold,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+          ],
         ),
       ),
     );

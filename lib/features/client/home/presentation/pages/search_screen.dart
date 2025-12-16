@@ -2,19 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
+import 'package:ehtirafy_app/features/client/search/domain/entities/search_result_entity.dart';
 import 'package:ehtirafy_app/features/client/search/presentation/cubits/search_cubit.dart';
 import 'package:ehtirafy_app/features/client/search/presentation/cubits/search_state.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<SearchCubit>()..loadInitialData(),
+      create: (context) => sl<SearchCubit>()..loadSearchHistory(),
       child: Scaffold(
         backgroundColor: AppColors.backgroundLight,
         body: Column(
@@ -28,46 +43,14 @@ class SearchScreen extends StatelessWidget {
                   } else if (state is SearchError) {
                     return Center(child: Text(state.message.tr()));
                   } else if (state is SearchLoaded) {
-                    if (state.searchResults != null) {
-                      return ListView.builder(
-                        padding: EdgeInsets.all(24.w),
-                        itemCount: state.searchResults!.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(state.searchResults![index].title),
-                          );
-                        },
-                      );
+                    if (state.isSearching) {
+                      return const Center(child: CircularProgressIndicator());
                     }
-                    return ListView(
-                      padding: EdgeInsets.all(24.w),
-                      children: [
-                        _buildSectionTitle(
-                          context,
-                          AppStrings.searchRecentSearches.tr(),
-                        ),
-                        SizedBox(height: 12.h),
-                        ...state.recentSearches.map(
-                          (e) => Padding(
-                            padding: EdgeInsets.only(bottom: 8.h),
-                            child: _buildRecentSearchItem(context, e.title),
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-                        _buildSectionTitle(
-                          context,
-                          AppStrings.searchMostSearched.tr(),
-                        ),
-                        SizedBox(height: 12.h),
-                        Wrap(
-                          spacing: 8.w,
-                          runSpacing: 8.h,
-                          children: state.popularTags
-                              .map((e) => _buildSearchTag(context, e.title))
-                              .toList(),
-                        ),
-                      ],
-                    );
+                    if (state.searchResults != null &&
+                        state.searchResults!.isNotEmpty) {
+                      return _buildSearchResults(context, state.searchResults!);
+                    }
+                    return _buildHistoryView(context, state);
                   }
                   return const SizedBox.shrink();
                 },
@@ -115,8 +98,13 @@ class SearchScreen extends StatelessWidget {
                         child: Builder(
                           builder: (context) {
                             return TextField(
-                              onSubmitted: (query) =>
-                                  context.read<SearchCubit>().search(query),
+                              controller: _searchController,
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (query) {
+                                if (query.isNotEmpty) {
+                                  context.read<SearchCubit>().search(query);
+                                }
+                              },
                               decoration: InputDecoration(
                                 hintText: AppStrings.searchHint.tr(),
                                 hintStyle: TextStyle(
@@ -131,14 +119,19 @@ class SearchScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => _showFilterBottomSheet(context),
-                        child: Icon(
-                          Icons.tune,
-                          color: AppColors.gold,
-                          size: 24.w,
+                      if (_searchController.text.isNotEmpty)
+                        GestureDetector(
+                          onTap: () {
+                            _searchController.clear();
+                            context.read<SearchCubit>().clearSearchResults();
+                            setState(() {});
+                          },
+                          child: Icon(
+                            Icons.close,
+                            color: AppColors.grey400,
+                            size: 20.w,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -150,121 +143,209 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(
-        context,
-      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-    );
-  }
+  Widget _buildHistoryView(BuildContext context, SearchLoaded state) {
+    if (state.searchHistory.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search, size: 64.w, color: AppColors.grey300),
+            SizedBox(height: 16.h),
+            Text(
+              'ابحث عن مصورين أو خدمات',
+              style: TextStyle(color: AppColors.grey600, fontSize: 16.sp),
+            ),
+          ],
+        ),
+      );
+    }
 
-  Widget _buildRecentSearchItem(BuildContext context, String text) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(text, style: Theme.of(context).textTheme.bodyMedium),
-          Icon(Icons.close, color: AppColors.grey400, size: 16.w),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchTag(BuildContext context, String text) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.grey200),
-      ),
-      child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
-    );
-  }
-
-  void _showFilterBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => const FilterBottomSheet(),
-    );
-  }
-}
-
-class FilterBottomSheet extends StatelessWidget {
-  const FilterBottomSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+    return ListView(
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppStrings.searchRecentSearches.tr(),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            TextButton(
+              onPressed: () => context.read<SearchCubit>().clearHistory(),
+              child: Text(
+                'مسح الكل',
+                style: TextStyle(color: AppColors.gold, fontSize: 14.sp),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        ...state.searchHistory.map(
+          (item) => Padding(
+            padding: EdgeInsets.only(bottom: 8.h),
+            child: _buildHistoryItem(context, item),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHistoryItem(BuildContext context, SearchResultEntity item) {
+    return GestureDetector(
+      onTap: () {
+        _searchController.text = item.title;
+        context.read<SearchCubit>().search(item.title);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.history, color: AppColors.grey400, size: 20.w),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Text(
+                item.title,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            GestureDetector(
+              onTap: () =>
+                  context.read<SearchCubit>().deleteFromHistory(item.title),
+              child: Icon(Icons.close, color: AppColors.grey400, size: 16.w),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            AppStrings.searchFilterTitle.tr(),
-            style: Theme.of(context).textTheme.titleLarge,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 24.h),
-          Text(
-            AppStrings.searchFilterPriceRange.tr(),
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          SizedBox(height: 16.h),
-          // Placeholder for Price Range Slider
-          Container(
-            height: 48.h,
-            color: AppColors.grey100,
-            child: const Center(child: Text('Price Slider Placeholder')),
-          ),
-          SizedBox(height: 24.h),
-          Text(
-            AppStrings.searchFilterRating.tr(),
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          SizedBox(height: 16.h),
-          // Placeholder for Rating Stars
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              5,
-              (index) =>
-                  Icon(Icons.star_border, color: AppColors.gold, size: 32.w),
+    );
+  }
+
+  Widget _buildSearchResults(
+    BuildContext context,
+    List<SearchResultEntity> results,
+  ) {
+    if (results.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 64.w, color: AppColors.grey300),
+            SizedBox(height: 16.h),
+            Text(
+              'لا توجد نتائج',
+              style: TextStyle(color: AppColors.grey600, fontSize: 16.sp),
             ),
-          ),
-          SizedBox(height: 32.h),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.gold,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              shape: RoundedRectangleBorder(
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      padding: EdgeInsets.all(24.w),
+      itemCount: results.length,
+      separatorBuilder: (context, index) => SizedBox(height: 12.h),
+      itemBuilder: (context, index) {
+        return _buildResultCard(context, results[index]);
+      },
+    );
+  }
+
+  Widget _buildResultCard(BuildContext context, SearchResultEntity result) {
+    return GestureDetector(
+      onTap: () => context.push('/freelancer/${result.id}'),
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 60.w,
+              height: 60.w,
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
+                color: AppColors.grey100,
+                image: result.imageUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(result.imageUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: result.imageUrl == null
+                  ? Icon(Icons.person, color: AppColors.grey400, size: 32.w)
+                  : null,
+            ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    result.title,
+                    style: TextStyle(
+                      color: AppColors.dark,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (result.category != null) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      result.category!,
+                      style: TextStyle(
+                        color: AppColors.grey600,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
+                  if (result.rating != null) ...[
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: AppColors.gold, size: 16.w),
+                        SizedBox(width: 4.w),
+                        Text(
+                          result.rating!.toStringAsFixed(1),
+                          style: TextStyle(
+                            color: AppColors.dark,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (result.reviewsCount != null) ...[
+                          SizedBox(width: 4.w),
+                          Text(
+                            '(${result.reviewsCount})',
+                            style: TextStyle(
+                              color: AppColors.grey600,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ],
               ),
             ),
-            child: Text(
-              AppStrings.searchFilterApply.tr(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+            Icon(Icons.arrow_forward_ios, color: AppColors.grey400, size: 16.w),
+          ],
+        ),
       ),
     );
   }
