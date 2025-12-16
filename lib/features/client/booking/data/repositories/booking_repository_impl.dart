@@ -47,7 +47,7 @@ class BookingRepositoryImpl implements BookingRepository {
       }
 
       // Create request body using ContractModel helper
-      // API mapping: photographer → publisher, client → customer
+      // API mapping: photographer → freelancer (uses publisher_id field), client → customer
       final body = ContractModel.createRequestBody(
         advertisementId: advertisementId,
         photographerId: photographerId, // Will be sent as publisher_id

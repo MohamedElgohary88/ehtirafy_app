@@ -25,6 +25,12 @@ class FreelancerOrderEntity extends Equatable {
     required this.createdAt,
   });
 
+  /// Chat allowed only for in-progress or completed orders
+  /// Chat is NOT allowed for pending or cancelled orders
+  bool get isChatAllowed =>
+      status == FreelancerOrderStatus.inProgress ||
+      status == FreelancerOrderStatus.completed;
+
   @override
   List<Object?> get props => [
     id,

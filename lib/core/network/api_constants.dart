@@ -11,8 +11,8 @@ class ApiConstants {
 
   // Freelancer Endpoints
   // Advertisements endpoint - requires user_type query param:
-  // - user_type=freelancer → Freelancer sees their own gigs
-  // - user_type=publisher → Client sees all available ads
+  // - user_type=freelancer → Freelancer (photographer) sees their own gigs
+  // - user_type=customer → Customer (client) sees all available ads
   static const String advertisements =
       '$baseUrl/api/$version/front/advertisements';
   static const String freelancerPortfolio =
@@ -46,4 +46,17 @@ class ApiConstants {
   static const String search = '$baseUrl/api/$version/search';
   static const String bestFreelancers =
       '$baseUrl/api/$version/best-freelancers';
+
+  // Detail Endpoints
+  /// Get advertisement/service details by ID
+  static String advertisementDetails(String id) =>
+      '$baseUrl/api/$version/front/advertisements/$id';
+
+  /// Get portfolio work details by ID
+  static String portfolioItemDetails(String id) =>
+      '$baseUrl/api/$version/front/our-works/$id';
+
+  /// Get user ratings by user/freelancer ID
+  static String userRates(String userId) =>
+      '/api/$version/front/user-rates/$userId';
 }

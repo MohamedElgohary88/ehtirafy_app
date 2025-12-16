@@ -38,6 +38,14 @@ class ContractDetailsEntity extends Equatable {
     this.approvedAt,
   });
 
+  /// Chat allowed only for active contracts (in progress, under review, completed)
+  /// Chat is NOT allowed for: awaiting payment (not started yet), cancelled, archived
+  bool get isChatAllowed {
+    return status == ContractStatus.inProgress ||
+        status == ContractStatus.underReview ||
+        status == ContractStatus.completed;
+  }
+
   @override
   List<Object?> get props => [
     id,

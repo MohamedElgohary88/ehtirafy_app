@@ -18,10 +18,10 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
   @override
   Future<Either<Failure, List<FreelancerOrderEntity>>> getOrders() async {
     try {
-      // For freelancer/photographer, we use user_type=publisher
-      // Backend naming: publisher = photographer who posts ads (our app's Freelancer)
+      // For freelancer/photographer, we use user_type=freelancer
+      // Backend naming: freelancer = photographer who posts ads
       final contracts = await remoteDataSource.getContracts({
-        'user_type': 'publisher',
+        'user_type': 'freelancer',
       });
 
       // Map ContractModel to FreelancerOrderEntity
@@ -74,6 +74,7 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
     try {
       final contract = await remoteDataSource.updateContract(orderId, {
         'contr_pub_status': 'accepted',
+        'note_type': 'freelancer', // Required by API for freelancer actions
         '_method': 'put',
       });
 
@@ -103,6 +104,7 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
     try {
       await remoteDataSource.updateContract(orderId, {
         'contr_pub_status': 'rejected',
+        'note_type': 'freelancer', // Required by API for freelancer actions
         '_method': 'put',
       });
       return const Right(null);
@@ -120,7 +122,7 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
     try {
       // Add user_type for freelancer + order ID filter
       final contracts = await remoteDataSource.getContracts({
-        'user_type': 'publisher',
+        'user_type': 'freelancer',
         'id': orderId,
       });
       if (contracts.isNotEmpty) {

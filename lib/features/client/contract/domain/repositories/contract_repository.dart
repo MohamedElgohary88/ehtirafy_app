@@ -9,11 +9,10 @@ abstract class ContractRepository {
   /// Get detailed contract information by ID
   Future<Either<Failure, ContractDetailsEntity>> getContractDetails(String id);
 
-  /// Get list of contracts
-  ///
+  /// Fetch contracts from API
   /// [userRole] determines the user_type query parameter:
-  /// - UserRole.freelancer → user_type=publisher (photographer)
-  /// - UserRole.client → user_type=customer or freelancer (API ambiguity)
+  /// - UserRole.freelancer → user_type=freelancer (photographer)
+  /// - UserRole.client → user_type=customer
   Future<Either<Failure, List<ContractEntity>>> getContracts({
     UserRole? userRole,
     Map<String, dynamic>? params,

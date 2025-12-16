@@ -45,8 +45,8 @@ class ContractEntity extends Equatable {
   final int id;
   final String advertisementId;
 
-  // App-friendly naming (mapped from API's publisher/customer)
-  final String photographerId; // Maps from publisher_id
+  // App-friendly naming (mapped from API's freelancer/customer)
+  final String photographerId; // Maps from publisher_id (freelancer)
   final String clientId; // Maps from customer_id
 
   final String requestedAmount;
@@ -102,8 +102,13 @@ class ContractEntity extends Equatable {
   }
 
   /// Check if chat is allowed for this contract
-  /// Rule: Chat is allowed if contract exists and is not rejected
-  bool get isChatAllowed => contrPubStatus != 'rejected';
+  /// Rule: Chat is allowed only when contract is ACCEPTED or COMPLETED
+  /// Chat is NOT allowed when: pending, rejected, or cancelled
+  bool get isChatAllowed {
+    final status = displayStatus;
+    return status == ContractStatus.accepted ||
+        status == ContractStatus.completed;
+  }
 
   @override
   List<Object?> get props => [

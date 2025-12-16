@@ -8,9 +8,13 @@ import 'package:ehtirafy_app/core/error/exceptions.dart';
 
 abstract class FreelancerGigsRemoteDataSource {
   /// Get gigs with user_type parameter
-  /// - user_type=freelancer → Freelancer sees their own gigs
-  /// - user_type=publisher → Client sees all available ads
+  /// - user_type=freelancer → Freelancer (photographer) sees their own gigs
+  /// - user_type=customer → Customer (client) sees all available ads
   Future<List<GigModel>> getGigs({String userType = 'freelancer'});
+
+  /// Get advertisement/gig details by ID
+  Future<GigModel> getGigById(String id);
+
   Future<GigModel> addGig(Map<String, dynamic> data);
   Future<GigModel> updateGig(String id, Map<String, dynamic> data);
   Future<void> deleteGig(String id);
@@ -34,6 +38,22 @@ class FreelancerGigsRemoteDataSourceImpl
     );
     if (baseResponse.status == 200) {
       return baseResponse.data!.map((e) => GigModel.fromJson(e)).toList();
+    } else {
+      throw ServerException(baseResponse.message);
+    }
+  }
+
+  @override
+  Future<GigModel> getGigById(String id) async {
+    final response = await _dioClient.get(
+      ApiConstants.advertisementDetails(id),
+    );
+    final baseResponse = BaseResponse<Map<String, dynamic>>.fromJson(
+      response.data,
+      (data) => data as Map<String, dynamic>,
+    );
+    if (baseResponse.status == 200) {
+      return GigModel.fromJson(baseResponse.data!);
     } else {
       throw ServerException(baseResponse.message);
     }

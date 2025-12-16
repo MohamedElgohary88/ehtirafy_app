@@ -14,12 +14,9 @@ import '../models/request_model.dart';
 /// Uses ContractRemoteDataSource to fetch contracts from API
 /// and maps them to RequestEntity for the UI
 ///
-/// ## Backend Naming Convention (IMPORTANT)
-/// The backend uses reversed naming:
-/// - `publisher` = Photographer who posts ads (our app's **Freelancer**)
-/// - `freelancer` = Client who requests services (our app's **Client**)
-///
-/// This mapping is handled internally to keep our app's naming clean.
+/// ## Backend Naming Convention
+/// - `freelancer` = Photographer/publisher (our app's **Freelancer**)
+/// - `customer` = Client who requests services (our app's **Customer**)
 class RequestsRepositoryImpl implements RequestsRepository {
   final ContractRemoteDataSource remoteDataSource;
   final UserRole userRole;
@@ -32,9 +29,9 @@ class RequestsRepositoryImpl implements RequestsRepository {
   @override
   Future<Either<Failure, List<RequestEntity>>> getMyRequests() async {
     try {
-      // Backend API accepts: 'publisher' or 'freelancer'
-      // Both roles use 'publisher' to get their relative contracts
-      final userType = 'publisher';
+      // Backend API accepts: 'freelancer' or 'customer'
+      // Client/customer uses 'customer' to get their contracts
+      final userType = 'customer';
 
       // Debug log
       debugPrint('🔍 RequestsRepositoryImpl - userRole: $userRole');

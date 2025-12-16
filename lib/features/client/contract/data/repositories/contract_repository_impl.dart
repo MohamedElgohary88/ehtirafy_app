@@ -12,12 +12,9 @@ import 'package:ehtirafy_app/features/shared/profile/domain/entities/user_role.d
 
 /// Implementation of ContractRepository
 ///
-/// ## Backend Naming Convention (IMPORTANT)
-/// The backend uses reversed naming:
-/// - `publisher` = Photographer who posts ads (our app's **Freelancer**)
-/// - `freelancer` = Client who requests services (our app's **Client**)
-///
-/// This mapping is handled internally to keep our app's naming clean.
+/// ## Backend Naming Convention
+/// - `freelancer` = Photographer/publisher (our app's **Freelancer**)
+/// - `customer` = Client who requests services (our app's **Customer**)
 class ContractRepositoryImpl implements ContractRepository {
   final ContractRemoteDataSource? remoteDataSource;
 
@@ -52,14 +49,13 @@ class ContractRepositoryImpl implements ContractRepository {
       final queryParams = Map<String, dynamic>.from(params ?? {});
 
       if (userRole != null) {
-        // Backend API accepts: 'publisher' or 'freelancer'
-        // Both roles use 'publisher' to get their relative contracts
+        // Backend API accepts: 'freelancer' or 'customer'
         switch (userRole) {
           case UserRole.freelancer:
-            queryParams['user_type'] = 'publisher';
+            queryParams['user_type'] = 'freelancer';
             break;
           case UserRole.client:
-            queryParams['user_type'] = 'publisher';
+            queryParams['user_type'] = 'customer';
             break;
           case UserRole.guest:
             // Guests shouldn't access contracts
@@ -89,7 +85,7 @@ class ContractRepositoryImpl implements ContractRepository {
       }
 
       // Use ContractModel helper to create the status update body
-      // This maps: isPhotographer → publisher, !isPhotographer → customer
+      // This maps: isPhotographer (freelancer) → freelancer, !isPhotographer → customer
       final body = ContractModel.createStatusUpdateBody(
         isPhotographer: isPhotographer,
         status: status,

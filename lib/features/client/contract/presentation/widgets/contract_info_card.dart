@@ -7,8 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ContractInfoCard extends StatelessWidget {
   final ContractDetailsEntity contract;
+  final VoidCallback? onChat;
 
-  const ContractInfoCard({super.key, required this.contract});
+  const ContractInfoCard({super.key, required this.contract, this.onChat});
 
   @override
   Widget build(BuildContext context) {
@@ -118,16 +119,23 @@ class ContractInfoCard extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        Container(
-          padding: EdgeInsets.all(8.w),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.chat_bubble_outline,
-            color: AppColors.primary,
-            size: 20.sp,
+        GestureDetector(
+          onTap: contract.isChatAllowed ? onChat : null,
+          child: Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: contract.isChatAllowed
+                  ? AppColors.primary.withOpacity(0.1)
+                  : AppColors.grey200,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.chat_bubble_outline,
+              color: contract.isChatAllowed
+                  ? AppColors.primary
+                  : AppColors.grey400,
+              size: 20.sp,
+            ),
           ),
         ),
       ],

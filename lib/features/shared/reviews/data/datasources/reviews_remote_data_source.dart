@@ -45,10 +45,7 @@ class ReviewsRemoteDataSourceImpl implements ReviewsRemoteDataSource {
   @override
   Future<List<ReviewModel>> getUserRates({required String userId}) async {
     try {
-      final response = await dioClient.get(
-        '/api/v1/front/user-rates',
-        queryParameters: {'user_id': userId},
-      );
+      final response = await dioClient.get('/api/v1/front/user-rates/$userId');
 
       if (response.statusCode == 200) {
         return (response.data['data'] as List)

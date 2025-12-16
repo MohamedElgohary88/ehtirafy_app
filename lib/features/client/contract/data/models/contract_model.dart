@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_entity.dart';
 
 /// Contract model with mapping from API naming to app naming
-/// API uses: publisher (photographer), customer (client)
-/// App uses: photographer, client
+/// API uses: freelancer (photographer), customer (client)
+/// App uses: photographer (freelancer), client (customer)
 class ContractModel extends ContractEntity {
   const ContractModel({
     required super.id,
@@ -70,7 +70,7 @@ class ContractModel extends ContractEntity {
           : DateTime.now(),
       // Service/Advertisement details
       serviceTitle: json['advertisement']?['title'] ?? '',
-      // Photographer (publisher) details
+      // Photographer (freelancer) details
       photographerName: json['publisher']?['name'] ?? '',
       photographerImage: json['publisher']?['image'] ?? '',
       // Client (customer) details
@@ -122,7 +122,7 @@ class ContractModel extends ContractEntity {
   }) {
     final body = <String, dynamic>{
       '_method': 'put',
-      'note_type': isPhotographer ? 'publisher' : 'customer',
+      'note_type': isPhotographer ? 'freelancer' : 'customer',
     };
 
     if (isPhotographer) {

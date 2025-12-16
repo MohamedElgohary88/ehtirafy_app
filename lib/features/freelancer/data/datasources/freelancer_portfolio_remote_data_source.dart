@@ -6,6 +6,10 @@ import 'package:ehtirafy_app/features/freelancer/data/models/portfolio_item_mode
 
 abstract class FreelancerPortfolioRemoteDataSource {
   Future<List<PortfolioItemModel>> getPortfolio();
+
+  /// Get portfolio work details by ID
+  Future<PortfolioItemModel> getPortfolioItemById(String id);
+
   Future<PortfolioItemModel> addPortfolioItem(Map<String, dynamic> data);
   Future<PortfolioItemModel> updatePortfolioItem(
     String id,
@@ -34,6 +38,24 @@ class FreelancerPortfolioRemoteDataSourceImpl
             .toList();
       }
       return [];
+    } else {
+      throw ServerException(data['message'] ?? 'Unknown Error');
+    }
+  }
+
+  @override
+  Future<PortfolioItemModel> getPortfolioItemById(String id) async {
+    final response = await _dioClient.get(
+      ApiConstants.portfolioItemDetails(id),
+    );
+    final data = response.data;
+
+    if (data['status'] == 200) {
+      final responseData = data['data'];
+      if (responseData is Map<String, dynamic>) {
+        return PortfolioItemModel.fromJson(responseData);
+      }
+      throw ServerException('Invalid response format');
     } else {
       throw ServerException(data['message'] ?? 'Unknown Error');
     }
