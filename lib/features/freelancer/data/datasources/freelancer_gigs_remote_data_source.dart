@@ -5,6 +5,7 @@ import 'package:ehtirafy_app/features/freelancer/data/models/gig_model.dart';
 import 'package:ehtirafy_app/features/freelancer/domain/entities/gig_entity.dart';
 import 'package:ehtirafy_app/core/network/base_response.dart';
 import 'package:ehtirafy_app/core/error/exceptions.dart';
+import 'package:ehtirafy_app/features/client/home/data/models/category_model.dart';
 
 abstract class FreelancerGigsRemoteDataSource {
   /// Get gigs with user_type parameter
@@ -14,6 +15,9 @@ abstract class FreelancerGigsRemoteDataSource {
 
   /// Get advertisement/gig details by ID
   Future<GigModel> getGigById(String id);
+
+  /// Get categories from API
+  Future<List<CategoryModel>> getCategories();
 
   Future<GigModel> addGig(Map<String, dynamic> data);
   Future<GigModel> updateGig(String id, Map<String, dynamic> data);
@@ -60,26 +64,55 @@ class FreelancerGigsRemoteDataSourceImpl
   }
 
   @override
-  Future<GigModel> addGig(Map<String, dynamic> data) async {
-    final Map<String, dynamic> requestData = Map.from(data);
+  Future<List<CategoryModel>> getCategories() async {
+    try {
+      final response = await _dioClient.get(ApiConstants.categories);
 
-    // Handle images
-    if (requestData.containsKey('images') && requestData['images'] is List) {
-      final List<String> imagePaths = requestData['images'];
-      requestData.remove('images');
-
-      final List<MultipartFile> files = [];
-      for (var path in imagePaths) {
-        files.add(await MultipartFile.fromFile(path));
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['data'] != null && data['data'] is List) {
+          return (data['data'] as List)
+              .map((json) => CategoryModel.fromJson(json))
+              .toList();
+        }
       }
+      return [];
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
 
-      // Using 'images[]' as key for array of files as per common backend conventions
-      // If specific indexed keys are needed (images[0]), we would loop and add keys.
-      // But Dio FormData usually handles 'images[]' with list of files well.
-      requestData['images[]'] = files;
+  @override
+  Future<GigModel> addGig(Map<String, dynamic> data) async {
+    final Map<String, dynamic> formDataMap = {
+      'ar_title': data['ar_title'] ?? '',
+      'en_title': data['en_title'] ?? '',
+      'ar_description': data['ar_description'] ?? '',
+      'en_description': data['en_description'] ?? '',
+      'category_id': data['category_id'] ?? '',
+      'price': data['price'] ?? 0,
+    };
+
+    // Handle images - API expects indexed format: images[0], images[1], etc.
+    if (data.containsKey('images') && data['images'] is List) {
+      final List<String> imagePaths = List<String>.from(data['images']);
+      for (int i = 0; i < imagePaths.length; i++) {
+        formDataMap['images[$i]'] = await MultipartFile.fromFile(imagePaths[i]);
+      }
     }
 
-    final formData = FormData.fromMap(requestData);
+    // Handle days_availability - API expects indexed format: days_availability[0], days_availability[1], etc.
+    if (data.containsKey('days_availability') &&
+        data['days_availability'] is List) {
+      final List<String> availability = List<String>.from(
+        data['days_availability'],
+      );
+      for (int i = 0; i < availability.length; i++) {
+        formDataMap['days_availability[$i]'] = availability[i];
+      }
+    }
+
+    final formData = FormData.fromMap(formDataMap);
 
     final response = await _dioClient.post(
       ApiConstants.advertisements,
@@ -123,22 +156,36 @@ class FreelancerGigsRemoteDataSourceImpl
 
   @override
   Future<GigModel> updateGig(String id, Map<String, dynamic> data) async {
-    final Map<String, dynamic> requestData = Map.from(data);
-    requestData['_method'] = 'put';
+    final Map<String, dynamic> formDataMap = {
+      '_method': 'put',
+      'ar_title': data['ar_title'] ?? '',
+      'en_title': data['en_title'] ?? '',
+      'ar_description': data['ar_description'] ?? '',
+      'en_description': data['en_description'] ?? '',
+      'category_id': data['category_id'] ?? '',
+      'price': data['price'] ?? 0,
+    };
 
-    // Handle images for update
-    if (requestData.containsKey('images') && requestData['images'] is List) {
-      final List<String> imagePaths = requestData['images'];
-      requestData.remove('images');
-
-      final List<MultipartFile> files = [];
-      for (var path in imagePaths) {
-        files.add(await MultipartFile.fromFile(path));
+    // Handle images - API expects indexed format: images[0], images[1], etc.
+    if (data.containsKey('images') && data['images'] is List) {
+      final List<String> imagePaths = List<String>.from(data['images']);
+      for (int i = 0; i < imagePaths.length; i++) {
+        formDataMap['images[$i]'] = await MultipartFile.fromFile(imagePaths[i]);
       }
-      requestData['images[]'] = files;
     }
 
-    final formData = FormData.fromMap(requestData);
+    // Handle days_availability - API expects indexed format
+    if (data.containsKey('days_availability') &&
+        data['days_availability'] is List) {
+      final List<String> availability = List<String>.from(
+        data['days_availability'],
+      );
+      for (int i = 0; i < availability.length; i++) {
+        formDataMap['days_availability[$i]'] = availability[i];
+      }
+    }
+
+    final formData = FormData.fromMap(formDataMap);
 
     final response = await _dioClient.post(
       '${ApiConstants.advertisements}/$id',

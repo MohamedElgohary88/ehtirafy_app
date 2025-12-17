@@ -392,6 +392,14 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
+      // For new items, image is required by the API
+      if (widget.portfolioItem == null && _pickedImage == null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('يرجى اختيار صورة للعمل')));
+        return;
+      }
+
       if (widget.portfolioItem != null) {
         context.read<FreelancerPortfolioCubit>().updatePortfolioItem(
           id: widget.portfolioItem!.id,

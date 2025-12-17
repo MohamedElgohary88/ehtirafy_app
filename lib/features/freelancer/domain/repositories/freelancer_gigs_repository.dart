@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
+import 'package:ehtirafy_app/features/client/home/domain/entities/category_entity.dart';
 import '../entities/gig_entity.dart';
 
 abstract class FreelancerGigsRepository {
@@ -32,6 +33,6 @@ abstract class FreelancerGigsRepository {
   /// Delete a gig
   Future<Either<Failure, void>> deleteGig(String gigId);
 
-  /// Get available categories
-  List<String> getCategories();
+  /// Get available categories from API
+  Future<Either<Failure, List<CategoryEntity>>> getCategories();
 }

@@ -11,17 +11,18 @@ class FreelancerGigsCubit extends Cubit<FreelancerGigsState> {
   Future<void> loadGigs() async {
     emit(FreelancerGigsLoading());
 
-    final result = await repository.getGigs();
+    final gigsResult = await repository.getGigs();
+    final categoriesResult = await repository.getCategories();
 
-    result.fold(
-      (failure) => emit(FreelancerGigsError(failure.message)),
-      (gigs) => emit(
-        FreelancerGigsLoaded(
-          gigs: gigs,
-          categories: repository.getCategories(),
-        ),
-      ),
-    );
+    gigsResult.fold((failure) => emit(FreelancerGigsError(failure.message)), (
+      gigs,
+    ) {
+      categoriesResult.fold(
+        (failure) => emit(FreelancerGigsLoaded(gigs: gigs, categories: [])),
+        (categories) =>
+            emit(FreelancerGigsLoaded(gigs: gigs, categories: categories)),
+      );
+    });
   }
 
   Future<void> addGig({

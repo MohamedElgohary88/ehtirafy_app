@@ -1,6 +1,17 @@
 import 'dart:convert';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_entity.dart';
 
+/// Helper to parse localized fields that can be either String or Map with ar/en keys
+String _parseLocalizedField(dynamic field) {
+  if (field == null) return '';
+  if (field is String) return field;
+  if (field is Map) {
+    // Prefer Arabic, fallback to English
+    return field['ar']?.toString() ?? field['en']?.toString() ?? '';
+  }
+  return field.toString();
+}
+
 /// Contract model with mapping from API naming to app naming
 /// API uses: freelancer (photographer), customer (client)
 /// App uses: photographer (freelancer), client (customer)
@@ -68,8 +79,8 @@ class ContractModel extends ContractEntity {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : DateTime.now(),
-      // Service/Advertisement details
-      serviceTitle: json['advertisement']?['title'] ?? '',
+      // Service/Advertisement details - title can be String or Map with localized values
+      serviceTitle: _parseLocalizedField(json['advertisement']?['title']),
       // Photographer (freelancer) details
       photographerName: json['publisher']?['name'] ?? '',
       photographerImage: json['publisher']?['image'] ?? '',

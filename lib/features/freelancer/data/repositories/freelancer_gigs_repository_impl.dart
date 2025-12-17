@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:ehtirafy_app/core/error/failures.dart';
 import 'package:ehtirafy_app/core/error/exceptions.dart';
-import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
+import 'package:ehtirafy_app/features/client/home/domain/entities/category_entity.dart';
 import '../../domain/entities/gig_entity.dart';
 import '../../domain/repositories/freelancer_gigs_repository.dart';
 import '../datasources/freelancer_gigs_remote_data_source.dart';
@@ -35,14 +35,12 @@ class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
   }) async {
     try {
       final data = {
-        'ar_title': title, // Map to both for now
+        'ar_title': title,
         'en_title': title,
         'ar_description': description,
         'en_description': description,
-        'category_id': category, // Assuming category is ID
+        'category_id': category,
         'price': price,
-        // 'images[]': ... multipart files need to be processed here if they are paths
-        // 'days_availability[]': availability
       };
 
       // Pass image paths directly to RemoteDataSource to handle conversion
@@ -82,7 +80,6 @@ class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
         'en_description': description,
         'category_id': category,
         'price': price,
-        // 'status': _gigStatusToString(gig.status), // We might not want to reset status on update unless specified
       };
 
       if (images.isNotEmpty) {
@@ -115,7 +112,14 @@ class FreelancerGigsRepositoryImpl implements FreelancerGigsRepository {
   }
 
   @override
-  List<String> getCategories() {
-    return AppMockData.gigCategories;
+  Future<Either<Failure, List<CategoryEntity>>> getCategories() async {
+    try {
+      final categories = await remoteDataSource.getCategories();
+      return Right(categories);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return const Left(ServerFailure('فشل في جلب التصنيفات'));
+    }
   }
 }

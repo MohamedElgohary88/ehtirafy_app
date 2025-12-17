@@ -63,15 +63,21 @@ class FreelancerPortfolioRemoteDataSourceImpl
 
   @override
   Future<PortfolioItemModel> addPortfolioItem(Map<String, dynamic> data) async {
-    dynamic requestData = data;
+    // Always use FormData for this endpoint as it requires multipart for images
+    final Map<String, dynamic> formDataMap = {
+      'ar_title': data['ar_title'] ?? '',
+      'en_title': data['en_title'] ?? '',
+      'ar_description': data['ar_description'] ?? '',
+      'en_description': data['en_description'] ?? '',
+    };
+
+    // Handle image - API expects images[0] format
     if (data.containsKey('image') && data['image'] != null) {
       final imagePath = data['image'];
-      data.remove('image'); // Remove raw path string
-      requestData = FormData.fromMap({
-        ...data,
-        'image': await MultipartFile.fromFile(imagePath),
-      });
+      formDataMap['images[0]'] = await MultipartFile.fromFile(imagePath);
     }
+
+    final requestData = FormData.fromMap(formDataMap);
 
     final response = await _dioClient.post(
       ApiConstants.freelancerPortfolio,
@@ -102,23 +108,22 @@ class FreelancerPortfolioRemoteDataSourceImpl
     String id,
     Map<String, dynamic> data,
   ) async {
-    // Spoofing PUT with POST and _method
-    // data['_method'] = 'PUT'; // Caller should handle this or we do it here.
-    // User said "body all the same attributes like create but add _method = put"
-    // I'll ensure it's added here if not present, but safer to add.
-    final Map<String, dynamic> requestDataMap = Map.from(data);
-    requestDataMap['_method'] = 'PUT';
+    // Always use FormData for this endpoint as it requires multipart for images
+    final Map<String, dynamic> formDataMap = {
+      '_method': 'PUT',
+      'ar_title': data['ar_title'] ?? '',
+      'en_title': data['en_title'] ?? '',
+      'ar_description': data['ar_description'] ?? '',
+      'en_description': data['en_description'] ?? '',
+    };
 
-    dynamic requestData = requestDataMap;
-    if (requestDataMap.containsKey('image') &&
-        requestDataMap['image'] != null) {
-      final imagePath = requestDataMap['image'];
-      requestDataMap.remove('image'); // Remove raw path string
-      requestData = FormData.fromMap({
-        ...requestDataMap,
-        'image': await MultipartFile.fromFile(imagePath),
-      });
+    // Handle image - API expects images[0] format
+    if (data.containsKey('image') && data['image'] != null) {
+      final imagePath = data['image'];
+      formDataMap['images[0]'] = await MultipartFile.fromFile(imagePath);
     }
+
+    final requestData = FormData.fromMap(formDataMap);
 
     final response = await _dioClient.post(
       '${ApiConstants.freelancerPortfolio}/$id',
@@ -134,8 +139,8 @@ class FreelancerPortfolioRemoteDataSourceImpl
       // Fallback
       return PortfolioItemModel(
         id: id,
-        title: requestData['ar_title'] ?? '',
-        description: requestData['ar_description'] ?? '',
+        title: data['ar_title'] ?? '',
+        description: data['ar_description'] ?? '',
         createdAt: DateTime.now(),
       );
     } else {

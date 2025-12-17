@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ehtirafy_app/features/client/home/domain/entities/category_entity.dart';
 import '../../domain/entities/gig_entity.dart';
 
 abstract class FreelancerGigsState extends Equatable {
@@ -14,7 +15,7 @@ class FreelancerGigsLoading extends FreelancerGigsState {}
 
 class FreelancerGigsLoaded extends FreelancerGigsState {
   final List<GigEntity> gigs;
-  final List<String> categories;
+  final List<CategoryEntity> categories;
 
   const FreelancerGigsLoaded({required this.gigs, required this.categories});
 
@@ -23,7 +24,7 @@ class FreelancerGigsLoaded extends FreelancerGigsState {
 
   FreelancerGigsLoaded copyWith({
     List<GigEntity>? gigs,
-    List<String>? categories,
+    List<CategoryEntity>? categories,
   }) {
     return FreelancerGigsLoaded(
       gigs: gigs ?? this.gigs,
