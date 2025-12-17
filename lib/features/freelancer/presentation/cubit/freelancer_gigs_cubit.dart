@@ -11,18 +11,23 @@ class FreelancerGigsCubit extends Cubit<FreelancerGigsState> {
   Future<void> loadGigs() async {
     emit(FreelancerGigsLoading());
 
-    final gigsResult = await repository.getGigs();
-    final categoriesResult = await repository.getCategories();
+    // Fetch gigs and categories in parallel, handling failures independently
+    final results = await Future.wait([
+      repository.getGigs().then(
+        (result) => result.fold((l) => <dynamic>[], (r) => r),
+      ),
+      repository.getCategories().then(
+        (result) => result.fold((l) => <dynamic>[], (r) => r),
+      ),
+    ]);
 
-    gigsResult.fold((failure) => emit(FreelancerGigsError(failure.message)), (
-      gigs,
-    ) {
-      categoriesResult.fold(
-        (failure) => emit(FreelancerGigsLoaded(gigs: gigs, categories: [])),
-        (categories) =>
-            emit(FreelancerGigsLoaded(gigs: gigs, categories: categories)),
-      );
-    });
+    final gigs = results[0] as List<dynamic>;
+    final categories = results[1] as List<dynamic>;
+
+    // Always emit Loaded state - the create form needs categories even if gigs fail
+    emit(
+      FreelancerGigsLoaded(gigs: gigs.cast(), categories: categories.cast()),
+    );
   }
 
   Future<void> addGig({

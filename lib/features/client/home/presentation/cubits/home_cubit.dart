@@ -1,7 +1,4 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ehtirafy_app/core/constants/app_strings.dart';
-import 'package:ehtirafy_app/core/error/failures.dart';
 import 'package:ehtirafy_app/features/client/home/domain/entities/app_statistics.dart';
 import 'package:ehtirafy_app/features/client/home/domain/entities/category_entity.dart';
 import 'package:ehtirafy_app/features/client/home/domain/entities/photographer_entity.dart';
@@ -29,63 +26,45 @@ class HomeCubit extends Cubit<HomeState> {
 
     final user = await userLocalDataSource.getUser();
 
-    // Fetch in parallel
+    // Fetch in parallel with partial success handling
+    // We map each future to return a default value on failure instead of throwing
     final results = await Future.wait([
-      getFeaturedPhotographersUseCase(),
-      getCategoriesUseCase(),
-      getAppStatisticsUseCase(),
+      // 0: Photographers
+      getFeaturedPhotographersUseCase().then(
+        (result) => result.fold(
+          (l) => <PhotographerEntity>[], // Return empty list on failure
+          (r) => r,
+        ),
+      ),
+      // 1: Categories
+      getCategoriesUseCase().then(
+        (result) => result.fold(
+          (l) => <CategoryEntity>[], // Return empty list on failure
+          (r) => r,
+        ),
+      ),
+      // 2: Statistics
+      getAppStatisticsUseCase().then(
+        (result) => result.fold(
+          (l) => null, // Return null on failure
+          (r) => r,
+        ),
+      ),
     ]);
 
-    final photographersResult =
-        results[0] as Either<Failure, List<PhotographerEntity>>;
-    final categoriesResult =
-        results[1] as Either<Failure, List<CategoryEntity>>;
-    final statsResult = results[2] as Either<Failure, AppStatistics>;
+    final photographers = results[0] as List<PhotographerEntity>;
+    final categories = results[1] as List<CategoryEntity>;
+    final stats = results[2] as AppStatistics?;
 
-    photographersResult.fold(
-      (failure) => emit(HomeError(_mapFailureToMessage(failure))),
-      (photographers) {
-        categoriesResult.fold(
-          (failure) => _emitLoaded(photographers, [], null, user?.name),
-          (categories) {
-            statsResult.fold(
-              (failure) =>
-                  _emitLoaded(photographers, categories, null, user?.name),
-              (stats) =>
-                  _emitLoaded(photographers, categories, stats, user?.name),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _emitLoaded(
-    List<PhotographerEntity> photographers,
-    List<CategoryEntity> categories,
-    AppStatistics? stats,
-    String? userName,
-  ) {
+    // Always emit loaded state with whatever data we managed to get
+    // We only rely on local user data which is already fetched safely above
     emit(
       HomeLoaded(
         featuredPhotographers: photographers,
         categories: categories,
         appStatistics: stats,
-        userName: userName ?? 'عميلنا العزيز',
+        userName: user?.name ?? 'عميلنا العزيز',
       ),
     );
-  }
-
-  String _mapFailureToMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return AppStrings.failureServer;
-      case CacheFailure:
-        return AppStrings.failureCache;
-      case NetworkFailure:
-        return AppStrings.failureNetwork;
-      default:
-        return AppStrings.failureUnexpected;
-    }
   }
 }

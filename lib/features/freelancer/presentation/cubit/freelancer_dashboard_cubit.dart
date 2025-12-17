@@ -25,52 +25,58 @@ class FreelancerDashboardCubit extends Cubit<FreelancerDashboardState> {
   Future<void> loadDashboard() async {
     emit(FreelancerDashboardLoading());
 
-    // Get User ID from repository (assuming method exists or we can get it)
+    // Get User ID from repository
     final userId = await repository.getUserId();
     if (userId == null) {
       emit(const FreelancerDashboardError('User not found'));
       return;
     }
 
-    // Fetch data including new APIs
-    final statsResult = await _getFreelancerStatisticsUseCase(userId);
-    final lastContractsResult = await _getFreelancerLastContractsUseCase(
-      userId,
-    );
-    final portfolioResult = await repository.getPortfolioPreview();
-    final gigsResult = await repository.getGigsPreview();
     final userName = await repository.getUserName();
 
-    // Check for any failures
-    if (statsResult.isLeft()) {
-      // Handle error more gracefully or just log it and show partial data if possible
-      // For now, let's fail if stats fail
-      String errorMsg = 'Failed to fetch statistics';
-      statsResult.fold((l) => errorMsg = l.message, (r) => null);
-      emit(FreelancerDashboardError(errorMsg));
-      return;
-    }
-
-    emit(
-      FreelancerDashboardLoaded(
-        stats: statsResult.getOrElse(
-          () => const FreelancerStatistics(
+    // Fetch data via Future.wait for parallel execution
+    // Map each future to handle errors individually
+    final results = await Future.wait([
+      // 0: Statistics
+      _getFreelancerStatisticsUseCase(userId).then(
+        (result) => result.fold(
+          (l) => const FreelancerStatistics(
             completedOrders: 0,
             averageRating: 0.0,
             totalEarnings: 0.0,
             activeGigs: 0,
           ),
+          (r) => r,
         ),
-        portfolioItems: portfolioResult.getOrElse(
-          () => <PortfolioItemEntity>[],
-        ),
-        gigs: gigsResult.getOrElse(() => <GigEntity>[]),
-        lastContracts: lastContractsResult.getOrElse(
-          () => <FreelancerLastContract>[],
-        ),
+      ),
+      // 1: Last Contracts
+      _getFreelancerLastContractsUseCase(userId).then(
+        (result) => result.fold((l) => <FreelancerLastContract>[], (r) => r),
+      ),
+      // 2: Portfolio
+      repository.getPortfolioPreview().then(
+        (result) => result.fold((l) => <PortfolioItemEntity>[], (r) => r),
+      ),
+      // 3: Gigs
+      repository.getGigsPreview().then(
+        (result) => result.fold((l) => <GigEntity>[], (r) => r),
+      ),
+    ]);
+
+    final stats = results[0] as FreelancerStatistics;
+    final lastContracts = results[1] as List<FreelancerLastContract>;
+    final portfolioItems = results[2] as List<PortfolioItemEntity>;
+    final gigs = results[3] as List<GigEntity>;
+
+    // Always emit Loaded state, even if data is empty
+    emit(
+      FreelancerDashboardLoaded(
+        stats: stats,
+        portfolioItems: portfolioItems,
+        gigs: gigs,
+        lastContracts: lastContracts,
         userName: userName,
-        isOnline:
-            true, // Default to true or fetch from somewhere else if needed
+        isOnline: true, // Default to true
       ),
     );
   }

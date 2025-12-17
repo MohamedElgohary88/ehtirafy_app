@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ehtirafy_app/core/network/api_constants.dart';
 import 'package:ehtirafy_app/core/network/dio_client.dart';
 import 'package:ehtirafy_app/features/freelancer/data/models/gig_model.dart';
@@ -67,17 +68,28 @@ class FreelancerGigsRemoteDataSourceImpl
   Future<List<CategoryModel>> getCategories() async {
     try {
       final response = await _dioClient.get(ApiConstants.categories);
+      debugPrint('Categories API Response: ${response.statusCode}');
+      debugPrint('Categories API Data: ${response.data}');
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['data'] != null && data['data'] is List) {
-          return (data['data'] as List)
-              .map((json) => CategoryModel.fromJson(json))
-              .toList();
+          final list = data['data'] as List;
+          debugPrint('Categories count from API: ${list.length}');
+          final categories = list.map((json) {
+            debugPrint('Parsing category: $json');
+            return CategoryModel.fromJson(json);
+          }).toList();
+          debugPrint(
+            'Parsed categories: ${categories.map((c) => c.nameAr).join(", ")}',
+          );
+          return categories;
         }
       }
+      debugPrint('Categories API: No data or status not 200');
       return [];
     } catch (e) {
+      debugPrint('Categories API Error: $e');
       throw ServerException(e.toString());
     }
   }
@@ -119,39 +131,37 @@ class FreelancerGigsRemoteDataSourceImpl
       data: formData,
     );
 
-    // Response: { status: 200, message: "Success", data: "Advertisement created successfully" }
-    // It returns string, not the object. So we might need to fetch it again or return a mock/partial model?
-    // User request said response data is "Advertisement created successfully".
-    // This is problematic for Clean Architecture (we need the created ID).
-    // Assuming for now we just return a success indicator or empty model.
-    // Or maybe we can't return the full model.
-    // I will throw exception if success is not true.
+    // API returns the created advertisement object in 'data' field
+    // Example: { "status": 200, "message": "...", "data": { "id": 8, "title": {...}, ... } }
 
-    final baseResponse = BaseResponse<String>.fromJson(
-      response.data,
-      (data) => data as String,
-    );
-
-    if (baseResponse.status == 200) {
-      // Since API doesn't return the object, we can't return a full GigModel with ID.
-      // We might have to refetch or return a dummy.
-      // Let's return a dummy with success status for now.
-      // Or better: The Cubit expects a GigEntity to add to list.
-      // We should probably reload the list after add.
-      return const GigModel(
-        id: 'temp',
-        title: '',
-        description: '',
-        price: 0,
-        category: '',
-        status: GigStatus.pending,
-        coverImage: '',
-        createdAt: null,
-        // We will fix Model constructor to nullable createdAt
-      );
-    } else {
-      throw ServerException(baseResponse.message);
+    if (response.statusCode == 200 && response.data['status'] == 200) {
+      final responseData = response.data['data'];
+      if (responseData != null && responseData is Map<String, dynamic>) {
+        // Parse the created gig from response
+        return GigModel(
+          id: responseData['id']?.toString() ?? 'temp',
+          title: _extractLocalizedText(responseData['title']),
+          description: _extractLocalizedText(responseData['description']),
+          price: double.tryParse(responseData['price']?.toString() ?? '0') ?? 0,
+          category: responseData['category_id']?.toString() ?? '',
+          status: GigStatus.pending,
+          coverImage: '',
+          createdAt: responseData['created_at'] != null
+              ? DateTime.tryParse(responseData['created_at'].toString())
+              : null,
+        );
+      }
     }
+
+    throw ServerException(response.data['message'] ?? 'فشل في إضافة الخدمة');
+  }
+
+  /// Helper to extract Arabic text from localized object
+  String _extractLocalizedText(dynamic value) {
+    if (value is Map) {
+      return value['ar']?.toString() ?? value['en']?.toString() ?? '';
+    }
+    return value?.toString() ?? '';
   }
 
   @override

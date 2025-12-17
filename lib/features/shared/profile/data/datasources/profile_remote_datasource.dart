@@ -12,7 +12,7 @@ abstract class ProfileRemoteDataSource {
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-  static const String _roleKey = 'USER_ROLE';
+  static const String _roleKey = 'user_role';
   final SharedPreferences sharedPreferences;
   final DioClient dioClient;
 

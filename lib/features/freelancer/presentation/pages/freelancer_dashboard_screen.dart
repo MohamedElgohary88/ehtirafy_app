@@ -256,7 +256,8 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
         Expanded(
           child: StatCard(
             title: AppStrings.freelancerDashboardTotalEarnings.tr(),
-            value: '${state.stats.totalEarnings.toInt()} ر.س',
+            value:
+                '${state.stats.totalEarnings == 0 ? "0.00" : state.stats.totalEarnings.toStringAsFixed(2)} ر.س',
             icon: Icons.account_balance_wallet_outlined,
             iconColor: AppColors.primary,
           ),
@@ -337,42 +338,45 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
   Widget _buildEmptyPortfolioCard(BuildContext context) {
     return InkWell(
       onTap: () => context.push('/freelancer/portfolio/add'),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(24.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: AppColors.primary.withOpacity(0.3),
-            style: BorderStyle.solid,
-          ),
+      child: CustomPaint(
+        painter: _DashedBorderPainter(
+          color: AppColors.primary.withOpacity(0.5),
+          strokeWidth: 1.5,
+          gap: 5.0,
         ),
-        child: Column(
-          children: [
-            Icon(
-              Icons.add_photo_alternate_outlined,
-              size: 48.sp,
-              color: AppColors.primary,
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              AppStrings.freelancerDashboardEmptyPortfolio.tr(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF2B2B2B),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(24.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.add_photo_alternate_outlined,
+                size: 48.sp,
+                color: AppColors.primary,
               ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              AppStrings.freelancerDashboardAddFirstWork.tr(),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF888888),
-                fontSize: 12.sp,
+              SizedBox(height: 12.h),
+              Text(
+                AppStrings.freelancerDashboardEmptyPortfolio.tr(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: const Color(0xFF2B2B2B),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 4.h),
+              Text(
+                AppStrings.freelancerDashboardAddFirstWork.tr(),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFF888888),
+                  fontSize: 12.sp,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -477,31 +481,37 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
   Widget _buildEmptyGigsCard(BuildContext context) {
     return InkWell(
       onTap: () => context.push('/freelancer/gigs/create'),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(24.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+      child: CustomPaint(
+        painter: _DashedBorderPainter(
+          color: AppColors.primary.withOpacity(0.5),
+          strokeWidth: 1.5,
+          gap: 5.0,
         ),
-        child: Column(
-          children: [
-            Icon(
-              Icons.add_business_outlined,
-              size: 48.sp,
-              color: AppColors.primary,
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              AppStrings.freelancerDashboardEmptyServices.tr(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF2B2B2B),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(24.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.add_business_outlined,
+                size: 48.sp,
+                color: AppColors.primary,
               ),
-            ),
-          ],
+              SizedBox(height: 12.h),
+              Text(
+                AppStrings.freelancerDashboardEmptyServices.tr(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: const Color(0xFF2B2B2B),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -683,5 +693,53 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
         ),
       ],
     );
+  }
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double gap;
+
+  _DashedBorderPainter({
+    required this.color,
+    this.strokeWidth = 1.0,
+    this.gap = 5.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    var path = Path();
+    path.addRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        Radius.circular(16.r),
+      ),
+    );
+
+    Path dashPath = Path();
+    double distance = 0.0;
+    for (var pathMetric in path.computeMetrics()) {
+      while (distance < pathMetric.length) {
+        dashPath.addPath(
+          pathMetric.extractPath(distance, distance + gap),
+          Offset.zero,
+        );
+        distance += gap * 2;
+      }
+    }
+    canvas.drawPath(dashPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(_DashedBorderPainter oldDelegate) {
+    return color != oldDelegate.color ||
+        strokeWidth != oldDelegate.strokeWidth ||
+        gap != oldDelegate.gap;
   }
 }

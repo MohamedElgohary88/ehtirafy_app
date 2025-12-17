@@ -136,12 +136,16 @@ class _CreateGigScreenState extends State<CreateGigScreen> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            // Get categories from state
+            // Get categories from state - handle multiple state types
             List<CategoryEntity> categories = [];
             if (state is FreelancerGigsLoaded) {
               categories = state.categories;
               debugPrint(
                 'Categories loaded: ${categories.length} - ${categories.map((c) => c.nameAr).join(", ")}',
+              );
+            } else {
+              debugPrint(
+                'State is ${state.runtimeType}, categories may be empty',
               );
             }
 
