@@ -511,8 +511,6 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
     BuildContext context,
     List<FreelancerLastContract> orders,
   ) {
-    if (orders.isEmpty) return const SizedBox.shrink();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -525,13 +523,54 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
           },
         ),
         SizedBox(height: 12.h),
-        ...orders.map(
-          (order) => Padding(
-            padding: EdgeInsets.only(bottom: 12.h),
-            child: _buildOrderPreviewCard(context, order),
+        if (orders.isEmpty)
+          _buildEmptyOrdersPlaceholder(context)
+        else
+          ...orders.map(
+            (order) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: _buildOrderPreviewCard(context, order),
+            ),
           ),
-        ),
       ],
+    );
+  }
+
+  Widget _buildEmptyOrdersPlaceholder(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.inbox_outlined,
+            size: 48.sp,
+            color: const Color(0xFFCCCCCC),
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            'لا توجد طلبات حتى الآن',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF888888),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            'ستظهر الطلبات الجديدة هنا',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: const Color(0xFFAAAAAA),
+              fontSize: 12.sp,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
