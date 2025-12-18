@@ -50,6 +50,16 @@ import 'package:ehtirafy_app/features/shared/auth/domain/entities/user_role.dart
 import 'package:ehtirafy_app/features/shared/profile/presentation/manager/profile_cubit.dart';
 import 'package:ehtirafy_app/core/notifications/token_debug_screen.dart';
 import 'package:ehtirafy_app/core/router/utils/go_router_refresh_stream.dart';
+import 'package:ehtirafy_app/features/client/home/presentation/cubits/category_advertisements_cubit.dart';
+import 'package:ehtirafy_app/features/client/home/presentation/pages/category_advertisements_screen.dart';
+import 'package:ehtirafy_app/features/client/home/presentation/cubits/all_freelancers_cubit.dart';
+import 'package:ehtirafy_app/features/client/home/presentation/pages/all_freelancers_screen.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/work_details_cubit.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/pages/work_details_screen.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/advertisement_details_cubit.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/pages/advertisement_details_screen.dart';
+import 'package:ehtirafy_app/features/shared/reviews/presentation/cubits/reviews_cubit.dart';
+import 'package:ehtirafy_app/features/client/requests/presentation/pages/rate_service_screen.dart';
 
 /// GoRouter configuration for the app
 final appRouter = GoRouter(
@@ -368,6 +378,72 @@ final appRouter = GoRouter(
       builder: (context, state) => const NotificationsScreen(),
     ),
     GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
+    // Category advertisements screen
+    GoRoute(
+      path: '/category/:id',
+      builder: (context, state) {
+        final categoryId = state.pathParameters['id']!;
+        final extra = state.extra as Map<String, dynamic>?;
+        final categoryName = extra?['categoryName'] ?? 'الفئة';
+        return BlocProvider(
+          create: (_) => sl<CategoryAdvertisementsCubit>(),
+          child: CategoryAdvertisementsScreen(
+            categoryId: categoryId,
+            categoryName: categoryName,
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/all-freelancers',
+      builder: (context, state) {
+        return BlocProvider(
+          create: (_) => sl<AllFreelancersCubit>()..loadAllFreelancers(),
+          child: const AllFreelancersScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/work/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return BlocProvider(
+          create: (_) => sl<WorkDetailsCubit>()..loadWorkDetails(id),
+          child: WorkDetailsScreen(workId: id),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/rate-service',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return BlocProvider(
+          create: (_) => sl<ReviewsCubit>(),
+          child: RateServiceScreen(
+            freelancerId: extra?['freelancerId'] ?? '',
+            freelancerName: extra?['freelancerName'] ?? '',
+            serviceName: extra?['serviceName'] ?? '',
+            advertisementId: extra?['advertisementId'] ?? '',
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/advertisement/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        final extra = state.extra as Map<String, dynamic>?;
+        return BlocProvider(
+          create: (_) =>
+              sl<AdvertisementDetailsCubit>()..loadAdvertisementDetails(id),
+          child: AdvertisementDetailsScreen(
+            advertisementId: id,
+            freelancerId: extra?['freelancerId'],
+            freelancerName: extra?['freelancerName'],
+          ),
+        );
+      },
+    ),
     GoRoute(
       path: '/freelancer/:id',
       builder: (context, state) {

@@ -29,7 +29,7 @@ class HomeFeaturedPhotographers extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => context.push('/all-freelancers'),
                 child: Text(
                   'عرض الكل',
                   style: TextStyle(

@@ -5,6 +5,7 @@ import 'package:ehtirafy_app/features/shared/reviews/domain/entities/review_enti
 abstract class ReviewsRepository {
   Future<Either<Failure, void>> addRate({
     required String ratedUserId,
+    required String advertisementId,
     required double rating,
     required String comment,
   });

@@ -102,12 +102,11 @@ class ContractEntity extends Equatable {
   }
 
   /// Check if chat is allowed for this contract
-  /// Rule: Chat is allowed only when contract is ACCEPTED or COMPLETED
-  /// Chat is NOT allowed when: pending, rejected, or cancelled
+  /// Rule: Chat is allowed only when contract is ACCEPTED (in progress)
+  /// Chat is NOT allowed when: pending, rejected, cancelled, or completed
   bool get isChatAllowed {
     final status = displayStatus;
-    return status == ContractStatus.accepted ||
-        status == ContractStatus.completed;
+    return status == ContractStatus.accepted;
   }
 
   @override

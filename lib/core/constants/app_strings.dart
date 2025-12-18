@@ -240,6 +240,7 @@ class AppStrings {
   static const myRequestsPayNow = 'myRequests.action.payNow';
   static const myRequestsPaymentMessage = 'myRequests.message.paymentRequired';
   static const myRequestsApprovedSince = 'myRequests.message.approvedSince';
+  static const myRequestsRateService = 'myRequests.action.rateService';
   // Contract Details
   static const contractDetailsTitle = 'contract.details.title';
   static const contractStatusInProgress = 'contract.status.inProgress';

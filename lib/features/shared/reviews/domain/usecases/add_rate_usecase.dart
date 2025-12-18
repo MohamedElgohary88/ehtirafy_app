@@ -9,11 +9,13 @@ class AddRateUseCase {
 
   Future<Either<Failure, void>> call({
     required String ratedUserId,
+    required String advertisementId,
     required double rating,
     required String comment,
   }) async {
     return await repository.addRate(
       ratedUserId: ratedUserId,
+      advertisementId: advertisementId,
       rating: rating,
       comment: comment,
     );

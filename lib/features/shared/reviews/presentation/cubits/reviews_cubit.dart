@@ -16,12 +16,14 @@ class ReviewsCubit extends Cubit<ReviewsState> {
 
   Future<void> addRate({
     required String ratedUserId,
+    required String advertisementId,
     required double rating,
     required String comment,
   }) async {
     emit(ReviewsLoading());
     final result = await addRateUseCase(
       ratedUserId: ratedUserId,
+      advertisementId: advertisementId,
       rating: rating,
       comment: comment,
     );

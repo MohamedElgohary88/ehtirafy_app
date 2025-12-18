@@ -250,7 +250,7 @@ class RequestCard extends StatelessWidget {
       }
     } else if (request.status == RequestStatus.completed) {
       // Completed -> Rate Service
-      buttonText = 'Rate Service'; // Need to add string or use existing
+      buttonText = AppStrings.myRequestsRateService.tr();
       buttonColor = Colors.white;
       textColor = AppColors.primary;
       isOutlined = true;
@@ -259,26 +259,49 @@ class RequestCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      width: double.infinity,
-      height: 44.h,
-      decoration: ShapeDecoration(
-        color: buttonColor,
-        shape: RoundedRectangleBorder(
-          side: isOutlined
-              ? BorderSide(width: 1, color: AppColors.primary)
-              : BorderSide.none,
-          borderRadius: BorderRadius.circular(10.r),
+    return GestureDetector(
+      onTap: () {
+        if (request.status == RequestStatus.active &&
+            request.isPaymentRequired) {
+          // Navigate to payment
+          context.push('/contract/${request.id}');
+        } else if (request.status == RequestStatus.completed) {
+          // Navigate to rate screen
+          context.push(
+            '/rate-service',
+            extra: {
+              'freelancerId': request.photographerId,
+              'freelancerName': request.photographerName,
+              'serviceName': request.serviceName,
+              'advertisementId': request.advertisementId,
+            },
+          );
+        } else {
+          // Navigate to details
+          context.push('/contract/${request.id}');
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        height: 44.h,
+        decoration: ShapeDecoration(
+          color: buttonColor,
+          shape: RoundedRectangleBorder(
+            side: isOutlined
+                ? BorderSide(width: 1, color: AppColors.primary)
+                : BorderSide.none,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
         ),
-      ),
-      child: Center(
-        child: Text(
-          buttonText,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: textColor,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-            height: 1.43,
+        child: Center(
+          child: Text(
+            buttonText,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: textColor,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              height: 1.43,
+            ),
           ),
         ),
       ),

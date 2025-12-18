@@ -7,8 +7,12 @@ import 'package:ehtirafy_app/core/error/exceptions.dart';
 
 abstract class HomeRemoteDataSource {
   Future<List<PhotographerModel>> getFeaturedPhotographers();
+  Future<List<PhotographerModel>> getAllFreelancers();
   Future<List<CategoryModel>> getCategories();
   Future<AppStatisticsModel> getAppStatistics();
+  Future<List<PhotographerModel>> getAdvertisementsByCategory(
+    String categoryId,
+  );
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -27,6 +31,26 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           return (data['data'] as List)
               // Filter out entries without advertisement
               .where((json) => json['advertisement'] != null)
+              .map((json) => PhotographerModel.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<PhotographerModel>> getAllFreelancers() async {
+    try {
+      final response = await dioClient.get(ApiConstants.bestFreelancers);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['data'] != null && data['data'] is List) {
+          // Return ALL entries, including those without advertisement
+          return (data['data'] as List)
               .map((json) => PhotographerModel.fromJson(json))
               .toList();
         }
@@ -61,11 +85,38 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   Future<AppStatisticsModel> getAppStatistics() async {
     try {
       final response = await dioClient.get('/api/v1/app/statistics');
-      if (response.statusCode == 200) {
-        return AppStatisticsModel.fromJson(response.data['data']);
+
+      // Check both HTTP status and API status
+      final data = response.data;
+      if (response.statusCode == 200 && data != null && data['data'] != null) {
+        return AppStatisticsModel.fromJson(data['data']);
       } else {
-        throw ServerException(response.data['message'] ?? 'Unknown error');
+        throw ServerException(data?['message'] ?? 'Unknown error');
       }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<PhotographerModel>> getAdvertisementsByCategory(
+    String categoryId,
+  ) async {
+    try {
+      final response = await dioClient.get(
+        ApiConstants.advertisementsByCategory(categoryId),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['data'] != null && data['data'] is List) {
+          return (data['data'] as List)
+              .where((json) => json['advertisement'] != null)
+              .map((json) => PhotographerModel.fromJson(json))
+              .toList();
+        }
+      }
+      return [];
     } catch (e) {
       throw ServerException(e.toString());
     }

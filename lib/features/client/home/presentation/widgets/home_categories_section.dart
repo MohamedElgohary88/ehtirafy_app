@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ehtirafy_app/features/client/home/domain/entities/category_entity.dart';
 
 class HomeCategoriesSection extends StatelessWidget {
@@ -71,6 +72,7 @@ class HomeCategoriesSection extends StatelessWidget {
                   emoji: _getCategoryEmoji(category.nameEn),
                   title: category.getLocalizedName(locale),
                   categoryId: category.id,
+                  categoryName: category.getLocalizedName(locale),
                 );
               },
             ),
@@ -119,18 +121,23 @@ class _CategoryCard extends StatelessWidget {
   final String emoji;
   final String title;
   final int categoryId;
+  final String categoryName;
 
   const _CategoryCard({
     required this.emoji,
     required this.title,
     required this.categoryId,
+    required this.categoryName,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to category screen with categoryId
+        context.push(
+          '/category/$categoryId',
+          extra: {'categoryName': categoryName},
+        );
       },
       child: Container(
         width: 130.w,

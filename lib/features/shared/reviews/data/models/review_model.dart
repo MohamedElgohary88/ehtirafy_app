@@ -11,12 +11,34 @@ class ReviewModel extends ReviewEntity {
   });
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
+    // Handle rating as 'rate' (string) or 'rating' (number)
+    double rating = 0.0;
+    final rateData = json['rate'] ?? json['rating'];
+    if (rateData is num) {
+      rating = rateData.toDouble();
+    } else if (rateData is String) {
+      rating = double.tryParse(rateData) ?? 0.0;
+    }
+
+    // Format date from created_at
+    String formattedDate = '';
+    final createdAt = json['created_at'] ?? json['date'];
+    if (createdAt != null) {
+      try {
+        final date = DateTime.parse(createdAt.toString());
+        formattedDate =
+            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      } catch (e) {
+        formattedDate = createdAt.toString();
+      }
+    }
+
     return ReviewModel(
       id: json['id']?.toString() ?? '',
-      userName: json['user_name'] ?? json['client_name'] ?? 'Unknown',
+      userName: json['user_name'] ?? json['client_name'] ?? 'عميل',
       userImage: json['user_image'] ?? json['client_avatar'],
-      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
-      date: json['date'] ?? json['created_at'] ?? '',
+      rating: rating,
+      date: formattedDate,
       comment: json['comment'] ?? json['description'] ?? '',
     );
   }

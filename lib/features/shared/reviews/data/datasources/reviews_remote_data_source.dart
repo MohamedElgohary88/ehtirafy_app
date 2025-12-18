@@ -5,6 +5,7 @@ import 'package:ehtirafy_app/features/shared/reviews/data/models/review_model.da
 abstract class ReviewsRemoteDataSource {
   Future<void> addRate({
     required String ratedUserId,
+    required String advertisementId,
     required double rating,
     required String comment,
   });
@@ -20,6 +21,7 @@ class ReviewsRemoteDataSourceImpl implements ReviewsRemoteDataSource {
   @override
   Future<void> addRate({
     required String ratedUserId,
+    required String advertisementId,
     required double rating,
     required String comment,
   }) async {
@@ -28,7 +30,8 @@ class ReviewsRemoteDataSourceImpl implements ReviewsRemoteDataSource {
         '/api/v1/front/add-rate',
         data: {
           'rateable_id': ratedUserId,
-          'rateable_type': 'user', // Assuming 'user' is the type
+          'rateable_type': 'user',
+          'advertisement_id': advertisementId,
           'rate': rating,
           'comment': comment,
         },
@@ -48,9 +51,17 @@ class ReviewsRemoteDataSourceImpl implements ReviewsRemoteDataSource {
       final response = await dioClient.get('/api/v1/front/user-rates/$userId');
 
       if (response.statusCode == 200) {
-        return (response.data['data'] as List)
-            .map((e) => ReviewModel.fromJson(e))
-            .toList();
+        final data = response.data['data'];
+        // API returns { count: N, ratings: [...] }
+        final ratings = data['ratings'];
+        if (ratings != null && ratings is List) {
+          return ratings.map((e) => ReviewModel.fromJson(e)).toList();
+        }
+        // Fallback if data is directly a list
+        if (data is List) {
+          return data.map((e) => ReviewModel.fromJson(e)).toList();
+        }
+        return [];
       } else {
         throw ServerException(response.data['message'] ?? 'Unknown error');
       }

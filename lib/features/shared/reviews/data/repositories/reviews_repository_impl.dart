@@ -13,12 +13,14 @@ class ReviewsRepositoryImpl implements ReviewsRepository {
   @override
   Future<Either<Failure, void>> addRate({
     required String ratedUserId,
+    required String advertisementId,
     required double rating,
     required String comment,
   }) async {
     try {
       await remoteDataSource.addRate(
         ratedUserId: ratedUserId,
+        advertisementId: advertisementId,
         rating: rating,
         comment: comment,
       );

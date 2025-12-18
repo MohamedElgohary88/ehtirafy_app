@@ -28,7 +28,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"asmaa\",\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\":\"12345678\",\r\n    \"password_confirmation\":\"12345678\",\r\n    \"sex\":\"male\",\r\n    \"material_status\":\"married\",\r\n    \"phone\":\"0573447923\",\r\n    \"user_type\":\"admin\",\r\n    \"country_code\":\"966\"\r\n}",
+							"raw": "{\r\n    \"name\":\"asmaa\",\r\n    \"email\":\"admwin@gmail.com\",\r\n    \"password\":\"12345678\",\r\n    \"password_confirmation\":\"12345678\",\r\n    \"sex\":\"male\",\r\n    \"material_status\":\"married\",\r\n    \"phone\":\"0573447923\",\r\n    \"user_type\":\"admin\",\r\n    \"country_code\":\"966\",\r\n    \"device_token\":\"6666666\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -36,9 +36,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{test_server}}/api/{{version}}/auth/register",
+							"raw": "{{local_server}}/api/{{version}}/auth/register",
 							"host": [
-								"{{test_server}}"
+								"{{local_server}}"
 							],
 							"path": [
 								"api",
@@ -1448,6 +1448,30 @@
 										"{{version}}",
 										"front",
 										"advertisements",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "advertisements/category/1",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{local_server}}/api/{{version}}/advertisements/category/1",
+									"host": [
+										"{{local_server}}"
+									],
+									"path": [
+										"api",
+										"{{version}}",
+										"advertisements",
+										"category",
 										"1"
 									]
 								}

@@ -1,4 +1,6 @@
-import 'package:ehtirafy_app/core/constants/app_mock_data.dart';
+import 'package:ehtirafy_app/core/network/api_constants.dart';
+import 'package:ehtirafy_app/core/network/dio_client.dart';
+import 'package:ehtirafy_app/core/error/exceptions.dart';
 import 'package:ehtirafy_app/features/client/notifications/data/models/notification_model.dart';
 
 abstract class NotificationsRemoteDataSource {
@@ -7,19 +9,42 @@ abstract class NotificationsRemoteDataSource {
 
 class NotificationsRemoteDataSourceImpl
     implements NotificationsRemoteDataSource {
-  // In a real app, this would inject ApiService
-  // final ApiService apiService;
+  final DioClient dioClient;
 
-  NotificationsRemoteDataSourceImpl();
+  NotificationsRemoteDataSourceImpl({required this.dioClient});
 
   @override
   Future<List<NotificationModel>> getNotifications() async {
-    // Simulate API delay
-    await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      final response = await dioClient.get(ApiConstants.notifications);
 
-    // Return mock data
-    return AppMockData.notifications
-        .map((e) => NotificationModel.fromJson(e))
-        .toList();
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['data'] != null && data['data'] is List) {
+          return (data['data'] as List)
+              .map((json) => NotificationModel.fromJson(_mapApiResponse(json)))
+              .toList();
+        }
+        return [];
+      } else {
+        throw ServerException(
+          response.data['message'] ?? 'Failed to fetch notifications',
+        );
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  /// Maps API response fields to our model's expected format
+  Map<String, dynamic> _mapApiResponse(Map<String, dynamic> json) {
+    return {
+      'id': json['id']?.toString() ?? '',
+      'title': json['title'] ?? json['data']?['title'] ?? '',
+      'body': json['body'] ?? json['data']?['body'] ?? '',
+      'time': json['created_at'] ?? json['time'] ?? '',
+      'isUnread': json['read_at'] == null,
+      'type': json['type'] ?? 'general',
+    };
   }
 }

@@ -5,9 +5,22 @@ class ApiConstants {
   // Auth Endpoints
   static const String register = '/api/$version/auth/register';
   static const String login = '/api/$version/auth/login';
+  static const String logout = '/api/$version/auth/logout';
   static const String forgotPassword = '/api/$version/auth/forgot-password';
   static const String resetPassword = '/api/$version/auth/reset-password';
   static const String sendOtp = '/api/$version/auth/send-otp';
+  static const String verifyOtp = '/api/$version/auth/verify-otp';
+
+  // Notifications Endpoint
+  static const String notifications = '/api/$version/notifications';
+
+  // Freelancer Profile Endpoint
+  static String freelancerProfile(String id) =>
+      '$baseUrl/api/$version/get-freelancer-profile/$id';
+
+  // Advertisements by Category
+  static String advertisementsByCategory(String categoryId) =>
+      '$baseUrl/api/$version/advertisements/category/$categoryId';
 
   // Freelancer Endpoints
   // Advertisements endpoint - requires user_type query param:

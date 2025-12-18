@@ -755,6 +755,8 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
                         if (currentRating > 0) {
                           context.read<ReviewsCubit>().addRate(
                             ratedUserId: freelancerId,
+                            advertisementId:
+                                '', // TODO: Get from user's past contracts with this freelancer
                             rating: currentRating,
                             comment: commentController.text,
                           );

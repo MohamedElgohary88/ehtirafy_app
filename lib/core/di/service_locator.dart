@@ -42,12 +42,20 @@ import 'package:ehtirafy_app/features/client/home/domain/repositories/home_repos
 import 'package:ehtirafy_app/features/client/home/domain/usecases/get_featured_photographers_usecase.dart';
 import 'package:ehtirafy_app/features/client/home/domain/usecases/get_app_statistics_usecase.dart';
 import 'package:ehtirafy_app/features/client/home/domain/usecases/get_categories_usecase.dart';
+import 'package:ehtirafy_app/features/client/home/domain/usecases/get_advertisements_by_category_usecase.dart';
+import 'package:ehtirafy_app/features/client/home/domain/usecases/get_all_freelancers_usecase.dart';
 import 'package:ehtirafy_app/features/client/home/presentation/cubits/home_cubit.dart';
+import 'package:ehtirafy_app/features/client/home/presentation/cubits/category_advertisements_cubit.dart';
+import 'package:ehtirafy_app/features/client/home/presentation/cubits/all_freelancers_cubit.dart';
 import 'package:ehtirafy_app/features/client/freelancer/data/datasources/freelancer_remote_data_source.dart';
 import 'package:ehtirafy_app/features/client/freelancer/data/repositories/freelancer_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/freelancer/domain/repositories/freelancer_repository.dart';
 import 'package:ehtirafy_app/features/client/freelancer/domain/usecases/get_freelancer_profile_usecase.dart';
+import 'package:ehtirafy_app/features/client/freelancer/domain/usecases/get_work_details_usecase.dart';
+import 'package:ehtirafy_app/features/client/freelancer/domain/usecases/get_advertisement_details_usecase.dart';
 import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/freelancer_cubit.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/work_details_cubit.dart';
+import 'package:ehtirafy_app/features/client/freelancer/presentation/cubits/advertisement_details_cubit.dart';
 import 'package:ehtirafy_app/features/client/booking/data/repositories/booking_repository_impl.dart';
 import 'package:ehtirafy_app/features/client/booking/domain/repositories/booking_repository.dart';
 import 'package:ehtirafy_app/features/client/booking/domain/usecases/submit_booking_request_usecase.dart';
@@ -163,7 +171,7 @@ Future<void> setupLocator() async {
     () => NotificationsRepositoryImpl(remoteDataSource: sl()),
   );
   sl.registerLazySingleton<NotificationsRemoteDataSource>(
-    () => NotificationsRemoteDataSourceImpl(),
+    () => NotificationsRemoteDataSourceImpl(dioClient: sl()),
   );
   // Features - Search
   sl.registerFactory(() => SearchCubit(searchUseCase: sl()));
@@ -189,14 +197,26 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton(() => GetFeaturedPhotographersUseCase(sl()));
   sl.registerLazySingleton(() => GetCategoriesUseCase(sl()));
   sl.registerLazySingleton(() => GetAppStatisticsUseCase(sl()));
+  sl.registerLazySingleton(() => GetAdvertisementsByCategoryUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllFreelancersUseCase(sl()));
+  sl.registerFactory(() => AllFreelancersCubit(getAllFreelancersUseCase: sl()));
   sl.registerLazySingleton<HomeRepository>(
     () => HomeRepositoryImpl(remoteDataSource: sl()),
   );
   sl.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(dioClient: sl()),
   );
+  // Features - Category Advertisements
+  sl.registerFactory(
+    () => CategoryAdvertisementsCubit(getAdvertisementsByCategoryUseCase: sl()),
+  );
   // Features - Freelancer
-  sl.registerFactory(() => FreelancerCubit(getFreelancerProfileUseCase: sl()));
+  sl.registerFactory(
+    () => FreelancerCubit(
+      getFreelancerProfileUseCase: sl(),
+      getUserRatesUseCase: sl<GetUserRatesUseCase>(),
+    ),
+  );
   sl.registerLazySingleton(() => GetFreelancerProfileUseCase(sl()));
   sl.registerLazySingleton<FreelancerRepository>(
     () => FreelancerRepositoryImpl(remoteDataSource: sl()),
@@ -204,6 +224,16 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton<FreelancerRemoteDataSource>(
     () => FreelancerRemoteDataSourceImpl(dioClient: sl()),
   );
+
+  // Features - Work Details
+  sl.registerFactory(() => WorkDetailsCubit(getWorkDetailsUseCase: sl()));
+  sl.registerLazySingleton(() => GetWorkDetailsUseCase(sl()));
+
+  // Features - Advertisement Details
+  sl.registerFactory(
+    () => AdvertisementDetailsCubit(getAdvertisementDetailsUseCase: sl()),
+  );
+  sl.registerLazySingleton(() => GetAdvertisementDetailsUseCase(sl()));
   // Features - Booking
   // Booking Feature
   sl.registerFactory(() => ResetPasswordCubit(sl()));
@@ -241,7 +271,7 @@ Future<void> setupLocator() async {
 
   sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(sl()));
   sl.registerLazySingleton<ChatRemoteDataSource>(
-    () => ChatRemoteDataSourceImpl(),
+    () => ChatRemoteDataSourceImpl(dioClient: sl()),
   );
 
   // Features - Profile

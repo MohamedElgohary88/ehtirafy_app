@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_entity.dart';
 
 /// Helper to parse localized fields that can be either String or Map with ar/en keys
@@ -41,24 +40,55 @@ class ContractModel extends ContractEntity {
   /// - publisher.name → photographerName
   /// - customer.name → clientName
   factory ContractModel.fromJson(Map<String, dynamic> json) {
-    // Parse chat messages if embedded in contract
-    List<Map<String, dynamic>>? parsedMessages;
-    if (json['chat_messages'] != null) {
+    // Parse chat messages from contr_cust_notes and contr_pub_notes
+    List<Map<String, dynamic>> parsedMessages = [];
+
+    // Parse customer notes
+    if (json['contr_cust_notes'] != null) {
       try {
-        if (json['chat_messages'] is String) {
-          final decoded = jsonDecode(json['chat_messages']);
-          if (decoded is List) {
-            parsedMessages = decoded.cast<Map<String, dynamic>>();
+        if (json['contr_cust_notes'] is List) {
+          for (var note in json['contr_cust_notes']) {
+            if (note is Map<String, dynamic>) {
+              parsedMessages.add({
+                'note': note['note'] ?? '',
+                'date': note['date_of_note'] ?? '',
+                'creator': note['creator'] ?? '',
+                'user_type': note['user_type'] ?? 'customer',
+              });
+            }
           }
-        } else if (json['chat_messages'] is List) {
-          parsedMessages = (json['chat_messages'] as List)
-              .map((e) => e as Map<String, dynamic>)
-              .toList();
         }
-      } catch (_) {
-        // Ignore parsing errors for chat messages
-      }
+      } catch (_) {}
     }
+
+    // Parse publisher/freelancer notes
+    if (json['contr_pub_notes'] != null) {
+      try {
+        if (json['contr_pub_notes'] is List) {
+          for (var note in json['contr_pub_notes']) {
+            if (note is Map<String, dynamic>) {
+              parsedMessages.add({
+                'note': note['note'] ?? '',
+                'date': note['date_of_note'] ?? '',
+                'creator': note['creator'] ?? '',
+                'user_type': note['user_type'] ?? 'freelancer',
+              });
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    // Sort messages by date
+    parsedMessages.sort((a, b) {
+      try {
+        final dateA = DateTime.tryParse(a['date'] ?? '') ?? DateTime(1970);
+        final dateB = DateTime.tryParse(b['date'] ?? '') ?? DateTime(1970);
+        return dateA.compareTo(dateB);
+      } catch (_) {
+        return 0;
+      }
+    });
 
     return ContractModel(
       id: json['id'] is int
@@ -87,8 +117,8 @@ class ContractModel extends ContractEntity {
       // Client (customer) details
       clientName: json['customer']?['name'] ?? '',
       clientImage: json['customer']?['image'] ?? '',
-      // Chat messages embedded in contract
-      chatMessages: parsedMessages,
+      // Chat messages from notes
+      chatMessages: parsedMessages.isNotEmpty ? parsedMessages : null,
     );
   }
 

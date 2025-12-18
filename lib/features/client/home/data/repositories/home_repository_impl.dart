@@ -23,6 +23,16 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
+  Future<Either<Failure, List<PhotographerEntity>>> getAllFreelancers() async {
+    try {
+      final result = await remoteDataSource.getAllFreelancers();
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<CategoryEntity>>> getCategories() async {
     try {
       final result = await remoteDataSource.getCategories();
@@ -36,6 +46,20 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, AppStatistics>> getAppStatistics() async {
     try {
       final result = await remoteDataSource.getAppStatistics();
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PhotographerEntity>>> getAdvertisementsByCategory(
+    String categoryId,
+  ) async {
+    try {
+      final result = await remoteDataSource.getAdvertisementsByCategory(
+        categoryId,
+      );
       return Right(result);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

@@ -60,6 +60,8 @@ class RequestsRepositoryImpl implements RequestsRepository {
       id: contract.id.toString(),
       serviceName: contract.serviceTitle ?? 'خدمة تصوير',
       photographerName: contract.photographerName ?? 'مصور',
+      photographerId: contract.photographerId,
+      advertisementId: contract.advertisementId,
       photographerImage: contract.photographerImage ?? '',
       status: _mapContractStatusToRequestStatus(contract),
       price: double.tryParse(contract.requestedAmount) ?? 0,

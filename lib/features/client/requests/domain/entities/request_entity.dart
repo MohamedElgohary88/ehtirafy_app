@@ -6,6 +6,8 @@ class RequestEntity extends Equatable {
   final String id;
   final String serviceName;
   final String photographerName;
+  final String photographerId;
+  final String advertisementId;
   final String photographerImage;
   final RequestStatus status;
   final double price;
@@ -17,6 +19,8 @@ class RequestEntity extends Equatable {
     required this.id,
     required this.serviceName,
     required this.photographerName,
+    required this.photographerId,
+    required this.advertisementId,
     required this.photographerImage,
     required this.status,
     required this.price,
@@ -30,6 +34,8 @@ class RequestEntity extends Equatable {
     id,
     serviceName,
     photographerName,
+    photographerId,
+    advertisementId,
     photographerImage,
     status,
     price,
