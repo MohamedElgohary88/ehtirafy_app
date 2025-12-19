@@ -17,8 +17,7 @@ class SplashCubit extends Cubit<SplashState> {
     emit(SplashLoading());
 
     try {
-      // Small delay for splash branding
-      await Future.delayed(const Duration(milliseconds: 1500));
+      // No delay needed as native splash handles branding
 
       // Check for saved token
       final token = await userLocalDataSource.getToken();
