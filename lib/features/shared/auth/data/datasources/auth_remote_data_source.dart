@@ -8,7 +8,11 @@ import 'package:ehtirafy_app/core/error/exceptions.dart';
 import 'package:dio/dio.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<LoginModel> login({required String email, required String password});
+  Future<LoginModel> login({
+    required String email,
+    required String password,
+    required String deviceToken,
+  });
   Future<RegisterResponseModel> signup(RegisterRequestParams params);
   Future<String> forgotPassword(String email);
   Future<String> resetPassword({
@@ -35,11 +39,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<LoginModel> login({
     required String email,
     required String password,
+    required String deviceToken,
   }) async {
     try {
       final response = await _dioClient.post(
         ApiConstants.login,
-        data: FormData.fromMap({'email': email, 'password': password}),
+        data: FormData.fromMap({
+          'email': email,
+          'password': password,
+          'device_token': deviceToken,
+        }),
       );
 
       final baseResponse = BaseResponse<LoginModel>.fromJson(

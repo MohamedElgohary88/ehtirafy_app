@@ -28,9 +28,9 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['data'] != null && data['data'] is List) {
+          // Return all best freelancers, including those without advertisement
+          // The model handles null advertisements gracefully
           return (data['data'] as List)
-              // Filter out entries without advertisement
-              .where((json) => json['advertisement'] != null)
               .map((json) => PhotographerModel.fromJson(json))
               .toList();
         }

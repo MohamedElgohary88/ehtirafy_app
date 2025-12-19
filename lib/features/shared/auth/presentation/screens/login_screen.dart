@@ -13,6 +13,8 @@ import 'package:ehtirafy_app/features/shared/auth/presentation/widgets/auth_text
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_cubit.dart';
 import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/login_state.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
+import 'package:ehtirafy_app/core/notifications/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -62,11 +64,66 @@ class _LoginView extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatelessWidget {
+class _LoginForm extends StatefulWidget {
+  const _LoginForm();
+
+  @override
+  State<_LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<_LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  _LoginForm();
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin(BuildContext context, LoginCubit cubit) async {
+    final currentState = cubit.state;
+    if (currentState is LoginLoading) return;
+
+    // Get device token for push notifications
+    String deviceToken = '';
+    try {
+      // First, try to request permission if not already granted
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      // Then get the token
+      deviceToken = await NotificationService.getToken() ?? '';
+
+      // If still empty, try getting FCM token directly
+      if (deviceToken.isEmpty) {
+        deviceToken = await FirebaseMessaging.instance.getToken() ?? '';
+      }
+
+      // Fallback for simulators (iOS Simulator doesn't support push notifications)
+      // Provide a placeholder token for testing
+      if (deviceToken.isEmpty) {
+        deviceToken = 'simulator_device_token';
+        debugPrint('Using simulator fallback token');
+      }
+
+      debugPrint('Device token for login: $deviceToken');
+    } catch (e) {
+      debugPrint('Failed to get device token: $e');
+      // Use fallback token on error (e.g., simulator)
+      deviceToken = 'simulator_device_token';
+    }
+
+    cubit.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+      deviceToken,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,14 +175,7 @@ class _LoginForm extends StatelessWidget {
             SizedBox(height: 16.h),
             PrimaryButton(
               text: AppStrings.authLoginButton.tr(),
-              onPressed: () {
-                final currentState = context.read<LoginCubit>().state;
-                if (currentState is LoginLoading) return;
-                cubit.login(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
-                );
-              },
+              onPressed: () => _handleLogin(context, cubit),
               isLoading: state is LoginLoading,
             ),
             SizedBox(height: 16.h),

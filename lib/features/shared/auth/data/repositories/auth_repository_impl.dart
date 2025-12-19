@@ -19,11 +19,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, LoginResult>> login({
     required String email,
     required String password,
+    required String deviceToken,
   }) async {
     try {
       final result = await remoteDataSource.login(
         email: email,
         password: password,
+        deviceToken: deviceToken,
       );
 
       // Persist user and token
