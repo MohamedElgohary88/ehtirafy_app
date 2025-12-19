@@ -17,7 +17,9 @@ class SplashCubit extends Cubit<SplashState> {
     emit(SplashLoading());
 
     try {
-      // No delay needed as native splash handles branding
+      // CRITICAL: Wait 2 seconds to ensure Flutter splash is visible
+      // and BlocListener is mounted before emitting navigation state
+      await Future.delayed(const Duration(seconds: 2));
 
       // Check for saved token
       final token = await userLocalDataSource.getToken();
@@ -28,7 +30,6 @@ class SplashCubit extends Cubit<SplashState> {
 
         roleResult.fold(
           (failure) {
-            // If role fetch fails, default to client home
             emit(SplashNavigateToHome());
           },
           (role) {

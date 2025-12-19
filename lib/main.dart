@@ -4,30 +4,27 @@ import 'package:easy_localization/easy_localization.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'package:ehtirafy_app/core/di/service_locator.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:ehtirafy_app/firebase_options.dart';
 import 'package:ehtirafy_app/core/notifications/background_handler.dart';
 import 'package:ehtirafy_app/core/notifications/notification_service.dart';
 
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-
 Future<void> main() async {
-  // 1. Keep native splash screen up until app is ready
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  // ANR FIX: Do NOT use FlutterNativeSplash.preserve() on Android 12+
+  // The native splash dismisses automatically when Flutter renders.
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase (Critical ordered step 1)
+  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Register Background Handler (Critical ordered step 2)
+  // Register Background Handler
   FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
 
-  // Initialize Notification Service (Critical ordered step 3)
+  // Initialize Notification Service
   await NotificationService().initialize();
 
-  // 2. Run app
+  // Run app
   runApp(const AppBootstrap());
 }
 
@@ -51,26 +48,19 @@ class _AppBootstrapState extends State<AppBootstrap> {
 
   Future<void> _initializeApp() async {
     try {
-      // 3. Initialize everything here while showing the loading screen
       await EasyLocalization.ensureInitialized();
       await setupLocator();
 
-      // Initialization done, allow UI to update then remove splash
       if (mounted) {
         setState(() {
           _isInitialized = true;
         });
-        // We are ready, let the first frame of MyApp render, then remove splash.
-        // Doing it immediately here is also fine usually.
-        FlutterNativeSplash.remove();
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _error = e.toString();
         });
-        // If error, also remove splash to show error
-        FlutterNativeSplash.remove();
       }
     }
   }
