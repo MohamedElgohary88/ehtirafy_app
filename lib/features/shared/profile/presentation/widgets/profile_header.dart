@@ -23,13 +23,16 @@ class ProfileHeader extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Avatar
+            // Avatar - Using initials instead of photo
             Container(
               width: 80.w,
               height: 80.w,
-              padding: EdgeInsets.all(8.w),
               decoration: ShapeDecoration(
-                color: Colors.white,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFC8A44F), Color(0xFFD4AF37)],
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
                 ),
@@ -48,16 +51,13 @@ class ProfileHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Container(
-                decoration: ShapeDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      user.avatarUrl ?? "https://i.pravatar.cc/300",
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
+              child: Center(
+                child: Text(
+                  _getInitials(user.name),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28.sp,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -122,5 +122,14 @@ class ProfileHeader extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return '?';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

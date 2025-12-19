@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/features/client/home/domain/entities/photographer_entity.dart';
+import 'package:ehtirafy_app/core/widgets/user_avatar.dart';
 
 class HomeFeaturedPhotographers extends StatelessWidget {
   final List<PhotographerEntity> photographers;
@@ -85,28 +86,7 @@ class _PhotographerCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 80.w,
-              height: 80.w,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.r),
-                color: const Color(0xFFF5F5F5),
-                image: photographer.imageUrl.isNotEmpty
-                    ? DecorationImage(
-                        image: NetworkImage(photographer.imageUrl),
-                        fit: BoxFit.cover,
-                        onError: (exception, stackTrace) {},
-                      )
-                    : null,
-              ),
-              child: photographer.imageUrl.isEmpty
-                  ? Icon(
-                      Icons.person,
-                      color: const Color(0xFFBDBDBD),
-                      size: 40.w,
-                    )
-                  : null,
-            ),
+            UserAvatar(name: photographer.name, size: 80),
             SizedBox(width: 16.w),
             Expanded(
               child: Column(

@@ -8,6 +8,7 @@ class RegisterRequestParams {
   final String phone;
   final String userType;
   final String countryCode;
+  final String deviceToken;
 
   RegisterRequestParams({
     required this.name,
@@ -19,6 +20,7 @@ class RegisterRequestParams {
     required this.phone,
     required this.userType,
     required this.countryCode,
+    required this.deviceToken,
   });
 
   Map<String, dynamic> toJson() {
@@ -32,6 +34,7 @@ class RegisterRequestParams {
       'phone': phone,
       'user_type': userType,
       'country_code': countryCode,
+      'device_token': deviceToken,
     };
   }
 }

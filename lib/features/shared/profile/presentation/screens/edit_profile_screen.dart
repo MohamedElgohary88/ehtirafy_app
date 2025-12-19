@@ -140,60 +140,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Avatar Section
+                  // Avatar Section - Using initials instead of photo
                   Center(
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 120.w,
-                          height: 120.w,
-                          padding: EdgeInsets.all(4.w),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: _primaryGold, width: 2),
+                    child: Container(
+                      width: 120.w,
+                      height: 120.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [_primaryGold, const Color(0xFFD4AF37)],
+                        ),
+                        border: Border.all(color: Colors.white, width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: _primaryGold.withValues(alpha: 0.3),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          _getInitials(
+                            state is ProfileLoaded
+                                ? state.userProfile.name
+                                : '',
+                          ),
+                          style: TextStyle(
                             color: Colors.white,
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  state is ProfileLoaded &&
-                                          state.userProfile.avatarUrl != null
-                                      ? state.userProfile.avatarUrl!
-                                      : "https://i.pravatar.cc/300",
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                            fontSize: 40.sp,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Cairo',
                           ),
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 36.w,
-                            height: 36.w,
-                            decoration: BoxDecoration(
-                              color: _primaryGold,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.camera_alt_rounded,
-                              color: Colors.white,
-                              size: 18.sp,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                   SizedBox(height: 40.h),
@@ -361,5 +343,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ],
       ),
     );
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return '?';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

@@ -47,6 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String materialStatus,
     required String userType,
     required String countryCode,
+    required String deviceToken,
   }) async {
     try {
       final params = RegisterRequestParams(
@@ -59,6 +60,7 @@ class AuthRepositoryImpl implements AuthRepository {
         phone: phone,
         userType: userType,
         countryCode: countryCode,
+        deviceToken: deviceToken,
       );
       final result = await remoteDataSource.signup(params);
       await localDataSource.saveUser(result);

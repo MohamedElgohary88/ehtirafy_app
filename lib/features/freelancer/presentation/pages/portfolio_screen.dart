@@ -75,7 +75,12 @@ class PortfolioScreen extends StatelessWidget {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => context.push('/freelancer/portfolio/add'),
+          onPressed: () async {
+            final result = await context.push('/freelancer/portfolio/add');
+            if (result == true) {
+              context.read<FreelancerPortfolioCubit>().loadPortfolio();
+            }
+          },
           backgroundColor: AppColors.primary,
           child: const Icon(Icons.add, color: Colors.white),
         ),
@@ -183,7 +188,12 @@ class PortfolioScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             GestureDetector(
-              onTap: () => context.push('/freelancer/portfolio/add'),
+              onTap: () async {
+                final result = await context.push('/freelancer/portfolio/add');
+                if (result == true) {
+                  context.read<FreelancerPortfolioCubit>().loadPortfolio();
+                }
+              },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: ShapeDecoration(
@@ -233,7 +243,15 @@ class PortfolioScreen extends StatelessWidget {
 
   Widget _buildPortfolioItem(BuildContext context, PortfolioItemEntity item) {
     return GestureDetector(
-      onTap: () => context.push('/freelancer/portfolio/add', extra: item),
+      onTap: () async {
+        final result = await context.push(
+          '/freelancer/portfolio/add',
+          extra: item,
+        );
+        if (result == true) {
+          context.read<FreelancerPortfolioCubit>().loadPortfolio();
+        }
+      },
       onLongPress: () => _showDeleteDialog(context, item),
       child: Container(
         decoration: BoxDecoration(

@@ -96,9 +96,28 @@ class ContractInfoCard extends StatelessWidget {
   Widget _buildPhotographerInfo() {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 20.r,
-          backgroundImage: NetworkImage(contract.photographerImage),
+        // Initials-based avatar instead of network image
+        Container(
+          width: 40.r,
+          height: 40.r,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFC8A44F), Color(0xFFD4AF37)],
+            ),
+          ),
+          child: Center(
+            child: Text(
+              _getInitials(contract.photographerName),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ),
         SizedBox(width: 12.w),
         Column(
@@ -140,5 +159,14 @@ class ContractInfoCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return '?';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

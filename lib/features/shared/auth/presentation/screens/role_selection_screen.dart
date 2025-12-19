@@ -175,6 +175,7 @@ class _RoleSelectionView extends StatelessWidget {
                                     materialStatus: data['maritalStatus'],
                                     userType: data['userType'],
                                     countryCode: data['countryCode'],
+                                    deviceToken: '6666666',
                                   );
 
                                   // Also save preference locally

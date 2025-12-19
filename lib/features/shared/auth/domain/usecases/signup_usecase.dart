@@ -22,6 +22,7 @@ class SignupUseCase implements UseCase<User, SignupParams> {
       materialStatus: params.materialStatus,
       userType: params.userType,
       countryCode: params.countryCode,
+      deviceToken: params.deviceToken,
     );
   }
 }
@@ -36,6 +37,7 @@ class SignupParams extends Equatable {
   final String materialStatus;
   final String userType;
   final String countryCode;
+  final String deviceToken;
 
   const SignupParams({
     required this.fullName,
@@ -47,6 +49,7 @@ class SignupParams extends Equatable {
     required this.materialStatus,
     required this.userType,
     required this.countryCode,
+    required this.deviceToken,
   });
 
   @override
@@ -60,5 +63,6 @@ class SignupParams extends Equatable {
     materialStatus,
     userType,
     countryCode,
+    deviceToken,
   ];
 }

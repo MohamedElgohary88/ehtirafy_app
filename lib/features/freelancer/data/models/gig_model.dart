@@ -7,6 +7,7 @@ class GigModel extends GigEntity {
     required super.description,
     required super.price,
     required super.category,
+    super.categoryName,
     required super.status,
     required super.coverImage,
     super.createdAt,
@@ -35,6 +36,20 @@ class GigModel extends GigEntity {
           json['images'] is List &&
           (json['images'] as List).isNotEmpty) {
         return json['images'][0].toString();
+      }
+      return '';
+    }
+
+    // Parse category object: {"id": 3, "name": {"en": "sessions", "ar": "سشنات"}}
+    String parseCategoryName() {
+      final category = json['category'];
+      if (category is Map && category['name'] != null) {
+        final name = category['name'];
+        if (name is Map) {
+          // Prefer Arabic name, fallback to English
+          return name['ar']?.toString() ?? name['en']?.toString() ?? '';
+        }
+        return name.toString();
       }
       return '';
     }
@@ -71,6 +86,7 @@ class GigModel extends GigEntity {
       description: parseDescription(),
       price: double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
       category: json['category_id']?.toString() ?? '',
+      categoryName: parseCategoryName(),
       status: _parseStatus(json['status']?.toString() ?? ''),
       coverImage: parseCoverImage(),
       createdAt: json['created_at'] != null
@@ -88,6 +104,7 @@ class GigModel extends GigEntity {
       'description': description,
       'price': price,
       'category': category,
+      'categoryName': categoryName,
       'status': _statusToString(status),
       'coverImage': coverImage,
       'createdAt': createdAt?.toIso8601String(),

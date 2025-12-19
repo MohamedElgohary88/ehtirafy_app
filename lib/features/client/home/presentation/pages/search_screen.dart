@@ -9,6 +9,7 @@ import 'package:ehtirafy_app/core/di/service_locator.dart';
 import 'package:ehtirafy_app/features/client/search/domain/entities/search_result_entity.dart';
 import 'package:ehtirafy_app/features/client/search/presentation/cubits/search_cubit.dart';
 import 'package:ehtirafy_app/features/client/search/presentation/cubits/search_state.dart';
+import 'package:ehtirafy_app/core/widgets/user_avatar.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -273,23 +274,7 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         child: Row(
           children: [
-            Container(
-              width: 60.w,
-              height: 60.w,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.r),
-                color: AppColors.grey100,
-                image: result.imageUrl != null
-                    ? DecorationImage(
-                        image: NetworkImage(result.imageUrl!),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-              child: result.imageUrl == null
-                  ? Icon(Icons.person, color: AppColors.grey400, size: 32.w)
-                  : null,
-            ),
+            UserAvatar(name: result.title, size: 60, fontSize: 20.sp),
             SizedBox(width: 16.w),
             Expanded(
               child: Column(

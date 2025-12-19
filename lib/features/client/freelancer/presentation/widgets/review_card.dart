@@ -4,7 +4,7 @@ import 'package:ehtirafy_app/core/theme/app_colors.dart';
 
 class ReviewCard extends StatelessWidget {
   final String userName;
-  final String userImage;
+  final String userImage; // Kept for API compatibility but not used
   final double rating;
   final String date;
   final String comment;
@@ -39,9 +39,28 @@ class ReviewCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 20.r,
-                backgroundImage: NetworkImage(userImage),
+              // Initials-based avatar instead of photo
+              Container(
+                width: 40.r,
+                height: 40.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFC8A44F), Color(0xFFD4AF37)],
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    _getInitials(userName),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(width: 12.w),
               Expanded(
@@ -101,5 +120,14 @@ class ReviewCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return '?';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

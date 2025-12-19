@@ -51,10 +51,13 @@ class FreelancerGigsCubit extends Cubit<FreelancerGigsState> {
       images: images,
     );
 
-    result.fold(
-      (failure) => emit(FreelancerGigAddError(failure.message)),
-      (gig) => emit(FreelancerGigAdded(gig)),
-    );
+    result.fold((failure) => emit(FreelancerGigAddError(failure.message)), (
+      gig,
+    ) {
+      emit(FreelancerGigAdded(gig));
+      // Reload gigs list to refresh cached data
+      loadGigs();
+    });
   }
 
   Future<void> updateGig({
@@ -80,10 +83,13 @@ class FreelancerGigsCubit extends Cubit<FreelancerGigsState> {
       images: images,
     );
 
-    result.fold(
-      (failure) => emit(FreelancerGigUpdateError(failure.message)),
-      (gig) => emit(FreelancerGigUpdated(gig)),
-    );
+    result.fold((failure) => emit(FreelancerGigUpdateError(failure.message)), (
+      gig,
+    ) {
+      emit(FreelancerGigUpdated(gig));
+      // Reload gigs list to refresh cached data
+      loadGigs();
+    });
   }
 
   Future<void> deleteGig(String gigId) async {

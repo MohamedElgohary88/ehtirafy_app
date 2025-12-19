@@ -21,51 +21,93 @@ class GigCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(16.r),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: const Color(0x0D000000),
-              blurRadius: 10,
+              color: const Color(0x1A000000),
+              blurRadius: 12,
               offset: const Offset(0, 4),
             ),
           ],
           border: Border.all(color: const Color(0xFFF2F2F2)),
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cover image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.r),
-              child: Image.network(
-                gig.coverImage,
-                width: 80.w,
-                height: 80.h,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  width: 80.w,
-                  height: 80.h,
-                  color: const Color(0xFFF5F5F5),
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.grey,
-                    size: 24.sp,
+            // Cover image with status badge
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16.r),
+                  ),
+                  child: Image.network(
+                    gig.coverImage,
+                    width: double.infinity,
+                    height: 120.h,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: double.infinity,
+                      height: 120.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primary.withValues(alpha: 0.1),
+                            AppColors.gold.withValues(alpha: 0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(16.r),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: AppColors.primary,
+                        size: 40.sp,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                // Gradient overlay
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16.r),
+                      ),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.3),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Status badge
+                Positioned(
+                  top: 10.h,
+                  right: 10.w,
+                  child: _buildStatusBadge(context),
+                ),
+              ],
             ),
-            SizedBox(width: 12.w),
             // Content
-            Expanded(
+            Padding(
+              padding: EdgeInsets.all(16.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Title and actions row
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
@@ -73,28 +115,109 @@ class GigCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(
                                 color: const Color(0xFF2B2B2B),
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
                               ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      _buildStatusBadge(context),
+                      _buildActions(context),
                     ],
                   ),
                   SizedBox(height: 8.h),
-                  Text(
-                    gig.category,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF888888),
-                      fontSize: 12.sp,
+                  // Category and description
+                  if (gig.categoryName.isNotEmpty) ...[
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                      child: Text(
+                        gig.categoryName,
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8.h),
+                    SizedBox(height: 8.h),
+                  ],
+                  // Description
+                  if (gig.description.isNotEmpty)
+                    Text(
+                      gig.description,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFF888888),
+                        fontSize: 12.sp,
+                        height: 1.4,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  SizedBox(height: 12.h),
+                  // Days availability badges
+                  if (gig.availability.isNotEmpty) ...[
+                    Wrap(
+                      spacing: 6.w,
+                      runSpacing: 4.h,
+                      children: gig.availability
+                          .take(3)
+                          .map(
+                            (day) => Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF5F5F5),
+                                borderRadius: BorderRadius.circular(6.r),
+                              ),
+                              child: Text(
+                                _translateDay(day),
+                                style: TextStyle(
+                                  color: const Color(0xFF666666),
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    SizedBox(height: 12.h),
+                  ],
+                  // Price row
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [_buildPrice(context), _buildActions(context)],
+                    children: [
+                      Icon(
+                        Icons.monetization_on_outlined,
+                        size: 18.sp,
+                        color: AppColors.gold,
+                      ),
+                      SizedBox(width: 6.w),
+                      Text(
+                        '${gig.price.toInt()}',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.gold,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'ريال',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF888888),
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -125,65 +248,71 @@ class GigCard extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(8.r),
+        boxShadow: [
+          BoxShadow(
+            color: backgroundColor.withValues(alpha: 0.4),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Text(
         text,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: Colors.white,
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w500,
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _buildPrice(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          '${gig.price.toInt()}',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: AppColors.primary,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(width: 4.w),
-        Text(
-          'ريال',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: const Color(0xFF888888),
-            fontSize: 12.sp,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildActions(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (onEdit != null)
           IconButton(
             onPressed: onEdit,
-            icon: Icon(Icons.edit_outlined, size: 18.sp),
-            color: const Color(0xFF888888),
+            icon: Icon(Icons.edit_outlined, size: 20.sp),
+            color: AppColors.primary,
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints(minWidth: 32.w, minHeight: 32.h),
+            constraints: BoxConstraints(minWidth: 36.w, minHeight: 36.h),
           ),
         if (onDelete != null)
           IconButton(
             onPressed: onDelete,
-            icon: Icon(Icons.delete_outline, size: 18.sp),
+            icon: Icon(Icons.delete_outline, size: 20.sp),
             color: const Color(0xFFDC3545),
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints(minWidth: 32.w, minHeight: 32.h),
+            constraints: BoxConstraints(minWidth: 36.w, minHeight: 36.h),
           ),
       ],
     );
+  }
+
+  String _translateDay(String day) {
+    switch (day.toLowerCase()) {
+      case 'saturday':
+        return 'السبت';
+      case 'sunday':
+        return 'الأحد';
+      case 'monday':
+        return 'الاثنين';
+      case 'tuesday':
+        return 'الثلاثاء';
+      case 'wednesday':
+        return 'الأربعاء';
+      case 'thursday':
+        return 'الخميس';
+      case 'friday':
+        return 'الجمعة';
+      default:
+        return day;
+    }
   }
 }

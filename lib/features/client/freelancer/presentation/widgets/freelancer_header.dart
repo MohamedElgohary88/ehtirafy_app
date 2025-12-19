@@ -39,13 +39,41 @@ class FreelancerHeader extends StatelessWidget {
                 ),
               ],
             ),
-            child: CircleAvatar(
-              radius: 40.r,
-              backgroundImage: NetworkImage(freelancer.imageUrl),
+            // Initials-based avatar instead of network image
+            child: Container(
+              width: 80.r,
+              height: 80.r,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF2B2B2B), Color(0xFF3D3D3D)],
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  _getInitials(freelancer.name),
+                  style: TextStyle(
+                    color: AppColors.gold,
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return '?';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

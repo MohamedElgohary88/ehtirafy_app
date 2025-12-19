@@ -295,14 +295,18 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
           context,
           AppStrings.freelancerDashboardPortfolioSection.tr(),
           AppStrings.freelancerDashboardManagePortfolio.tr(),
-          () => context.push('/freelancer/portfolio'),
+          () async {
+            await context.push('/freelancer/portfolio');
+            // Always reload when returning from portfolio list
+            context.read<FreelancerDashboardCubit>().loadDashboard();
+          },
         ),
         SizedBox(height: 12.h),
         if (items.isEmpty)
           _buildEmptyPortfolioCard(context)
         else
           SizedBox(
-            height: 120.h,
+            height: 150.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: items.length,
@@ -318,18 +322,73 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
   }
 
   Widget _buildPortfolioItem(BuildContext context, PortfolioItemEntity item) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12.r),
-      child: Image.network(
-        item.image ?? '',
-        width: 120.w,
-        height: 120.h,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          width: 120.w,
-          height: 120.h,
-          color: const Color(0xFFF5F5F5),
-          child: Icon(Icons.image, color: Colors.grey, size: 32.sp),
+    return Container(
+      width: 140.w,
+      height: 140.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x1A000000),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Image
+            Image.network(
+              item.image ?? '',
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                color: const Color(0xFFF5F5F5),
+                child: Icon(Icons.image, color: Colors.grey, size: 32.sp),
+              ),
+            ),
+            // Gradient overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.7),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                ),
+              ),
+            ),
+            // Title overlay
+            Positioned(
+              bottom: 8.h,
+              left: 8.w,
+              right: 8.w,
+              child: Text(
+                item.title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -337,7 +396,12 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
 
   Widget _buildEmptyPortfolioCard(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/freelancer/portfolio/add'),
+      onTap: () async {
+        final result = await context.push('/freelancer/portfolio/add');
+        if (result == true) {
+          context.read<FreelancerDashboardCubit>().loadDashboard();
+        }
+      },
       child: CustomPaint(
         painter: _DashedBorderPainter(
           color: AppColors.primary.withOpacity(0.5),
@@ -390,15 +454,24 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
           context,
           AppStrings.freelancerDashboardServicesSection.tr(),
           AppStrings.freelancerDashboardAddService.tr(),
-          () => context.push('/freelancer/gigs/create'),
-          onTitleTap: () => context.push('/freelancer/gigs'),
+          () async {
+            final result = await context.push('/freelancer/gigs/create');
+            if (result == true) {
+              context.read<FreelancerDashboardCubit>().loadDashboard();
+            }
+          },
+          onTitleTap: () async {
+            await context.push('/freelancer/gigs');
+            // Always reload when returning from list, as changes might have happened there
+            context.read<FreelancerDashboardCubit>().loadDashboard();
+          },
         ),
         SizedBox(height: 12.h),
         if (gigs.isEmpty)
           _buildEmptyGigsCard(context)
         else
           SizedBox(
-            height: 100.h,
+            height: 180.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: gigs.length,
@@ -415,60 +488,149 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
 
   Widget _buildGigPreviewCard(BuildContext context, GigEntity gig) {
     return Container(
-      width: 200.w,
-      padding: EdgeInsets.all(12.w),
+      width: 220.w,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x0D000000),
-            blurRadius: 10,
+            color: const Color(0x1A000000),
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.r),
-            child: Image.network(
-              gig.coverImage,
-              width: 60.w,
-              height: 60.h,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                width: 60.w,
-                height: 60.h,
-                color: const Color(0xFFF5F5F5),
-                child: Icon(Icons.camera_alt, size: 20.sp, color: Colors.grey),
+          // Image with gradient overlay
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+                child: Image.network(
+                  gig.coverImage,
+                  width: double.infinity,
+                  height: 80.h,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: double.infinity,
+                    height: 80.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primary.withValues(alpha: 0.1),
+                          AppColors.gold.withValues(alpha: 0.1),
+                        ],
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.camera_alt,
+                      size: 32.sp,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              // Gradient overlay
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.r),
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.3),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Status badge
+              Positioned(
+                top: 8.h,
+                right: 8.w,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: gig.status == GigStatus.active
+                        ? const Color(0xFF28A745)
+                        : const Color(0xFF6C757D),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    gig.status == GigStatus.active ? 'نشط' : 'معلق',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(width: 12.w),
-          Expanded(
+          // Content
+          Padding(
+            padding: EdgeInsets.all(12.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Title
                 Text(
                   gig.title,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: const Color(0xFF2B2B2B),
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
                   ),
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 4.h),
-                Text(
-                  '${gig.price.toInt()} ريال',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.primary,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
+                // Category badge
+                if (gig.categoryName.isNotEmpty)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 2.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
+                    child: Text(
+                      gig.categoryName,
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
+                SizedBox(height: 6.h),
+                // Price
+                Row(
+                  children: [
+                    Icon(
+                      Icons.monetization_on_outlined,
+                      size: 14.sp,
+                      color: AppColors.gold,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      '${gig.price.toInt()} ريال',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.gold,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -480,7 +642,12 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
 
   Widget _buildEmptyGigsCard(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/freelancer/gigs/create'),
+      onTap: () async {
+        final result = await context.push('/freelancer/gigs/create');
+        if (result == true) {
+          context.read<FreelancerDashboardCubit>().loadDashboard();
+        }
+      },
       child: CustomPaint(
         painter: _DashedBorderPainter(
           color: AppColors.primary.withOpacity(0.5),
@@ -603,20 +770,26 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
       ),
       child: Row(
         children: [
+          // Client initials avatar instead of photo
           Container(
             width: 40.w,
             height: 40.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.r),
-              color: const Color(0xFFF5F5F5),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFC8A44F), Color(0xFFD4AF37)],
+              ),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.r),
-              child: Image.network(
-                order.clientAvatar ?? '',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    Icon(Icons.person, size: 20.sp, color: Colors.grey),
+            child: Center(
+              child: Text(
+                _getClientInitials(order.clientName),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -693,6 +866,15 @@ class _FreelancerDashboardScreenState extends State<FreelancerDashboardScreen> {
         ),
       ],
     );
+  }
+
+  String _getClientInitials(String name) {
+    if (name.isEmpty) return '?';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }
 

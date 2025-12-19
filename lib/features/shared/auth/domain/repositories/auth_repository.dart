@@ -19,6 +19,7 @@ abstract class AuthRepository {
     required String materialStatus,
     required String userType,
     required String countryCode,
+    required String deviceToken,
   });
 
   Future<Either<Failure, String>> forgotPassword(String email);

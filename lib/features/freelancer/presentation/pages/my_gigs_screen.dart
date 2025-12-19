@@ -98,7 +98,12 @@ class _MyGigsScreenState extends State<MyGigsScreen> {
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => context.push('/freelancer/gigs/create'),
+          onPressed: () async {
+            final result = await context.push('/freelancer/gigs/create');
+            if (result == true) {
+              context.read<FreelancerGigsCubit>().loadGigs();
+            }
+          },
           backgroundColor: AppColors.primary,
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
@@ -293,8 +298,15 @@ class _MyGigsScreenState extends State<MyGigsScreen> {
                 // Edit button
                 Expanded(
                   child: GestureDetector(
-                    onTap: () =>
-                        context.push('/freelancer/gigs/create', extra: gig),
+                    onTap: () async {
+                      final result = await context.push(
+                        '/freelancer/gigs/create',
+                        extra: gig,
+                      );
+                      if (result == true) {
+                        context.read<FreelancerGigsCubit>().loadGigs();
+                      }
+                    },
                     child: Container(
                       height: 32.h,
                       decoration: ShapeDecoration(
@@ -413,7 +425,12 @@ class _MyGigsScreenState extends State<MyGigsScreen> {
             ),
             SizedBox(height: 16.h),
             GestureDetector(
-              onTap: () => context.push('/freelancer/gigs/create'),
+              onTap: () async {
+                final result = await context.push('/freelancer/gigs/create');
+                if (result == true) {
+                  context.read<FreelancerGigsCubit>().loadGigs();
+                }
+              },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: ShapeDecoration(

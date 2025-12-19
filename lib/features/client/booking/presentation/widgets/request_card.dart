@@ -5,6 +5,7 @@ import 'package:ehtirafy_app/features/client/requests/domain/entities/request_en
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ehtirafy_app/core/widgets/user_avatar.dart';
 
 class RequestCard extends StatelessWidget {
   final RequestEntity request;
@@ -68,29 +69,7 @@ class RequestCard extends StatelessWidget {
   }
 
   Widget _buildPhotographerImage() {
-    return Container(
-      width: 56.w,
-      height: 56.h,
-      padding: EdgeInsets.all(8.w),
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 1, color: Color(0xAAEFEFEF)),
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-      ),
-      child: Container(
-        decoration: ShapeDecoration(
-          image: DecorationImage(
-            image: NetworkImage(request.photographerImage),
-            fit: BoxFit.cover,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-        ),
-      ),
-    );
+    return UserAvatar(name: request.photographerName, size: 56);
   }
 
   Widget _buildServiceName(BuildContext context) {

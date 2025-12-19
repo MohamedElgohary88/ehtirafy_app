@@ -51,7 +51,7 @@ class _AddPortfolioItemScreenState extends State<AddPortfolioItemScreen> {
       child: BlocListener<FreelancerPortfolioCubit, FreelancerPortfolioState>(
         listener: (context, state) {
           if (state is FreelancerPortfolioItemAdded) {
-            context.pop();
+            context.pop(true);
           } else if (state is FreelancerPortfolioError) {
             ScaffoldMessenger.of(
               context,

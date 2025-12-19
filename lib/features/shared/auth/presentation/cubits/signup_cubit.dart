@@ -22,6 +22,7 @@ class SignupCubit extends Cubit<SignupState> {
     required String materialStatus,
     required String userType,
     required String countryCode,
+    required String deviceToken,
   }) async {
     emit(SignupLoading());
     final result = await signupUseCase(
@@ -35,6 +36,7 @@ class SignupCubit extends Cubit<SignupState> {
         materialStatus: materialStatus,
         userType: userType,
         countryCode: countryCode,
+        deviceToken: deviceToken,
       ),
     );
     result.fold(

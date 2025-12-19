@@ -8,6 +8,7 @@ class GigEntity extends Equatable {
   final String description;
   final double price;
   final String category;
+  final String categoryName; // Localized category name from API
   final GigStatus status;
   final String coverImage;
   final DateTime? createdAt;
@@ -20,6 +21,7 @@ class GigEntity extends Equatable {
     required this.description,
     required this.price,
     required this.category,
+    this.categoryName = '',
     required this.status,
     required this.coverImage,
     this.createdAt,
@@ -34,6 +36,7 @@ class GigEntity extends Equatable {
     description,
     price,
     category,
+    categoryName,
     status,
     coverImage,
     createdAt,
