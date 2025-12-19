@@ -11,9 +11,12 @@ import 'package:ehtirafy_app/firebase_options.dart';
 import 'package:ehtirafy_app/core/notifications/background_handler.dart';
 import 'package:ehtirafy_app/core/notifications/notification_service.dart';
 
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 Future<void> main() async {
-  // 1. Minimal initialization required for runApp
-  WidgetsFlutterBinding.ensureInitialized();
+  // 1. Keep native splash screen up until app is ready
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize Firebase (Critical ordered step 1)
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -24,8 +27,7 @@ Future<void> main() async {
   // Initialize Notification Service (Critical ordered step 3)
   await NotificationService().initialize();
 
-  // 2. Run immediately without awaiting anything else
-  // This forces the native splash to dismiss as soon as possible
+  // 2. Run app
   runApp(const AppBootstrap());
 }
 
@@ -53,16 +55,22 @@ class _AppBootstrapState extends State<AppBootstrap> {
       await EasyLocalization.ensureInitialized();
       await setupLocator();
 
+      // Initialization done, allow UI to update then remove splash
       if (mounted) {
         setState(() {
           _isInitialized = true;
         });
+        // We are ready, let the first frame of MyApp render, then remove splash.
+        // Doing it immediately here is also fine usually.
+        FlutterNativeSplash.remove();
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _error = e.toString();
         });
+        // If error, also remove splash to show error
+        FlutterNativeSplash.remove();
       }
     }
   }
@@ -90,25 +98,13 @@ class _AppBootstrapState extends State<AppBootstrap> {
     }
 
     if (!_isInitialized) {
-      // 4. Show loading screen immediately (Raw MaterialApp, no localization yet)
-      return MaterialApp(
+      // App is initializing. Native splash is still visible.
+      // We return a simple container that matches splash background color
+      // just in case of a frame gap.
+      return const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: const Color(0xFF1C1D18),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/logo.png',
-                  width: 180,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: 24),
-                const CircularProgressIndicator(color: Color(0xFFC8A44F)),
-              ],
-            ),
-          ),
+          backgroundColor: Color(0xFF1C1D18), // Same as splash background
         ),
       );
     }
