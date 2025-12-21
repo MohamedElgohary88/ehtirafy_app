@@ -167,9 +167,10 @@ class ContractModel extends ContractEntity {
     };
 
     if (isPhotographer) {
-      body['contr_pub_status'] = status; // accepted, rejected, completed
+      body['contr_pub_status'] =
+          status; // Approved, Rejected, Completed, InProcess
     } else {
-      body['contr_cust_status'] = status; // cancelled, completed
+      body['contr_cust_status'] = status; // Completed, Paid, InProcess
     }
 
     if (noteText != null && noteText.isNotEmpty) {

@@ -91,7 +91,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"baselosama@gmail.com\",\r\n    \"password\": \"12345678\"\r\n}\r\n\r\n",
+							"raw": "{\r\n    \"email\": \"basel185@yahoo.com\",\r\n    \"password\": \"12345678\",\r\n    \"device_token\":\"wwww\"\r\n}\r\n\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -352,6 +352,17 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "rateable_id",
+									"value": "1",
+									"type": "text",
+									"description": "User ID being rated"
+								},
+								{
+									"key": "rateable_type",
+									"value": "user",
+									"type": "text"
+								},
+								{
 									"key": "advertisement_id",
 									"value": "1",
 									"type": "text"
@@ -362,8 +373,8 @@
 									"type": "text"
 								},
 								{
-									"key": "description",
-									"value": "hello",
+									"key": "comment",
+									"value": "Great service!",
 									"type": "text"
 								}
 							]
@@ -1849,29 +1860,31 @@
 										},
 										{
 											"key": "contr_pub_status",
-											"value": "completed",
+											"value": "Completed",
 											"type": "text"
 										},
 										{
 											"key": "note_type",
-											"value": "publisher",
+											"value": "freelancer",
 											"description": "publisher / customer",
 											"type": "text"
 										},
 										{
 											"key": "note_text",
 											"value": "تم التسليم بنجاح",
-											"type": "text"
+											"type": "text",
+											"disabled": true
 										},
 										{
 											"key": "contr_cust_status",
-											"value": "completed",
+											"value": "Completed",
 											"type": "text"
 										},
 										{
 											"key": "contract_status",
 											"value": "completed",
-											"type": "text"
+											"type": "text",
+											"disabled": true
 										}
 									]
 								},
@@ -1956,7 +1969,7 @@
 										{
 											"key": "user_type",
 											"value": "customer",
-											"description": "freelancer,publisher"
+											"description": "freelancer,customer"
 										}
 									]
 								}
@@ -2037,31 +2050,6 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "name",
-							"value": "kabil",
-							"type": "text"
-						},
-						{
-							"key": "sex",
-							"value": "male",
-							"type": "text"
-						},
-						{
-							"key": "material_status",
-							"value": "single",
-							"type": "text"
-						},
-						{
-							"key": "_method",
-							"value": "put",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
 					"raw": "{{local_server}}/api/{{version}}/notifications",
 					"host": [
@@ -2094,31 +2082,6 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "name",
-							"value": "kabil",
-							"type": "text"
-						},
-						{
-							"key": "sex",
-							"value": "male",
-							"type": "text"
-						},
-						{
-							"key": "material_status",
-							"value": "single",
-							"type": "text"
-						},
-						{
-							"key": "_method",
-							"value": "put",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
 					"raw": "{{local_server}}/api/{{version}}/privacy-policy?lang=ar",
 					"host": [
@@ -2157,31 +2120,6 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "name",
-							"value": "kabil",
-							"type": "text"
-						},
-						{
-							"key": "sex",
-							"value": "male",
-							"type": "text"
-						},
-						{
-							"key": "material_status",
-							"value": "single",
-							"type": "text"
-						},
-						{
-							"key": "_method",
-							"value": "put",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
 					"raw": "{{local_server}}/api/{{version}}/terms-conditions?lang=en",
 					"host": [
@@ -2220,31 +2158,6 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "name",
-							"value": "kabil",
-							"type": "text"
-						},
-						{
-							"key": "sex",
-							"value": "male",
-							"type": "text"
-						},
-						{
-							"key": "material_status",
-							"value": "single",
-							"type": "text"
-						},
-						{
-							"key": "_method",
-							"value": "put",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
 					"raw": "{{local_server}}/api/{{version}}/contact-us",
 					"host": [

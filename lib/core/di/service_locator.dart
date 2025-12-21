@@ -110,9 +110,11 @@ import 'package:ehtirafy_app/features/shared/reviews/presentation/cubits/reviews
 final sl = GetIt.instance;
 
 Future<void> setupLocator() async {
-  // External dependencies
-  final sharedPreferences = await SharedPreferences.getInstance();
-  sl.registerSingleton<SharedPreferences>(sharedPreferences);
+  // External dependencies - only register if not already registered (main.dart may have pre-registered)
+  if (!sl.isRegistered<SharedPreferences>()) {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    sl.registerSingleton<SharedPreferences>(sharedPreferences);
+  }
 
   // Data layer
   sl.registerLazySingleton<AuthRemoteDataSource>(
