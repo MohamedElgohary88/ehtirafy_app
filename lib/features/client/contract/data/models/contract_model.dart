@@ -22,6 +22,7 @@ class ContractModel extends ContractEntity {
     required super.clientId,
     required super.requestedAmount,
     required super.actualAmount,
+    super.contractStatus,
     super.contrPubStatus,
     super.contrCustStatus,
     required super.createdAt,
@@ -101,6 +102,7 @@ class ContractModel extends ContractEntity {
       clientId: json['customer_id']?.toString() ?? '',
       requestedAmount: json['requested_amount']?.toString() ?? '0',
       actualAmount: json['actual_amount']?.toString() ?? '0',
+      contractStatus: json['contract_status'],
       contrPubStatus: json['contr_pub_status'],
       contrCustStatus: json['contr_cust_status'],
       createdAt: json['created_at'] != null
@@ -132,6 +134,7 @@ class ContractModel extends ContractEntity {
       'customer_id': clientId, // App → API mapping
       'requested_amount': requestedAmount,
       'actual_amount': actualAmount,
+      'contract_status': contractStatus,
       'contr_pub_status': contrPubStatus,
       'contr_cust_status': contrCustStatus,
       'created_at': createdAt.toIso8601String(),

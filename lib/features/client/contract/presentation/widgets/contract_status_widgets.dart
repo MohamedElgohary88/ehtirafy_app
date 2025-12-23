@@ -252,8 +252,13 @@ class ContractUnderReviewCard extends StatelessWidget {
 
 class ContractAwaitingPaymentCard extends StatelessWidget {
   final ContractDetailsEntity contract;
+  final VoidCallback? onPayPressed;
 
-  const ContractAwaitingPaymentCard({super.key, required this.contract});
+  const ContractAwaitingPaymentCard({
+    super.key,
+    required this.contract,
+    this.onPayPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -549,20 +554,23 @@ class ContractAwaitingPaymentCard extends StatelessWidget {
   }
 
   Widget _buildPayButton() {
-    return Container(
-      width: double.infinity,
-      height: 48.h,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: Center(
-        child: Text(
-          AppStrings.contractPayNowAction.tr(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
+    return GestureDetector(
+      onTap: onPayPressed,
+      child: Container(
+        width: double.infinity,
+        height: 48.h,
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: Center(
+          child: Text(
+            AppStrings.contractPayNowAction.tr(),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),
@@ -692,6 +700,120 @@ class ContractInProgressActions extends StatelessWidget {
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ContractThreeStatusCard extends StatelessWidget {
+  final ContractDetailsEntity contract;
+
+  const ContractThreeStatusCard({super.key, required this.contract});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildStatusRow(
+            AppStrings.contractStatusGeneralLabel.tr(),
+            contract.contractStatus,
+          ),
+          Divider(height: 16.h, thickness: 1, color: AppColors.grey200),
+          _buildStatusRow(
+            AppStrings.contractStatusFreelancerLabel.tr(),
+            contract.contrPubStatus,
+          ),
+          Divider(height: 16.h, thickness: 1, color: AppColors.grey200),
+          _buildStatusRow(
+            AppStrings.contractStatusCustomerLabel.tr(),
+            contract.contrCustStatus,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusRow(String label, String? statusValue) {
+    // Determine color and display text based on status value (case-insensitive checks)
+    Color statusColor = AppColors.grey500;
+    String displayText = statusValue ?? 'N/A';
+    final val = statusValue?.toLowerCase() ?? '';
+
+    if (val == 'initial' || val == 'pending') {
+      statusColor = Colors.orange;
+      displayText = AppStrings.contractValInitial.tr();
+    } else if (val == 'inprocess' ||
+        val == 'inprogress' ||
+        val == 'approved' ||
+        val == 'active') {
+      statusColor = AppColors.primary;
+      // If specific "Approved" check
+      if (val == 'approved') {
+        displayText = AppStrings.contractValApproved.tr();
+      } else {
+        displayText = AppStrings.contractValInProcess.tr();
+      }
+    } else if (val == 'completed' || val == 'closed' || val == 'paid') {
+      statusColor = AppColors.success;
+      if (val == 'closed') {
+        displayText = AppStrings.contractValClosed.tr();
+      } else {
+        displayText = AppStrings.contractValCompleted.tr();
+      }
+    } else if (val == 'rejected' || val == 'cancelled') {
+      statusColor = AppColors.error;
+      if (val == 'rejected') {
+        displayText = AppStrings.contractValRejected.tr();
+      } else {
+        displayText = AppStrings.contractValCancelled.tr();
+      }
+    }
+
+    // Fallback if localization key not found or simple display desired
+    if (displayText.startsWith('contract.value.') && statusValue != null) {
+      displayText = statusValue;
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+          decoration: BoxDecoration(
+            color: statusColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(6.r),
+            border: Border.all(color: statusColor.withOpacity(0.3)),
+          ),
+          child: Text(
+            displayText,
+            style: TextStyle(
+              color: statusColor,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

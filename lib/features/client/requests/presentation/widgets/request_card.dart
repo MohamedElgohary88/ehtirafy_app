@@ -9,8 +9,9 @@ import '../../domain/entities/request_entity.dart';
 
 class RequestCard extends StatelessWidget {
   final RequestEntity request;
+  final VoidCallback? onPayPressed;
 
-  const RequestCard({super.key, required this.request});
+  const RequestCard({super.key, required this.request, this.onPayPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -266,23 +267,26 @@ class RequestCard extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.h),
-        Container(
-          width: double.infinity,
-          height: 44.h,
-          decoration: ShapeDecoration(
-            color: AppColors.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.r),
+        GestureDetector(
+          onTap: onPayPressed,
+          child: Container(
+            width: double.infinity,
+            height: 44.h,
+            decoration: ShapeDecoration(
+              color: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
             ),
-          ),
-          child: Center(
-            child: Text(
-              AppStrings.myRequestsPayNow.tr(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                height: 1.43,
+            child: Center(
+              child: Text(
+                AppStrings.myRequestsPayNow.tr(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  height: 1.43,
+                ),
               ),
             ),
           ),

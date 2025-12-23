@@ -431,6 +431,9 @@
       "approvedSince": "تمت الموافقة منذ"
     }
   },
+  "contract_date_and_time": "الوقت والتاريخ",
+  "contract_location": "موقع التصوير",
+  "contract_required_amount": "المبلغ المطلوب",
   "contract": {
     "details": {
       "title": "تفاصيل الطلب"

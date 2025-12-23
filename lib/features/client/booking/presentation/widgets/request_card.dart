@@ -9,8 +9,9 @@ import 'package:ehtirafy_app/core/widgets/user_avatar.dart';
 
 class RequestCard extends StatelessWidget {
   final RequestEntity request;
+  final VoidCallback? onPayPressed;
 
-  const RequestCard({super.key, required this.request});
+  const RequestCard({super.key, required this.request, this.onPayPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -242,8 +243,12 @@ class RequestCard extends StatelessWidget {
       onTap: () {
         if (request.status == RequestStatus.active &&
             request.isPaymentRequired) {
-          // Navigate to payment
-          context.push('/contract/${request.id}');
+          // Call payment callback if provided, otherwise navigate to details
+          if (onPayPressed != null) {
+            onPayPressed!();
+          } else {
+            context.push('/contract/${request.id}');
+          }
         } else if (request.status == RequestStatus.completed) {
           // Navigate to rate screen
           context.push(

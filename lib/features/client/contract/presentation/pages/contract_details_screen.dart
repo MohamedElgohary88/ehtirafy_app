@@ -10,6 +10,8 @@ import 'package:ehtirafy_app/features/client/contract/presentation/widgets/contr
 import 'package:ehtirafy_app/features/client/contract/presentation/widgets/contract_status_widgets.dart';
 import 'package:ehtirafy_app/features/client/contract/presentation/widgets/payment_status_card.dart';
 import 'package:ehtirafy_app/features/client/booking/presentation/widgets/states/order_details_awaiting_payment_view.dart';
+import 'package:ehtirafy_app/features/client/booking/presentation/widgets/states/order_details_completed_view.dart';
+import 'package:ehtirafy_app/features/client/booking/presentation/widgets/states/order_details_cancelled_view.dart';
 import 'package:ehtirafy_app/features/client/contract/presentation/widgets/work_stages_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,12 +83,23 @@ class ContractDetailsScreen extends StatelessWidget {
       return OrderDetailsAwaitingPaymentView(contract: contract);
     }
 
+    if (contract.status == ContractStatus.completed) {
+      return OrderDetailsCompletedView(contract: contract);
+    }
+
+    if (contract.status == ContractStatus.cancelled ||
+        contract.status == ContractStatus.rejected) {
+      return OrderDetailsCancelledView(contract: contract);
+    }
+
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ContractHeader(contract: contract),
+          SizedBox(height: 16.h),
+          ContractThreeStatusCard(contract: contract),
           SizedBox(height: 16.h),
           ContractInfoCard(contract: contract),
           SizedBox(height: 16.h),

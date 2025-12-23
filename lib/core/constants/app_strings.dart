@@ -261,6 +261,19 @@ class AppStrings {
   static const contractStageDeliveringPhotos =
       'contract.workStages.deliveringPhotos';
 
+  // Contract Status Attributes
+  static const contractStatusGeneralLabel = 'contract.status.generalLabel';
+  static const contractStatusFreelancerLabel =
+      'contract.status.freelancerLabel';
+  static const contractStatusCustomerLabel = 'contract.status.customerLabel';
+  static const contractValInitial = 'contract.value.initial';
+  static const contractValInProcess = 'contract.value.inProcess';
+  static const contractValCompleted = 'contract.value.completed';
+  static const contractValClosed = 'contract.value.closed';
+  static const contractValApproved = 'contract.value.approved';
+  static const contractValRejected = 'contract.value.rejected';
+  static const contractValCancelled = 'contract.value.cancelled';
+
   // Refactored (dot-notation) contract keys
   static const String contractPaymentWarningTitle =
       'contract.paymentWarning.title';

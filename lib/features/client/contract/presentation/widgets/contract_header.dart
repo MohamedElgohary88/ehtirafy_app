@@ -76,6 +76,7 @@ class ContractHeader extends StatelessWidget {
         break;
       case ContractStatus.archived:
       case ContractStatus.cancelled:
+      case ContractStatus.rejected:
         color = AppColors.error;
         text = AppStrings.contractStatusCancelledArchived.tr();
         break;

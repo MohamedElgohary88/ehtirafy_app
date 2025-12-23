@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import 'package:ehtirafy_app/features/client/contract/domain/entities/contract_details_entity.dart';
+import 'package:ehtirafy_app/features/client/contract/presentation/manager/contract_details_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ApprovedStatusCard extends StatelessWidget {
@@ -204,7 +206,7 @@ class ApprovedStatusCard extends StatelessWidget {
             height: 48.h,
             child: ElevatedButton(
               onPressed: () {
-                // TODO: Navigate to checkout
+                context.read<ContractDetailsCubit>().payContract(contract.id);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.gold,

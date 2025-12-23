@@ -66,7 +66,8 @@ class RequestsRepositoryImpl implements RequestsRepository {
       status: _mapContractStatusToRequestStatus(contract),
       price: double.tryParse(contract.requestedAmount) ?? 0,
       date: contract.createdAt,
-      isPaymentRequired: contract.displayStatus == ContractStatus.accepted,
+      isPaymentRequired:
+          contract.displayStatus == ContractStatus.awaitingPayment,
       approvedDate: contract.contrPubStatus == 'accepted'
           ? contract.updatedAt
           : null,
@@ -75,7 +76,7 @@ class RequestsRepositoryImpl implements RequestsRepository {
 
   /// Map contract status to RequestStatus enum
   /// - pending → underReview (waiting for photographer)
-  /// - accepted → active (payment required)
+  /// - accepted/awaitingPayment → active (payment required or in progress)
   /// - rejected/cancelled → cancelled
   /// - completed → completed
   RequestStatus _mapContractStatusToRequestStatus(ContractEntity contract) {
@@ -84,6 +85,7 @@ class RequestsRepositoryImpl implements RequestsRepository {
       case ContractStatus.pending:
         return RequestStatus.underReview;
       case ContractStatus.accepted:
+      case ContractStatus.awaitingPayment:
         return RequestStatus.active;
       case ContractStatus.rejected:
       case ContractStatus.cancelled:
