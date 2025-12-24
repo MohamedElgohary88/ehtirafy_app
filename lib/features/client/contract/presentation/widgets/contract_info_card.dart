@@ -8,8 +8,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ContractInfoCard extends StatelessWidget {
   final ContractDetailsEntity contract;
   final VoidCallback? onChat;
+  final bool isFreelancer;
 
-  const ContractInfoCard({super.key, required this.contract, this.onChat});
+  const ContractInfoCard({
+    super.key,
+    required this.contract,
+    this.onChat,
+    this.isFreelancer = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +46,14 @@ class ContractInfoCard extends StatelessWidget {
             DateFormat('d MMMM yyyy', 'ar').format(contract.date),
             icon: Icons.calendar_today_outlined,
           ),
+          if (contract.daysAvailability.isNotEmpty) ...[
+            SizedBox(height: 16.h),
+            _buildInfoRow(
+              'Days Availability', // Use AppStrings if available, or hardcode/tr
+              contract.daysAvailability.join(', '),
+              icon: Icons.event_available,
+            ),
+          ],
           SizedBox(height: 16.h),
           _buildInfoRow(
             AppStrings.contractBudgetLabel.tr(),
@@ -48,7 +62,7 @@ class ContractInfoCard extends StatelessWidget {
             isBudget: true,
           ),
           Divider(color: Colors.white10, height: 24.h),
-          _buildPhotographerInfo(),
+          _buildCounterpartyInfo(),
         ],
       ),
     );
@@ -93,10 +107,17 @@ class ContractInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPhotographerInfo() {
+  Widget _buildCounterpartyInfo() {
+    final name = isFreelancer
+        ? contract.customerName
+        : contract.photographerName;
+    final label = isFreelancer
+        ? 'Customer Name'
+        : AppStrings.bookingPhotographer.tr();
+    // Use initials if image not available or if using initials design
+
     return Row(
       children: [
-        // Initials-based avatar instead of network image
         Container(
           width: 40.r,
           height: 40.r,
@@ -110,7 +131,7 @@ class ContractInfoCard extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              _getInitials(contract.photographerName),
+              _getInitials(name),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.sp,
@@ -124,11 +145,11 @@ class ContractInfoCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppStrings.bookingPhotographer.tr(),
+              label,
               style: TextStyle(color: AppColors.grey500, fontSize: 12.sp),
             ),
             Text(
-              contract.photographerName,
+              name,
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 14.sp,

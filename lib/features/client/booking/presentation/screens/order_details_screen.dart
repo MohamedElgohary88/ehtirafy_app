@@ -17,6 +17,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:ehtirafy_app/features/shared/auth/presentation/cubits/role_cubit.dart';
+import 'package:ehtirafy_app/features/shared/auth/domain/entities/user_role.dart';
+
 class OrderDetailsScreen extends StatelessWidget {
   final String orderId;
 
@@ -71,6 +74,17 @@ class OrderDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, ContractDetailsEntity contract) {
+    // Determine user role
+    final roleState = sl<RoleCubit>().state;
+    bool isFreelancer = false;
+    if (roleState is RoleLoaded) {
+      isFreelancer = roleState.role == UserRole.freelancer;
+    } else if (roleState is RoleSaved) {
+      isFreelancer = roleState.role == UserRole.freelancer;
+    } else {
+      isFreelancer = sl<RoleCubit>().selected == UserRole.freelancer;
+    }
+
     // State 1: Pending Approval
     if (contract.status == ContractStatus.underReview) {
       return OrderDetailsPendingView(contract: contract);
@@ -93,7 +107,7 @@ class OrderDetailsScreen extends StatelessWidget {
           children: [
             ContractHeader(contract: contract),
             SizedBox(height: 16.h),
-            ContractInfoCard(contract: contract),
+            ContractInfoCard(contract: contract, isFreelancer: isFreelancer),
             SizedBox(height: 16.h),
             PaymentStatusCard(contract: contract),
             SizedBox(height: 16.h),
@@ -114,12 +128,10 @@ class OrderDetailsScreen extends StatelessWidget {
         children: [
           ContractHeader(contract: contract),
           SizedBox(height: 16.h),
-          ContractInfoCard(contract: contract),
+          ContractInfoCard(contract: contract, isFreelancer: isFreelancer),
           SizedBox(height: 16.h),
           // Add specific UI for completed/cancelled if needed, e.g. Rate Button
-          if (contract.status == ContractStatus.completed)
-            // _buildRateButton(context), // This was the removed line
-            Container(), // Placeholder for removed button
+          if (contract.status == ContractStatus.completed) Container(),
         ],
       ),
     );

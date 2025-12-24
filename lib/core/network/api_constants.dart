@@ -50,6 +50,8 @@ class ApiConstants {
       '$baseUrl/api/$version/front/contracts-relative';
   static String updateContract(String id) =>
       '$baseUrl/api/$version/front/contract/$id/update';
+  static String contractDetail(String id) =>
+      '$baseUrl/api/$version/contract-detail/$id';
 
   // Dashboard & Search & Home
   static String freelancerStatistics(String id) =>

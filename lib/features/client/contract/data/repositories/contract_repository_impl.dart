@@ -25,11 +25,13 @@ class ContractRepositoryImpl implements ContractRepository {
     String id,
   ) async {
     try {
-      // Using mock for details (remote source doesn't have details endpoint yet)
-      await Future.delayed(const Duration(seconds: 1));
-      final data = AppMockData.getContractDetails(id);
-      final model = ContractDetailsModel.fromJson(data);
-      return Right(model);
+      if (remoteDataSource == null) {
+        throw Exception("RemoteDataSource not initialized");
+      }
+      final result = await remoteDataSource!.getContractDetails(id);
+      return Right(result);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

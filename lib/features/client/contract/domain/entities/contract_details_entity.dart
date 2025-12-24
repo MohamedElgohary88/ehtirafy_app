@@ -22,10 +22,20 @@ class ContractDetailsEntity extends Equatable {
   final bool isPaymentDeposited;
   final String photographerName;
   final String photographerImage;
-  final DateTime? approvedAt; // For AwaitingPayment timer
+  final DateTime? approvedAt;
   final String? contractStatus;
   final String? contrPubStatus;
   final String? contrCustStatus;
+  final String publisherId;
+  final String publisherPhone;
+  final String publisherEmail;
+  final String customerId;
+  final String customerName;
+  final String customerImage;
+  final String customerPhone;
+  final String customerEmail;
+  final List<ContractNoteEntity> notes;
+  final List<String> daysAvailability;
 
   const ContractDetailsEntity({
     required this.id,
@@ -43,6 +53,16 @@ class ContractDetailsEntity extends Equatable {
     this.contractStatus,
     this.contrPubStatus,
     this.contrCustStatus,
+    this.publisherId = '',
+    this.publisherPhone = '',
+    this.publisherEmail = '',
+    this.customerId = '',
+    this.customerName = '',
+    this.customerImage = '',
+    this.customerPhone = '',
+    this.customerEmail = '',
+    this.notes = const [],
+    this.daysAvailability = const [],
   });
 
   /// Chat allowed only for active contracts (in progress, under review, completed)
@@ -69,6 +89,16 @@ class ContractDetailsEntity extends Equatable {
     String? contractStatus,
     String? contrPubStatus,
     String? contrCustStatus,
+    String? publisherId,
+    String? publisherPhone,
+    String? publisherEmail,
+    String? customerId,
+    String? customerName,
+    String? customerImage,
+    String? customerPhone,
+    String? customerEmail,
+    List<ContractNoteEntity>? notes,
+    List<String>? daysAvailability,
   }) {
     return ContractDetailsEntity(
       id: id ?? this.id,
@@ -86,6 +116,16 @@ class ContractDetailsEntity extends Equatable {
       contractStatus: contractStatus ?? this.contractStatus,
       contrPubStatus: contrPubStatus ?? this.contrPubStatus,
       contrCustStatus: contrCustStatus ?? this.contrCustStatus,
+      publisherId: publisherId ?? this.publisherId,
+      publisherPhone: publisherPhone ?? this.publisherPhone,
+      publisherEmail: publisherEmail ?? this.publisherEmail,
+      customerId: customerId ?? this.customerId,
+      customerName: customerName ?? this.customerName,
+      customerImage: customerImage ?? this.customerImage,
+      customerPhone: customerPhone ?? this.customerPhone,
+      customerEmail: customerEmail ?? this.customerEmail,
+      notes: notes ?? this.notes,
+      daysAvailability: daysAvailability ?? this.daysAvailability,
     );
   }
 
@@ -106,5 +146,32 @@ class ContractDetailsEntity extends Equatable {
     contractStatus,
     contrPubStatus,
     contrCustStatus,
+    publisherId,
+    publisherPhone,
+    publisherEmail,
+    customerId,
+    customerName,
+    customerImage,
+    customerPhone,
+    customerEmail,
+    notes,
+    daysAvailability,
   ];
+}
+
+class ContractNoteEntity extends Equatable {
+  final String? note;
+  final DateTime dateOfNote;
+  final String creator;
+  final String userType;
+
+  const ContractNoteEntity({
+    this.note,
+    required this.dateOfNote,
+    required this.creator,
+    required this.userType,
+  });
+
+  @override
+  List<Object?> get props => [note, dateOfNote, creator, userType];
 }
