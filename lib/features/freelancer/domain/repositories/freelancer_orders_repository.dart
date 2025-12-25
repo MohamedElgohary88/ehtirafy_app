@@ -16,4 +16,7 @@ abstract class FreelancerOrdersRepository {
   Future<Either<Failure, FreelancerOrderEntity>> getOrderDetails(
     String orderId,
   );
+
+  /// Complete an order
+  Future<Either<Failure, void>> completeOrder(String orderId);
 }

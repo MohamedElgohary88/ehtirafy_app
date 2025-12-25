@@ -12,8 +12,13 @@ import '../widgets/message_bubble.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final ConversationEntity conversation;
+  final String userType;
 
-  const ChatRoomScreen({super.key, required this.conversation});
+  const ChatRoomScreen({
+    super.key,
+    required this.conversation,
+    this.userType = 'customer',
+  });
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -25,7 +30,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ChatCubit>().loadMessages(widget.conversation.id);
+    context.read<ChatCubit>().loadMessages(
+      widget.conversation.id,
+      userType: widget.userType,
+    );
   }
 
   @override
@@ -147,7 +155,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   timestamp: DateTime.now(),
                   isRead: false,
                 );
-                context.read<ChatCubit>().sendMessage(message);
+                context.read<ChatCubit>().sendMessage(
+                  message,
+                  userType: widget.userType,
+                );
                 _controller.clear();
               }
             },

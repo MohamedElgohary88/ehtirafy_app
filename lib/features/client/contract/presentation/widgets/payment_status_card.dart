@@ -38,12 +38,27 @@ class PaymentStatusCard extends StatelessWidget {
                 child: Icon(Icons.check, color: Colors.white, size: 12.sp),
               ),
               SizedBox(width: 8.w),
-              Text(
-                AppStrings.contractPaymentStatusDeposited.tr(),
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      AppStrings.contractPaymentStatusDeposited.tr(),
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '${NumberFormat('#,###').format(contract.budget)} ${AppStrings.bookingCurrency.tr()}',
+                      style: TextStyle(
+                        color: AppColors.success,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

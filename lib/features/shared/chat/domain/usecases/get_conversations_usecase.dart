@@ -8,7 +8,9 @@ class GetConversationsUseCase {
 
   GetConversationsUseCase(this.repository);
 
-  Future<Either<Failure, List<ConversationEntity>>> call() async {
-    return await repository.getConversations();
+  Future<Either<Failure, List<ConversationEntity>>> call({
+    String userType = 'customer',
+  }) async {
+    return await repository.getConversations(userType: userType);
   }
 }

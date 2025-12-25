@@ -205,8 +205,9 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/messages',
               builder: (context, state) => BlocProvider(
-                create: (_) => sl<ChatCubit>()..loadConversations(),
-                child: const ConversationsScreen(),
+                create: (_) =>
+                    sl<ChatCubit>()..loadConversations(userType: 'customer'),
+                child: const ConversationsScreen(userType: 'customer'),
               ),
               routes: [
                 GoRoute(
@@ -215,7 +216,10 @@ final appRouter = GoRouter(
                     final conversation = state.extra as ConversationEntity;
                     return BlocProvider(
                       create: (_) => sl<ChatCubit>(),
-                      child: ChatRoomScreen(conversation: conversation),
+                      child: ChatRoomScreen(
+                        conversation: conversation,
+                        userType: 'customer',
+                      ),
                     );
                   },
                 ),
@@ -268,8 +272,9 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/freelancer/messages',
               builder: (context, state) => BlocProvider(
-                create: (_) => sl<ChatCubit>()..loadConversations(),
-                child: const ConversationsScreen(),
+                create: (_) =>
+                    sl<ChatCubit>()..loadConversations(userType: 'freelancer'),
+                child: const ConversationsScreen(userType: 'freelancer'),
               ),
               routes: [
                 GoRoute(
@@ -278,7 +283,10 @@ final appRouter = GoRouter(
                     final conversation = state.extra as ConversationEntity;
                     return BlocProvider(
                       create: (_) => sl<ChatCubit>(),
-                      child: ChatRoomScreen(conversation: conversation),
+                      child: ChatRoomScreen(
+                        conversation: conversation,
+                        userType: 'freelancer',
+                      ),
                     );
                   },
                 ),
@@ -374,6 +382,26 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/notifications',
       builder: (context, state) => const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: '/chat/conversation',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        final conversation = ConversationEntity(
+          id: extra['id'].toString(),
+          otherUserName: extra['name'] ?? '',
+          otherUserImage: extra['image'] ?? '',
+          lastMessage: '',
+          unreadCount: 0,
+          lastMessageTime: DateTime.now(),
+        );
+        final userType = extra['userType'] ?? 'customer';
+
+        return BlocProvider(
+          create: (_) => sl<ChatCubit>(),
+          child: ChatRoomScreen(conversation: conversation, userType: userType),
+        );
+      },
     ),
     GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
     // Category advertisements screen

@@ -33,7 +33,78 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
         switch (c.contrPubStatus?.toLowerCase()) {
           case 'accepted':
           case 'inprogress':
-            status = FreelancerOrderStatus.inProgress;
+          case 'approved': // Pending approval or Approved
+            // If Approved, check customer status for Payment
+            final custStatus = c.contrCustStatus?.toLowerCase();
+            if (c.contrPubStatus?.toLowerCase() == 'approved') {
+              if (custStatus == 'paid' ||
+                  custStatus == 'inprocess' ||
+                  custStatus == 'completed') {
+                status = FreelancerOrderStatus.inProgress;
+              } else {
+                // Approved but not paid yet - strictly speaking this is 'Awaiting Payment'
+                // For now, if we don't have a separate tab, map to Pending or InProgress?
+                // User wants "active" after "paid".
+                // So if NOT paid, it remains Pending (or a specialized status if we had one).
+                // Logic: If user didn't reject, it's pending their action OR waiting for payment.
+                // If status is 'Approved', the freelancer HAS accepted. So it shouldn't be in "New Requests" (Pending) which implies "Waiting for Freelancer Acceptance".
+                // However, "Active" implies work can start.
+                // Let's assume:
+                // 1. Pending: Freelancer needs to Accept/Reject. (contr_pub_status is null or pending?)
+                // 2. Active: Freelancer Accepted AND (Customer Paid OR trusting client).
+
+                // If contr_pub_status is 'Approved', the freelancer HAS accepted.
+                // So it typically shouldn't be in tab 0 (Requests).
+                // Tab 0 filters for FreelancerOrderStatus.pending.
+
+                // If I map 'Approved' to 'pending', it stays in Requests tab (as if I didn't accept it).
+                // If I map 'Approved' to 'inProgress', it goes to Active tab.
+
+                // User says: "after paid we should have it in the active contract tab".
+                // This implies before paid (but accepted/approved), it might NOT be in active?
+                // But it definitely shouldn't be in "Requests" (tab 0) asking for accept/reject again.
+
+                // If I map to 'inProgress', it shows in Active.
+                // If 'Paid' is required for 'Active', then what is it before Paid?
+                // If I keep it as 'Pending', the UI will show Accept/Reject buttons again?
+
+                // Let's look at UI. FreelancerOrderCard shows Accept/Reject if status is pending.
+                // If we return 'pending', the user sees 'Accept/Reject'. But they ALREADY approved it.
+                // This suggests we need a state for "Awaiting Payment" which is NOT "New Request".
+
+                // However, sticking to the existing 3 tabs:
+                // 1. Requests (New)
+                // 2. Active (In Progress)
+                // 3. Archived
+
+                // If I approved it, it is no longer a "New Request".
+                // It is technically "Active" (contract exists), just waiting for next step.
+                // So 'Approved' should likely be 'inProgress' regarding the TABS.
+                // But the user specifically said: "after paid we should have it in the active contract tab layout".
+                // This implies: "Approved" (but not paid) -> ?? (Maybe still Requests?)
+
+                // WAIT. If I set it to 'inProgress', it goes to tab 1.
+                // If the user says "after paid... active", maybe they see it in "Requests" before paid?
+                // If so, does the UI handle "Approved but not paid" in Requests tab?
+                // The FreelancerOrderCard only has "Accept/Reject" for Pending.
+                // It doesn't have "Waiting Payment".
+
+                // CORRECT LOGIC:
+                // If `contr_pub_status` is Approved, checking `contr_cust_status`.
+                // If `Paid`, definitely `inProgress`.
+                // If NOT `Paid`, it is still an active engagement, just early stage.
+                // If we put it in Pending, the user sees "Accept/Reject" again, which is confusing/wrong.
+
+                // Let's check the users constraint: "contract_status": "InProcess".
+                // "contr_pub_status": "Approved", "contr_cust_status": "Paid".
+                // This combination MUST be in Active.
+
+                // So:
+                status = FreelancerOrderStatus.inProgress;
+              }
+            } else {
+              status = FreelancerOrderStatus.inProgress;
+            }
             break;
           case 'completed':
             status = FreelancerOrderStatus.completed;
@@ -43,6 +114,7 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
             status = FreelancerOrderStatus.cancelled;
             break;
           default:
+            // e.g. null, 'pending'
             status = FreelancerOrderStatus.pending;
         }
 
@@ -105,6 +177,23 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
       await remoteDataSource.updateContract(orderId, {
         'contr_pub_status': 'Rejected',
         'note_type': 'freelancer', // Required by API for freelancer actions
+        '_method': 'PUT',
+      });
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> completeOrder(String orderId) async {
+    try {
+      await remoteDataSource.updateContract(orderId, {
+        'contr_pub_status': 'Completed',
+        'contract_status': 'Completed',
+        'note_type': 'freelancer',
         '_method': 'PUT',
       });
       return const Right(null);

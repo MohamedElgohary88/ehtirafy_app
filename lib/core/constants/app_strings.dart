@@ -273,6 +273,11 @@ class AppStrings {
   static const contractValApproved = 'contract.value.approved';
   static const contractValRejected = 'contract.value.rejected';
   static const contractValCancelled = 'contract.value.cancelled';
+  static const contractValPaid = 'contract.value.paid';
+
+  static const contractDaysAvailability = 'contract.daysAvailability';
+  static const contractCustomerName = 'contract.customerName';
+  static const contractHistory = 'contract.history';
 
   // Refactored (dot-notation) contract keys
   static const String contractPaymentWarningTitle =

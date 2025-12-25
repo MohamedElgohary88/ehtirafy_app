@@ -49,7 +49,9 @@ class ContractModel extends ContractEntity {
       try {
         if (json['contr_cust_notes'] is List) {
           for (var note in json['contr_cust_notes']) {
-            if (note is Map<String, dynamic>) {
+            if (note is Map<String, dynamic> &&
+                note['note'] != null &&
+                note['note'].toString().isNotEmpty) {
               parsedMessages.add({
                 'note': note['note'] ?? '',
                 'date': note['date_of_note'] ?? '',
@@ -67,7 +69,9 @@ class ContractModel extends ContractEntity {
       try {
         if (json['contr_pub_notes'] is List) {
           for (var note in json['contr_pub_notes']) {
-            if (note is Map<String, dynamic>) {
+            if (note is Map<String, dynamic> &&
+                note['note'] != null &&
+                note['note'].toString().isNotEmpty) {
               parsedMessages.add({
                 'note': note['note'] ?? '',
                 'date': note['date_of_note'] ?? '',

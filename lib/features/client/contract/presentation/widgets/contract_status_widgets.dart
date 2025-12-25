@@ -659,47 +659,54 @@ class ContractAwaitingPaymentCard extends StatelessWidget {
 }
 
 class ContractInProgressActions extends StatelessWidget {
-  const ContractInProgressActions({super.key});
+  final VoidCallback? onChatPressed;
+  final VoidCallback? onCompletePressed;
+
+  const ContractInProgressActions({
+    super.key,
+    this.onChatPressed,
+    this.onCompletePressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 48.h,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: AppColors.primary, width: 2),
-            borderRadius: BorderRadius.circular(14.r),
-          ),
-          child: Center(
+          child: OutlinedButton(
+            onPressed: onChatPressed,
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: AppColors.primary, width: 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.r),
+              ),
+              foregroundColor: AppColors.primary,
+            ),
             child: Text(
               AppStrings.contractContactPhotographer.tr(),
-              style: TextStyle(
-                color: AppColors.primary,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
             ),
           ),
         ),
         SizedBox(height: 12.h),
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 48.h,
-          decoration: BoxDecoration(
-            color: AppColors.success,
-            borderRadius: BorderRadius.circular(14.r),
-          ),
-          child: Center(
+          child: ElevatedButton(
+            onPressed: onCompletePressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.success,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.r),
+              ),
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
             child: Text(
               AppStrings.contractFinishService.tr(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
             ),
           ),
         ),
@@ -773,6 +780,8 @@ class ContractThreeStatusCard extends StatelessWidget {
       statusColor = AppColors.success;
       if (val == 'closed') {
         displayText = AppStrings.contractValClosed.tr();
+      } else if (val == 'paid') {
+        displayText = AppStrings.contractValPaid.tr();
       } else {
         displayText = AppStrings.contractValCompleted.tr();
       }

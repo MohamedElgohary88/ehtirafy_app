@@ -12,7 +12,9 @@ import '../cubit/chat_state.dart';
 import '../widgets/conversation_tile.dart';
 
 class ConversationsScreen extends StatefulWidget {
-  const ConversationsScreen({super.key});
+  final String userType;
+
+  const ConversationsScreen({super.key, this.userType = 'customer'});
 
   @override
   State<ConversationsScreen> createState() => _ConversationsScreenState();
@@ -55,10 +57,10 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                         return ConversationTile(
                           conversation: conv,
                           onTap: () {
-                            context.push(
-                              '/messages/chat/${conv.id}',
-                              extra: conv,
-                            );
+                            final path = widget.userType == 'freelancer'
+                                ? '/freelancer/messages/chat/${conv.id}'
+                                : '/messages/chat/${conv.id}';
+                            context.push(path, extra: conv);
                           },
                         );
                       },

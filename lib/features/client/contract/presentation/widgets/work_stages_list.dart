@@ -27,7 +27,7 @@ class WorkStagesList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Contract History', // Or AppStrings.contractHistory
+            AppStrings.contractHistory.tr(),
             style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 16.sp,

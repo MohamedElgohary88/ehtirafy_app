@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ehtirafy_app/core/constants/app_strings.dart';
 import 'package:ehtirafy_app/core/theme/app_colors.dart';
 import '../../domain/entities/freelancer_order_entity.dart';
 import '../cubit/freelancer_orders_cubit.dart';
@@ -1028,6 +1029,15 @@ class FreelancerOrderDetailsScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               // Chat with client
+              context.push(
+                '/chat/conversation',
+                extra: {
+                  'id': order.id,
+                  'name': order.clientName,
+                  'image': order.clientImage,
+                  'userType': 'freelancer',
+                },
+              );
             },
             child: Container(
               width: double.infinity,
@@ -1065,7 +1075,58 @@ class FreelancerOrderDetailsScreen extends StatelessWidget {
           SizedBox(height: 12.h),
           GestureDetector(
             onTap: () {
-              // Deliver service
+              final cubit = context.read<FreelancerOrdersCubit>();
+              // Show confirmation dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: Text(
+                      'تأكيد التسليم',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    content: Text(
+                      'هل أنت متأكد من رغبتك في تسليم الخدمة وإتمام العقد؟',
+                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14.sp),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop(); // Close dialog
+                        },
+                        child: Text(
+                          AppStrings.cancel.tr(),
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            color: AppColors.grey500,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Deliver service (Complete contract)
+                          cubit.completeOrder(order.id);
+                          Navigator.of(dialogContext).pop(); // Close dialog
+                          context.pop(); // Close screen
+                        },
+                        child: Text(
+                          'تأكيد',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
             child: Container(
               width: double.infinity,

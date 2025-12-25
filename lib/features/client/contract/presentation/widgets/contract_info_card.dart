@@ -29,6 +29,15 @@ class ContractInfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            contract.serviceTitle,
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 12.h),
           _buildInfoRow(
             AppStrings.contractDescriptionLabel.tr(),
             contract.description,
@@ -49,7 +58,7 @@ class ContractInfoCard extends StatelessWidget {
           if (contract.daysAvailability.isNotEmpty) ...[
             SizedBox(height: 16.h),
             _buildInfoRow(
-              'Days Availability', // Use AppStrings if available, or hardcode/tr
+              AppStrings.contractDaysAvailability.tr(),
               contract.daysAvailability.join(', '),
               icon: Icons.event_available,
             ),
@@ -112,33 +121,58 @@ class ContractInfoCard extends StatelessWidget {
         ? contract.customerName
         : contract.photographerName;
     final label = isFreelancer
-        ? 'Customer Name'
+        ? AppStrings.contractCustomerName.tr()
         : AppStrings.bookingPhotographer.tr();
     // Use initials if image not available or if using initials design
+
+    final image = isFreelancer
+        ? contract.customerImage
+        : contract.photographerImage;
 
     return Row(
       children: [
         Container(
           width: 40.r,
           height: 40.r,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFC8A44F), Color(0xFFD4AF37)],
-            ),
+            gradient: (image.isNotEmpty && image.startsWith('http'))
+                ? null
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFC8A44F), Color(0xFFD4AF37)],
+                  ),
           ),
-          child: Center(
-            child: Text(
-              _getInitials(name),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          child: (image.isNotEmpty && image.startsWith('http'))
+              ? ClipOval(
+                  child: Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Text(
+                          _getInitials(name),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    _getInitials(name),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
         ),
         SizedBox(width: 12.w),
         Column(

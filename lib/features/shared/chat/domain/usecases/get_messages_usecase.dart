@@ -8,7 +8,10 @@ class GetMessagesUseCase {
 
   GetMessagesUseCase(this.repository);
 
-  Future<Either<Failure, List<MessageEntity>>> call(String chatId) async {
-    return await repository.getMessages(chatId);
+  Future<Either<Failure, List<MessageEntity>>> call(
+    String chatId, {
+    String userType = 'customer',
+  }) async {
+    return await repository.getMessages(chatId, userType: userType);
   }
 }

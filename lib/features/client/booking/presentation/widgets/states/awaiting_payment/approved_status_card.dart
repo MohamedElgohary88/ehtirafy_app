@@ -109,18 +109,29 @@ class ApprovedStatusCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14.r),
                   ),
                 ),
-                child: Image.network(
-                  contract.photographerImage,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: const Color(0xFFECECEC),
-                    child: Icon(
-                      Icons.person_outline,
-                      color: AppColors.textSecondary,
-                      size: 28.r,
-                    ),
-                  ),
-                ),
+                child:
+                    (contract.photographerImage.isNotEmpty &&
+                        contract.photographerImage.startsWith('http'))
+                    ? Image.network(
+                        contract.photographerImage,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: const Color(0xFFECECEC),
+                          child: Icon(
+                            Icons.person_outline,
+                            color: AppColors.textSecondary,
+                            size: 28.r,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        color: const Color(0xFFECECEC),
+                        child: Icon(
+                          Icons.person_outline,
+                          color: AppColors.textSecondary,
+                          size: 28.r,
+                        ),
+                      ),
               ),
             ],
           ),

@@ -108,7 +108,49 @@ class ContractDetailsScreen extends StatelessWidget {
             SizedBox(height: 16.h),
             WorkStagesList(contract: contract),
             SizedBox(height: 16.h),
-            const ContractInProgressActions(),
+            ContractInProgressActions(
+              onChatPressed: () {
+                // Navigate to chat
+                context.push(
+                  '/chat/conversation',
+                  extra: {
+                    'id': contract.id.toString(),
+                    'name': contract.photographerName,
+                    'image': contract.photographerImage,
+                    'userType': 'customer',
+                  },
+                );
+              },
+              onCompletePressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text(AppStrings.contractFinishService.tr()),
+                    content: const Text(
+                      'هل أنت متأكد من إكمال هذا العقد؟ لا يمكن التراجع عن هذا الإجراء.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: Text(AppStrings.cancel.tr()),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          context.read<ContractDetailsCubit>().completeContract(
+                            contract.id.toString(),
+                          );
+                        },
+                        child: Text(
+                          AppStrings.confirm.tr(),
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ],
           SizedBox(height: 32.h),
         ],

@@ -8,7 +8,10 @@ class SendMessageUseCase {
 
   SendMessageUseCase(this.repository);
 
-  Future<Either<Failure, void>> call(MessageEntity message) async {
-    return await repository.sendMessage(message);
+  Future<Either<Failure, void>> call(
+    MessageEntity message, {
+    String userType = 'customer',
+  }) async {
+    return await repository.sendMessage(message, userType: userType);
   }
 }

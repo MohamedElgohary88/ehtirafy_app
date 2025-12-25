@@ -12,9 +12,13 @@ class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, List<ConversationEntity>>> getConversations() async {
+  Future<Either<Failure, List<ConversationEntity>>> getConversations({
+    String userType = 'customer',
+  }) async {
     try {
-      final conversations = await remoteDataSource.getConversations();
+      final conversations = await remoteDataSource.getConversations(
+        userType: userType,
+      );
       return Right(conversations);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -23,10 +27,14 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   Future<Either<Failure, List<MessageEntity>>> getMessages(
-    String chatId,
-  ) async {
+    String chatId, {
+    String userType = 'customer',
+  }) async {
     try {
-      final messages = await remoteDataSource.getMessages(chatId);
+      final messages = await remoteDataSource.getMessages(
+        chatId,
+        userType: userType,
+      );
       return Right(messages);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -34,7 +42,10 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<Failure, void>> sendMessage(MessageEntity message) async {
+  Future<Either<Failure, void>> sendMessage(
+    MessageEntity message, {
+    String userType = 'customer',
+  }) async {
     try {
       final messageModel = MessageModel(
         id: message.id,
@@ -44,7 +55,7 @@ class ChatRepositoryImpl implements ChatRepository {
         timestamp: message.timestamp,
         isRead: message.isRead,
       );
-      await remoteDataSource.sendMessage(messageModel);
+      await remoteDataSource.sendMessage(messageModel, userType: userType);
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

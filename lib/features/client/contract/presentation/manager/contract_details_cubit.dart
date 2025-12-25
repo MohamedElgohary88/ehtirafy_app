@@ -80,4 +80,44 @@ class ContractDetailsCubit extends Cubit<ContractDetailsState> {
       },
     );
   }
+
+  Future<void> completeContract(String id) async {
+    emit(ContractDetailsLoading());
+
+    // Call update status to 'Completed'
+    final result = await updateContractStatusUseCase(
+      id: id,
+      status: 'Completed',
+      isPhotographer: false, // Customer action
+    );
+
+    result.fold(
+      (failure) =>
+          emit(const ContractDetailsError(AppStrings.failureUnexpected)),
+      (success) async {
+        if (state is ContractDetailsSuccess) {
+          final currentDetails = (state as ContractDetailsSuccess).contract;
+
+          final statusMap = {
+            'contract_status': success.contractStatus,
+            'contr_pub_status': success.contrPubStatus,
+            'contr_cust_status': success.contrCustStatus,
+          };
+
+          final newStatus = ContractDetailsModel.deriveStatus(statusMap);
+
+          final newDetails = currentDetails.copyWith(
+            contractStatus: success.contractStatus,
+            contrPubStatus: success.contrPubStatus,
+            contrCustStatus: success.contrCustStatus,
+            status: newStatus,
+          );
+
+          emit(ContractDetailsSuccess(newDetails));
+        } else {
+          await getContractDetails(id);
+        }
+      },
+    );
+  }
 }

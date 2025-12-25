@@ -140,4 +140,45 @@ class FreelancerOrdersCubit extends Cubit<FreelancerOrdersState> {
         return orders;
     }
   }
+
+  Future<void> completeOrder(String orderId) async {
+    if (state is FreelancerOrdersLoaded) {
+      final currentState = state as FreelancerOrdersLoaded;
+
+      final result = await repository.completeOrder(orderId);
+
+      result.fold((failure) => emit(FreelancerOrdersError(failure.message)), (
+        _,
+      ) {
+        // Update the order status to completed in the list
+        final updatedOrders = currentState.allOrders.map((order) {
+          if (order.id == orderId) {
+            return FreelancerOrderEntity(
+              id: order.id,
+              serviceTitle: order.serviceTitle,
+              clientName: order.clientName,
+              clientImage: order.clientImage,
+              status: FreelancerOrderStatus.completed,
+              price: order.price,
+              location: order.location,
+              eventDate: order.eventDate,
+              createdAt: order.createdAt,
+            );
+          }
+          return order;
+        }).toList();
+
+        final filtered = _filterOrders(
+          updatedOrders,
+          currentState.selectedTabIndex,
+        );
+        emit(
+          currentState.copyWith(
+            allOrders: updatedOrders,
+            filteredOrders: filtered,
+          ),
+        );
+      });
+    }
+  }
 }
