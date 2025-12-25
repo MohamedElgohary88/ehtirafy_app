@@ -192,7 +192,6 @@ class FreelancerOrdersRepositoryImpl implements FreelancerOrdersRepository {
     try {
       await remoteDataSource.updateContract(orderId, {
         'contr_pub_status': 'Completed',
-        'contract_status': 'Completed',
         'note_type': 'freelancer',
         '_method': 'PUT',
       });

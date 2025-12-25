@@ -374,7 +374,10 @@ final appRouter = GoRouter(
       path: '/freelancer/orders/details',
       builder: (context, state) {
         final order = state.extra as FreelancerOrderEntity;
-        return FreelancerOrderDetailsScreen(order: order);
+        return BlocProvider(
+          create: (_) => sl<FreelancerOrdersCubit>(),
+          child: FreelancerOrderDetailsScreen(order: order),
+        );
       },
     ),
 
