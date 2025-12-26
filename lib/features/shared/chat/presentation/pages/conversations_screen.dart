@@ -12,6 +12,7 @@ import '../cubit/chat_state.dart';
 import '../widgets/conversation_tile.dart';
 import 'package:ehtirafy_app/core/widgets/empty_state_widget.dart';
 import 'package:ehtirafy_app/core/widgets/error_state_widget.dart';
+import 'package:ehtirafy_app/core/widgets/outlined_refresh_button.dart';
 
 class ConversationsScreen extends StatefulWidget {
   final String userType;
@@ -54,25 +55,65 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                     );
                   } else if (state is ConversationsLoaded) {
                     if (state.conversations.isEmpty) {
-                      return _buildEmptyState();
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                OutlinedRefreshButton(
+                                  onPressed: () {
+                                    context.read<ChatCubit>().loadConversations(
+                                      userType: widget.userType,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(child: _buildEmptyState()),
+                        ],
+                      );
                     }
-                    return ListView.separated(
-                      padding: EdgeInsets.all(24.w),
-                      itemCount: state.conversations.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 12.h),
-                      itemBuilder: (context, index) {
-                        final conv = state.conversations[index];
-                        return ConversationTile(
-                          conversation: conv,
-                          onTap: () {
-                            final path = widget.userType == 'freelancer'
-                                ? '/freelancer/messages/chat/${conv.id}'
-                                : '/messages/chat/${conv.id}';
-                            context.push(path, extra: conv);
-                          },
-                        );
-                      },
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              OutlinedRefreshButton(
+                                onPressed: () {
+                                  context.read<ChatCubit>().loadConversations(
+                                    userType: widget.userType,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.separated(
+                            padding: EdgeInsets.all(24.w),
+                            itemCount: state.conversations.length,
+                            separatorBuilder: (context, index) =>
+                                SizedBox(height: 12.h),
+                            itemBuilder: (context, index) {
+                              final conv = state.conversations[index];
+                              return ConversationTile(
+                                conversation: conv,
+                                onTap: () {
+                                  final path = widget.userType == 'freelancer'
+                                      ? '/freelancer/messages/chat/${conv.id}'
+                                      : '/messages/chat/${conv.id}';
+                                  context.push(path, extra: conv);
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     );
                   }
                   return const SizedBox.shrink();
@@ -99,30 +140,16 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               bottomRight: Radius.circular(24),
             ),
           ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                AppStrings.chatListTitle.tr(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                  height: 1.50,
-                ),
+          child: Center(
+            child: Text(
+              AppStrings.chatListTitle.tr(),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400,
+                height: 1.50,
               ),
-              Positioned(
-                right: 16.w,
-                child: IconButton(
-                  icon: const Icon(Icons.refresh, color: Colors.white),
-                  onPressed: () {
-                    context.read<ChatCubit>().loadConversations(
-                      userType: widget.userType,
-                    );
-                  },
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

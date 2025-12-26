@@ -35,21 +35,31 @@ class ErrorStateWidget extends StatelessWidget {
               ),
             ),
             SizedBox(height: 24.h),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: onRetry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.gold, width: 1.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
+                  borderRadius: BorderRadius.circular(20.r),
                 ),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+                backgroundColor: Colors.transparent,
               ),
-              child: Text(
-                retryText,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Cairo',
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.refresh, size: 16.sp, color: AppColors.gold),
+                  SizedBox(width: 8.w),
+                  Text(
+                    retryText,
+                    style: TextStyle(
+                      color: AppColors.gold,
+                      fontSize: 14.sp,
+                      fontFamily: 'Cairo',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

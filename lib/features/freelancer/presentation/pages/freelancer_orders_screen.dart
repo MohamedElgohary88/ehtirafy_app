@@ -10,6 +10,7 @@ import '../cubit/freelancer_orders_cubit.dart';
 import '../cubit/freelancer_orders_state.dart';
 import '../widgets/freelancer_order_card.dart';
 import '../widgets/orders_filter_tab.dart';
+import 'package:ehtirafy_app/core/widgets/outlined_refresh_button.dart';
 
 class FreelancerOrdersScreen extends StatefulWidget {
   const FreelancerOrdersScreen({super.key});
@@ -64,7 +65,22 @@ class _FreelancerOrdersScreenState extends State<FreelancerOrdersScreen> {
                   if (state is FreelancerOrdersLoaded) {
                     return Column(
                       children: [
-                        SizedBox(height: 24.h),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              OutlinedRefreshButton(
+                                onPressed: () {
+                                  context
+                                      .read<FreelancerOrdersCubit>()
+                                      .loadOrders();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24.w),
                           child: OrdersFilterTab(

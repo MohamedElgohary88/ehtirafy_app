@@ -21,6 +21,7 @@ import '../../../booking/presentation/widgets/request_card.dart';
 import '../widgets/requests_filter_tab.dart';
 import 'package:ehtirafy_app/core/widgets/empty_state_widget.dart';
 import 'package:ehtirafy_app/core/widgets/error_state_widget.dart';
+import 'package:ehtirafy_app/core/widgets/outlined_refresh_button.dart';
 
 /// My Requests Screen - Shows contracts for both clients and freelancers
 ///
@@ -82,7 +83,20 @@ class MyRequestsScreen extends StatelessWidget {
                     } else if (state is RequestsLoaded) {
                       return Column(
                         children: [
-                          SizedBox(height: 24.h),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                OutlinedRefreshButton(
+                                  onPressed: () {
+                                    context.read<RequestsCubit>().getRequests();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24.w),
                             child: RequestsFilterTab(
@@ -161,28 +175,16 @@ class MyRequestsScreen extends StatelessWidget {
               bottomRight: Radius.circular(24),
             ),
           ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                AppStrings.myRequestsTitle.tr(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                  height: 1.50,
-                ),
+          child: Center(
+            child: Text(
+              AppStrings.myRequestsTitle.tr(),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400,
+                height: 1.50,
               ),
-              Positioned(
-                right: 16.w,
-                child: IconButton(
-                  icon: const Icon(Icons.refresh, color: Colors.white),
-                  onPressed: () {
-                    context.read<RequestsCubit>().getRequests();
-                  },
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

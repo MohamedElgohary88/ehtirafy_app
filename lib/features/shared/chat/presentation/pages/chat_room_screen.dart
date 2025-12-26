@@ -9,6 +9,7 @@ import '../cubit/chat_cubit.dart';
 import '../cubit/chat_state.dart';
 import '../widgets/chat_input_bar.dart';
 import '../widgets/message_bubble.dart';
+import 'package:ehtirafy_app/core/widgets/outlined_refresh_button.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final ConversationEntity conversation;
@@ -113,6 +114,22 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OutlinedRefreshButton(
+                  onPressed: () {
+                    context.read<ChatCubit>().loadMessages(
+                      widget.conversation.id,
+                      userType: widget.userType,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: BlocBuilder<ChatCubit, ChatState>(
               buildWhen: (previous, current) =>
