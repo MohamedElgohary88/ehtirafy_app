@@ -62,99 +62,120 @@ class MyRequestsScreen extends StatelessWidget {
         value: SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
         ),
-        child: Scaffold(
-          backgroundColor: const Color(0xFFF9F9F9),
-          body: Column(
-            children: [
-              _buildHeader(context),
-              Expanded(
-                child: BlocBuilder<RequestsCubit, RequestsState>(
-                  builder: (context, state) {
-                    if (state is RequestsLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is RequestsError) {
-                      return ErrorStateWidget(
-                        message: state.message,
-                        onRetry: () {
-                          context.read<RequestsCubit>().getRequests();
-                        },
-                        retryText: 'إعادة المحاولة',
-                      );
-                    } else if (state is RequestsLoaded) {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                OutlinedRefreshButton(
-                                  onPressed: () {
-                                    context.read<RequestsCubit>().getRequests();
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 10.h),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: RequestsFilterTab(
-                              selectedIndex: state.selectedTabIndex,
-                              onTabSelected: (index) {
-                                context.read<RequestsCubit>().changeTab(index);
-                              },
-                            ),
-                          ),
-                          SizedBox(height: 24.h),
-                          Expanded(
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              child: state.filteredRequests.isEmpty
-                                  ? _buildEmptyState(context)
-                                  : ListView.separated(
-                                      key: ValueKey<int>(
-                                        state.selectedTabIndex,
-                                      ),
-                                      padding: EdgeInsets.only(
-                                        left: 24.w,
-                                        right: 24.w,
-                                        bottom: 24.h,
-                                      ),
-                                      itemCount: state.filteredRequests.length,
-                                      separatorBuilder: (context, index) =>
-                                          SizedBox(height: 16.h),
-                                      itemBuilder: (context, index) {
-                                        final request =
-                                            state.filteredRequests[index];
-                                        return RequestCard(
-                                          request: request,
-                                          onPayPressed:
-                                              request.isPaymentRequired
-                                              ? () {
-                                                  context
-                                                      .read<RequestsCubit>()
-                                                      .payContract(
-                                                        request.id.toString(),
-                                                        sl<
-                                                          UpdateContractStatusUseCase
-                                                        >(),
-                                                      );
-                                                }
-                                              : null,
-                                        );
-                                      },
-                                    ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
+        child: BlocListener<RequestsCubit, RequestsState>(
+          listener: (context, state) {
+            if (state is RequestsError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppColors.error,
+                  behavior: SnackBarBehavior.floating,
                 ),
-              ),
-            ],
+              );
+            }
+          },
+          child: Scaffold(
+            backgroundColor: const Color(0xFFF9F9F9),
+            body: Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: BlocBuilder<RequestsCubit, RequestsState>(
+                    builder: (context, state) {
+                      if (state is RequestsLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is RequestsError) {
+                        // Keep the specific error widget as well for non-intrusive retry if preferred
+                        // or just rely on the SnackBar. The user requested handling "exception... if we got any 400"
+                        // The existing ErrorStateWidget is good for fullscreen errors. The SnackBar satisfies the prompt.
+                        return ErrorStateWidget(
+                          message: state.message,
+                          onRetry: () {
+                            context.read<RequestsCubit>().getRequests();
+                          },
+                          retryText: 'إعادة المحاولة',
+                        );
+                      } else if (state is RequestsLoaded) {
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  OutlinedRefreshButton(
+                                    onPressed: () {
+                                      context
+                                          .read<RequestsCubit>()
+                                          .getRequests();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24.w),
+                              child: RequestsFilterTab(
+                                selectedIndex: state.selectedTabIndex,
+                                onTabSelected: (index) {
+                                  context.read<RequestsCubit>().changeTab(
+                                    index,
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 24.h),
+                            Expanded(
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                child: state.filteredRequests.isEmpty
+                                    ? _buildEmptyState(context)
+                                    : ListView.separated(
+                                        key: ValueKey<int>(
+                                          state.selectedTabIndex,
+                                        ),
+                                        padding: EdgeInsets.only(
+                                          left: 24.w,
+                                          right: 24.w,
+                                          bottom: 24.h,
+                                        ),
+                                        itemCount:
+                                            state.filteredRequests.length,
+                                        separatorBuilder: (context, index) =>
+                                            SizedBox(height: 16.h),
+                                        itemBuilder: (context, index) {
+                                          final request =
+                                              state.filteredRequests[index];
+                                          return RequestCard(
+                                            request: request,
+                                            onPayPressed:
+                                                request.isPaymentRequired
+                                                ? () {
+                                                    context
+                                                        .read<RequestsCubit>()
+                                                        .payContract(
+                                                          request.id.toString(),
+                                                          sl<
+                                                            UpdateContractStatusUseCase
+                                                          >(),
+                                                        );
+                                                  }
+                                                : null,
+                                          );
+                                        },
+                                      ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

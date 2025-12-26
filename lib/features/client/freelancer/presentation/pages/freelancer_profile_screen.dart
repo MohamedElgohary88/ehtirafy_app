@@ -70,28 +70,41 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
         value: SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
         ),
-        child: Scaffold(
-          backgroundColor: const Color(0xFFFAFAFA),
-          body: BlocBuilder<FreelancerCubit, FreelancerState>(
-            builder: (context, state) {
-              if (state is FreelancerLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.gold),
-                );
-              } else if (state is FreelancerError) {
-                return ErrorStateWidget(
-                  message: state.message,
-                  onRetry: () {
-                    context.read<FreelancerCubit>().getFreelancerProfile(
-                      widget.freelancerId,
-                    );
-                  },
-                );
-              } else if (state is FreelancerLoaded) {
-                return _buildProfileContent(context, state.freelancer);
-              }
-              return const SizedBox.shrink();
-            },
+        child: BlocListener<FreelancerCubit, FreelancerState>(
+          listener: (context, state) {
+            if (state is FreelancerError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppColors.error,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFAFAFA),
+            body: BlocBuilder<FreelancerCubit, FreelancerState>(
+              builder: (context, state) {
+                if (state is FreelancerLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColors.gold),
+                  );
+                } else if (state is FreelancerError) {
+                  return ErrorStateWidget(
+                    message: state.message,
+                    onRetry: () {
+                      context.read<FreelancerCubit>().getFreelancerProfile(
+                        widget.freelancerId,
+                      );
+                    },
+                  );
+                } else if (state is FreelancerLoaded) {
+                  return _buildProfileContent(context, state.freelancer);
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
         ),
       ),

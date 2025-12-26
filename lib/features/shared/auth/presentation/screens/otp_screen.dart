@@ -50,7 +50,7 @@ class _OtpView extends StatelessWidget {
               ),
               _OtpTarget(phone: phone),
               SizedBox(height: 24.h),
-              _OtpDigits(),
+              _OtpDigits(signupData: signupData),
               SizedBox(height: 24.h),
               _OtpTimer(),
               SizedBox(height: 24.h),
@@ -83,7 +83,8 @@ class _OtpTarget extends StatelessWidget {
 }
 
 class _OtpDigits extends StatefulWidget {
-  const _OtpDigits();
+  final Map<String, dynamic>? signupData;
+  const _OtpDigits({this.signupData});
   @override
   State<_OtpDigits> createState() => _OtpDigitsState();
 }
@@ -95,6 +96,48 @@ class _OtpDigitsState extends State<_OtpDigits> {
   );
   final List<FocusNode> _nodes = List.generate(4, (_) => FocusNode());
   final List<String> _prev = List.filled(4, '');
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAndAutoFillOtp();
+  }
+
+  Future<void> _checkAndAutoFillOtp() async {
+    final otp = widget.signupData?['otp'] as String?;
+    if (otp != null && otp.length == 4) {
+      // Small delay before starting animation to let UI settle
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+
+      final cubit = context.read<OtpCubit>();
+
+      for (int i = 0; i < 4; i++) {
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (!mounted) return;
+
+        final digit = otp[i];
+        _controllers[i].text = digit;
+        cubit.updateDigit(i, digit);
+
+        // Flash focus for visual effect
+        _nodes[i].requestFocus();
+      }
+
+      // Clear focus after filling
+      await Future.delayed(const Duration(milliseconds: 200));
+      if (!mounted) return;
+      FocusScope.of(context).unfocus();
+
+      // Trigger verification if requested (based on "we shouldnot wait for user to type it")
+      // The user prompt said: "write the otp autoamtic in the fildes with animation... we shouldnot wait for user to type it"
+      // It implies we should proceed if possible, but the `_OtpActions` handles the verify button.
+      // I'll leave the auto-verify call to the button press or valid state,
+      // but actually calling `verify` programmatically here is better UX.
+      // However, `_OtpActions` has the `verify()` logic. I won't duplicate it here to avoid complexity unless necessary.
+      // But I will ensure the Cubit state is updated so `canVerify` becomes true.
+    }
+  }
 
   @override
   void dispose() {
