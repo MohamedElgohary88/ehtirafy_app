@@ -184,6 +184,10 @@ class AppStrings {
   static const profileLogout = 'profile.logout';
   static const profileClientRole = 'profile.clientRole';
   static const profileFreelancerRole = 'profile.freelancerRole';
+  static const profileLogoutConfirmationTitle =
+      'profile.logoutConfirmation.title';
+  static const profileLogoutConfirmationMessage =
+      'profile.logoutConfirmation.message';
 
   // Transactions
   static const transactionItemLabel = 'transactions.itemLabel';

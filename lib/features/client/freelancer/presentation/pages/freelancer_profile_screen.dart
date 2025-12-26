@@ -16,6 +16,8 @@ import 'package:ehtirafy_app/features/client/freelancer/presentation/widgets/rev
 import 'package:ehtirafy_app/features/client/freelancer/presentation/widgets/reviews_summary_widget.dart';
 import 'package:ehtirafy_app/features/client/freelancer/presentation/widgets/service_card.dart';
 import 'package:ehtirafy_app/features/client/freelancer/domain/entities/freelancer_entity.dart';
+import 'package:ehtirafy_app/core/widgets/empty_state_widget.dart';
+import 'package:ehtirafy_app/core/widgets/error_state_widget.dart';
 
 class FreelancerProfileScreen extends StatefulWidget {
   final String freelancerId;
@@ -77,7 +79,14 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
                   child: CircularProgressIndicator(color: AppColors.gold),
                 );
               } else if (state is FreelancerError) {
-                return Center(child: Text(state.message));
+                return ErrorStateWidget(
+                  message: state.message,
+                  onRetry: () {
+                    context.read<FreelancerCubit>().getFreelancerProfile(
+                      widget.freelancerId,
+                    );
+                  },
+                );
               } else if (state is FreelancerLoaded) {
                 return _buildProfileContent(context, state.freelancer);
               }
@@ -559,6 +568,15 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
   }
 
   Widget _buildPortfolioTab(FreelancerEntity freelancer) {
+    if (freelancer.portfolio.isEmpty) {
+      return Center(
+        child: EmptyStateWidget(
+          message: AppStrings.freelancerPortfolioEmptyTitle.tr(),
+          subMessage: AppStrings.freelancerPortfolioEmptySubtitle.tr(),
+          icon: Icons.photo_library_outlined,
+        ),
+      );
+    }
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 20.h),
@@ -570,7 +588,12 @@ class _FreelancerProfileScreenState extends State<FreelancerProfileScreen>
     final services = freelancer.services;
 
     if (services.isEmpty) {
-      return Center(child: Text(AppStrings.noDataFound.tr()));
+      return Center(
+        child: EmptyStateWidget(
+          message: AppStrings.freelancerDashboardEmptyServices.tr(),
+          icon: Icons.design_services_outlined,
+        ),
+      );
     }
 
     return ListView.builder(

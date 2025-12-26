@@ -19,6 +19,8 @@ import '../cubit/requests_cubit.dart';
 import '../cubit/requests_state.dart';
 import '../../../booking/presentation/widgets/request_card.dart';
 import '../widgets/requests_filter_tab.dart';
+import 'package:ehtirafy_app/core/widgets/empty_state_widget.dart';
+import 'package:ehtirafy_app/core/widgets/error_state_widget.dart';
 
 /// My Requests Screen - Shows contracts for both clients and freelancers
 ///
@@ -70,33 +72,12 @@ class MyRequestsScreen extends StatelessWidget {
                     if (state is RequestsLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is RequestsError) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 48.sp,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 16.h),
-                            Text(
-                              state.message,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            SizedBox(height: 16.h),
-                            ElevatedButton(
-                              onPressed: () {
-                                context.read<RequestsCubit>().getRequests();
-                              },
-                              child: Text('إعادة المحاولة'),
-                            ),
-                          ],
-                        ),
+                      return ErrorStateWidget(
+                        message: state.message,
+                        onRetry: () {
+                          context.read<RequestsCubit>().getRequests();
+                        },
+                        retryText: 'إعادة المحاولة',
                       );
                     } else if (state is RequestsLoaded) {
                       return Column(
@@ -180,16 +161,28 @@ class MyRequestsScreen extends StatelessWidget {
               bottomRight: Radius.circular(24),
             ),
           ),
-          child: Center(
-            child: Text(
-              AppStrings.myRequestsTitle.tr(),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.50,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Text(
+                AppStrings.myRequestsTitle.tr(),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
+                ),
               ),
-            ),
+              Positioned(
+                right: 16.w,
+                child: IconButton(
+                  icon: const Icon(Icons.refresh, color: Colors.white),
+                  onPressed: () {
+                    context.read<RequestsCubit>().getRequests();
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -197,82 +190,15 @@ class MyRequestsScreen extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Container(
-      width: 349.w,
-      height: 268.h,
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14.r),
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 80.w,
-            height: 80.h,
-            decoration: ShapeDecoration(
-              color: const Color(0xFFF9F9F9),
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 2, color: Color(0xFFE5E5E5)),
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-            ),
-            child: Icon(
-              Icons.camera_alt_outlined,
-              size: 40.sp,
-              color: const Color(0xFF888888),
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            AppStrings.myRequestsNoRequests.tr(),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: const Color(0xFF2B2B2B),
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w400,
-              height: 1.50,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            AppStrings.myRequestsStartRequesting.tr(),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF888888),
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w400,
-              height: 1.50,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          GestureDetector(
-            onTap: () {
-              // Navigate to home or photographers list
-              context.go('/home');
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: ShapeDecoration(
-                color: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              child: Text(
-                AppStrings.myRequestsBrowsePhotographers.tr(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  height: 1.43,
-                ),
-              ),
-            ),
-          ),
-        ],
+    return Center(
+      child: EmptyStateWidget(
+        message: AppStrings.myRequestsNoRequests.tr(),
+        subMessage: AppStrings.myRequestsStartRequesting.tr(),
+        icon: Icons.camera_alt_outlined,
+        retryText: AppStrings.myRequestsBrowsePhotographers.tr(),
+        onRetry: () {
+          context.go('/home');
+        },
       ),
     );
   }

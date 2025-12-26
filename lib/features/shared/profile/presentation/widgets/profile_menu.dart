@@ -2,6 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../manager/profile_cubit.dart';
 import '../../domain/entities/user_profile_entity.dart';
 import 'profile_tile.dart';
 
@@ -63,7 +66,26 @@ class ProfileMenu extends StatelessWidget {
           icon: Icons.logout,
           isDestructive: true,
           onTap: () {
-            // Logout Logic
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(AppStrings.profileLogoutConfirmationTitle.tr()),
+                content: Text(AppStrings.profileLogoutConfirmationMessage.tr()),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(AppStrings.cancel.tr()),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.read<ProfileCubit>().logout();
+                    },
+                    child: Text(AppStrings.confirm.tr()),
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ],

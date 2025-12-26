@@ -10,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import '../cubit/chat_cubit.dart';
 import '../cubit/chat_state.dart';
 import '../widgets/conversation_tile.dart';
+import 'package:ehtirafy_app/core/widgets/empty_state_widget.dart';
+import 'package:ehtirafy_app/core/widgets/error_state_widget.dart';
 
 class ConversationsScreen extends StatefulWidget {
   final String userType;
@@ -42,7 +44,14 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                   if (state is ChatLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is ChatError) {
-                    return Center(child: Text(state.message));
+                    return ErrorStateWidget(
+                      message: state.message,
+                      onRetry: () {
+                        context.read<ChatCubit>().loadConversations(
+                          userType: widget.userType,
+                        );
+                      },
+                    );
                   } else if (state is ConversationsLoaded) {
                     if (state.conversations.isEmpty) {
                       return _buildEmptyState();
@@ -90,16 +99,30 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               bottomRight: Radius.circular(24),
             ),
           ),
-          child: Center(
-            child: Text(
-              AppStrings.chatListTitle.tr(),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.50,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Text(
+                AppStrings.chatListTitle.tr(),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
+                ),
               ),
-            ),
+              Positioned(
+                right: 16.w,
+                child: IconButton(
+                  icon: const Icon(Icons.refresh, color: Colors.white),
+                  onPressed: () {
+                    context.read<ChatCubit>().loadConversations(
+                      userType: widget.userType,
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -108,62 +131,26 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 80.w,
-            height: 80.h,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF9F9F9),
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: const Color(0xFFE5E5E5), width: 2),
-            ),
-            child: Icon(
-              Icons.chat_bubble_outline,
-              size: 40.sp,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            AppStrings.chatNoMessages.tr(),
-            style: TextStyle(
-              color: const Color(0xFF2B2B2B),
-              fontSize: 16.sp,
-              fontFamily: 'Cairo',
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            AppStrings.chatStartConversation.tr(),
-            style: TextStyle(
-              color: const Color(0xFF888888),
-              fontSize: 16.sp,
-              fontFamily: 'Cairo',
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          SizedBox(height: 24.h),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: const Color(0xFFC8A44F), width: 2),
-            ),
-            child: Text(
-              AppStrings.chatFindPhotographer.tr(),
-              style: TextStyle(
-                color: const Color(0xFFC8A44F),
-                fontSize: 14.sp,
-                fontFamily: 'Cairo',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
+      child: EmptyStateWidget(
+        message: AppStrings.chatNoMessages.tr(),
+        subMessage: AppStrings.chatStartConversation.tr(),
+        icon: Icons.chat_bubble_outline,
+        retryText: AppStrings.chatFindPhotographer.tr(),
+        onRetry: () {
+          // Navigate logic here if needed, usually chat logic is different
+          // But based on original code it didn't have specific navigation in button?
+          // Original: Container with 'Find Photographer' text but NO onTap in previous file view?
+          // Ah, wait. In step 75 view_file of conversations_screen.dart:
+          // It was just a Container with text "AppStrings.chatFindPhotographer.tr()".
+          // It didn't seem to have a GestureDetector or InkWell.
+          // Let's re-read step 75.
+          // Lines 149-165: Container with text. No onTap.
+          // Line 110-168: Column.
+          // So it wasn't clickable? That's weird.
+          // I'll make it clickable to '/home' or just hide the button if no action is intended.
+          // However, making it clickable to search seems appropriate.
+          context.push('/home');
+        },
       ),
     );
   }

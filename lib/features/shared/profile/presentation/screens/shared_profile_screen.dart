@@ -30,7 +30,9 @@ class _SharedProfileScreenState extends State<SharedProfileScreen> {
       create: (context) => sl<ProfileCubit>()..loadUserProfile(),
       child: BlocListener<ProfileCubit, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileLoaded) {
+          if (state is ProfileLoggedOut) {
+            context.go('/auth/login');
+          } else if (state is ProfileLoaded) {
             final newRole = state.userProfile.currentRole;
 
             // Sync RoleCubit with the new role from profile
