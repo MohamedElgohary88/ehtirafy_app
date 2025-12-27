@@ -68,8 +68,12 @@ class AuthRepositoryImpl implements AuthRepository {
       await localDataSource.saveUser(result);
 
       // Save token if available (for auto-login)
+      // Save token if available (for auto-login)
       if (result.token != null && result.token!.isNotEmpty) {
+        print('Signup successful. Saving token: ${result.token}');
         await localDataSource.saveToken(result.token!);
+      } else {
+        print('Signup successful but NO TOKEN found in response.');
       }
 
       return Right(result);

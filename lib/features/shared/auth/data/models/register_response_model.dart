@@ -38,6 +38,7 @@ class RegisterResponseModel extends User {
       'country_code': countryCode,
       'sex': sex,
       'material_status': materialStatus,
+      'token': token,
     };
   }
 }
